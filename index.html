@@ -2,102 +2,129 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Medex Web</title>
-  <style>
-    body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      margin: 0;
-      padding: 20px;
-      background-color: #f9fafb;
-      color: #333;
-    }
-
-    header {
-      text-align: center;
-      margin-bottom: 30px;
-    }
-
-    header h1 {
-      font-size: 2.5em;
-      color: #2c3e50;
-    }
-
-    .container {
-      max-width: 800px;
-      margin: 0 auto;
-      background: #ffffff;
-      padding: 20px;
-      border-radius: 12px;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    }
-
-    textarea {
-      width: 100%;
-      height: 250px;
-      padding: 10px;
-      font-family: monospace;
-      font-size: 15px;
-      border: 1px solid #ccc;
-      border-radius: 8px;
-      resize: vertical;
-      margin-bottom: 20px;
-    }
-
-    .button-group {
-      text-align: center;
-      margin-bottom: 20px;
-    }
-
-    button {
-      background-color: #3498db;
-      color: white;
-      border: none;
-      padding: 12px 20px;
-      margin: 5px;
-      font-size: 16px;
-      border-radius: 8px;
-      cursor: pointer;
-      transition: background-color 0.3s ease;
-    }
-
-    button:hover {
-      background-color: #2980b9;
-    }
-
-    button:disabled {
-      background-color: #95a5a6;
-      cursor: not-allowed;
-    }
-
-    .resultado {
-      margin-top: 20px;
-      padding: 15px;
-      background: #ecf0f1;
-      border-radius: 8px;
-      min-height: 100px;
-      white-space: pre-wrap;
-      font-family: monospace;
-      font-size: 14px;
-    }
-  </style>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MedEx - Evaluador de Pacientes para Estudios Clínicos</title>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+  <!-- Sección 1: Entrada del paciente -->
+  <div id="entrada-paciente" class="seccion">
+    <h1>MedEx</h1>
+    <h2>Historia Clínica</h2>
+    <textarea id="texto-hc" placeholder="Pegue aquí el texto completo de la historia clínica..."></textarea>
+    <button id="evaluar-paciente" class="btn-principal">🔍 Evaluar Paciente</button>
+  </div>
 
-  <header>
-    <h1>Medex Web</h1>
-  </header>
-
-  <div class="container">
-    <textarea id="inputTexto" placeholder="Pegá aquí la historia clínica..."></textarea>
-
-    <div class="button-group">
-      <button id="btnAnalizar">Analizar caso</button>
-      <button id="btnEvaluar" disabled>Evaluar estudios</button>
+  <!-- Sección 2: Datos del paciente -->
+  <div id="datos-paciente" class="seccion">
+    <h1>Datos del Paciente</h1>
+    <div id="output">Resumen HC</div>
+    
+    <!-- Edad -->
+    <div id="bloque-edad" class="bloque">
+      <label>📅 Edad:</label>
+      <span id="edad-valor">-</span>
+      <input type="number" id="edad-input" style="display:none;" min="0" max="120" />
+      <div class="botones">
+        <button id="btn-editar-edad">✏️ Modificar</button>
+        <button id="btn-confirmar-edad" style="display:none;">✅ Confirmar</button>
+      </div>
     </div>
 
-    <div class="resultado" id="resultadoDatos">
-      <!-- Resultados aparecerán aquí -->
+    <!-- Antecedentes -->
+    <div class="bloque">
+      <label>📍 Antecedentes:</label>
+      <span id="antecedentes-valor">-</span>
+      <div class="autocomplete-container" id="antecedentes-autocomplete">
+        <input type="text" id="antecedentes-input" class="autocomplete-input" placeholder="Escriba antecedentes...">
+        <div id="antecedentes-suggestions" class="autocomplete-suggestions"></div>
+      </div>
+      <div class="botones">
+        <button id="btn-editar-antecedentes">✏️ Modificar</button>
+        <button id="btn-confirmar-antecedentes" style="display:none;">✅ Confirmar</button>
+      </div>
+    </div>
+
+    <!-- Riesgo -->
+    <div id="bloque-riesgo" class="bloque">
+      <label>⚠️ Factores de riesgo:</label>
+      <span id="riesgo-valor">-</span>
+      <div class="autocomplete-container" id="riesgo-autocomplete">
+        <input type="text" id="riesgo-input" class="autocomplete-input" placeholder="Escriba factores...">
+        <div id="riesgo-suggestions" class="autocomplete-suggestions"></div>
+      </div>
+      <div class="botones">
+        <button id="btn-editar-riesgo">✏️ Modificar</button>
+        <button id="btn-confirmar-riesgo" style="display:none;">✅ Confirmar</button>
+      </div>
+    </div>
+
+    <!-- Medicación -->
+    <div id="bloque-med" class="bloque">
+      <label>💊 Medicación:</label>
+      <span id="med-valor">-</span>
+      <div class="autocomplete-container" id="med-autocomplete">
+        <input type="text" id="med-input" class="autocomplete-input" placeholder="Escriba medicación...">
+        <div id="med-suggestions" class="autocomplete-suggestions"></div>
+      </div>
+      <div class="botones">
+        <button id="btn-editar-med">✏️ Modificar</button>
+        <button id="btn-confirmar-med" style="display:none;">✅ Confirmar</button>
+      </div>
+    </div>
+
+    <!-- Laboratorio -->
+    <div id="bloque-lab" class="bloque">
+      <label>🧪 Laboratorio:</label>
+      <span id="lab-valor">-</span>
+      <div class="autocomplete-container" id="lab-autocomplete">
+        <input type="text" id="lab-input" class="autocomplete-input" placeholder="Escriba complementarios...">
+        <div id="lab-suggestions" class="autocomplete-suggestions"></div>
+      </div>
+      <div class="botones">
+        <button id="btn-editar-lab">✏️ Modificar</button>
+        <button id="btn-confirmar-lab" style="display:none;">✅ Confirmar</button>
+      </div>
+    </div>
+
+    <button id="evaluar-estudios" class="btn-principal">🧠 Evaluar Estudios</button>
+    <div id="resultado-evaluacion"></div>
+  </div>
+
+  <!-- Sección 3: Estudios -->
+  <div id="estudios" class="seccion">
+    <h1>Estudios Clínicos</h1>
+    <h2>Resultados de Evaluación</h2>
+    
+    <div id="lista-estudios">
+      <!-- Ejemplo de estudio -->
+      <div class="estudio">
+        <div class="estudio-header">
+          <span>Estudio X - Tratamiento para Y</span>
+          <span class="estado cumple">Cumple</span>
+        </div>
+        <div class="estudio-body">
+          <div class="criterio cumple">✅ Edad entre 18-65 años</div>
+          <div class="criterio cumple">✅ Sin antecedentes de Z</div>
+          <div class="criterio excluido">❌ No toma medicación W</div>
+          <p><strong>Comentario:</strong> El paciente cumple con la mayoría de los criterios excepto por la medicación actual.</p>
+        </div>
+      </div>
+      
+      <!-- Otro estudio de ejemplo -->
+      <div class="estudio">
+        <div class="estudio-header">
+          <span>Estudio A - Prevención de B</span>
+          <span class="estado parcial">Parcial</span>
+        </div>
+        <div class="estudio-body">
+          <div class="criterio cumple">✅ Edad entre 30-70 años</div>
+          <div class="criterio parcial">⚠️ Factor de riesgo C presente pero controlado</div>
+          <div class="criterio cumple">✅ Valores de laboratorio dentro de rango</div>
+          <p><strong>Comentario:</strong> El paciente podría ser elegible con monitorización adicional del factor C.</p>
+        </div>
+      </div>
     </div>
   </div>
 
