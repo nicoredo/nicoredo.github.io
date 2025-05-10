@@ -6,6 +6,8 @@
   <title>MedEx - Evaluador de Pacientes para Estudios Clínicos</title>
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
 </head>
 <body>
   <!-- Sección 1: Entrada del paciente -->
@@ -102,9 +104,39 @@
     <h1>Estudios Clínicos</h1>
     <h2>Resultados de Evaluación</h2>
     <div id="lista-estudios"></div>
+    <button id="btn-generar-derivacion" class="btn-principal" disabled style="opacity: 0.5; cursor: not-allowed;">
+      📤 Generar Derivación
+    </button>
 
   </div>
 
    <script type="module" src="js/app.js"></script>
+
+<!-- Popup modal derivación -->
+<div id="modal-derivacion" class="modal">
+  <div class="modal-content">
+    <h2>Generar informe de derivación</h2>
+    <label>Derivador:</label>
+    <input type="text" id="titulo-derivacion" placeholder="Nombre/Apellido/Matricula">
+
+    <label>Apellido:</label>
+    <input type="text" id="apellido" placeholder="Apellido del paciente">
+
+    <label>Nombre:</label>
+    <input type="text" id="nombre" placeholder="Nombre del paciente">
+
+    <label>DNI:</label>
+    <input type="text" id="dni" placeholder="Documento">
+
+    <label>Teléfono:</label>
+    <input type="text" id="telefono" placeholder="Ej: 11 5555 5555">
+
+    <div class="modal-botones">
+      <button id="btn-cancelar-modal" class="btn-secundario">Cancelar</button>
+      <button id="btn-confirmar-modal" class="btn-principal">Generar PDF</button>
+    </div>
+  </div>
+</div>
+
 </body>
 </html>
