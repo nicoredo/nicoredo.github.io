@@ -71,8 +71,8 @@
   },
   "riesgo": {
     "diabetes mellitus tipo 1": ["dm1", "diabetes insulinodependiente", "insulina", "insulinizado", "insulinizada", "dbt ir"],
-    "diabetes mellitus tipo 2": ["diabetico", "dm2", "dbt", "diabetes tipo 2", "dbt no ir", "metformina"],
-    "hipertension arterial": ["hta", "hipertension", "hipertenso", "hipertensa"],
+    "diabetes mellitus tipo 2": ["diabetico", "diabetica", "dm2", "dbt", "diabetes tipo 2", "dbt no ir", "metformina"],
+    "hipertension arterial": ["hta", "hipertension", "hipertenso", "hipertensa", "presion alta"],
     "dislipidemia": ["dislipemia", "dlp", "DLP", "dislipemico", "dislipemica", "hipercolesterolemia", "colesterol alto"],
     "hipertrigliceridemia": ["trigliceridos elevados", "hipertg", "TG elevado", "hipertrigliceridos"],
     "tabaquismo": ["tbq", "extbq", "fumadora","fumador", "tabaquista", "extabaquista", "consumo de tabaco"],
