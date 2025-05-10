@@ -34,6 +34,28 @@ const labValor = document.getElementById('lab-valor');
         console.log("Terminología cargada:", terminologiaMedica);  // para verificar
         configurarBotonesEdicion();
         setupEventListeners();
+
+        document.getElementById('btn-limpiar-extraccion').addEventListener('click', () => {
+            edadValor.textContent = '-';
+            antecedentesValor.textContent = '-';
+            riesgoValor.textContent = '-';
+            medValor.textContent = '-';
+            labValor.textContent = '-';
+            document.getElementById('lista-estudios').innerHTML = '';
+            estadoApp.datosPaciente = null;
+        });
+        
+        document.getElementById('btn-limpiar-todo').addEventListener('click', () => {
+            document.getElementById('texto-hc').value = '';
+            edadValor.textContent = '-';
+            antecedentesValor.textContent = '-';
+            riesgoValor.textContent = '-';
+            medValor.textContent = '-';
+            labValor.textContent = '-';
+            document.getElementById('lista-estudios').innerHTML = '';
+            estadoApp.datosPaciente = null;
+        });
+        
     }
 
     function setupEventListeners() {
@@ -74,10 +96,39 @@ const labValor = document.getElementById('lab-valor');
             console.log("Datos para evaluar:", datosParaEvaluar); // Para depuración
             
             const resultados = evaluarPaciente(datosParaEvaluar);
+            estadoApp.resultadosEvaluacion = resultados; // guardamos en memoria
             mostrarResultadosDetallados(resultados);
         });
+
+        //// Cuadro de dialogo para preguntar filiatorios del paciente
+        const modal = document.getElementById('modal-derivacion');
+        const btnGenerar = document.getElementById('btn-generar-derivacion');
+        const btnCancelar = document.getElementById('btn-cancelar-modal');
+        const btnConfirmar = document.getElementById('btn-confirmar-modal');
         
+        btnGenerar.addEventListener('click', () => {
+          modal.style.display = 'flex';
+        });
+        
+        btnCancelar.addEventListener('click', () => {
+          modal.style.display = 'none';
+        });
+        
+        btnConfirmar.addEventListener('click', () => {
+          const filiatorios = {
+            derivador: document.getElementById('titulo-derivacion').value,
+            apellido: document.getElementById('apellido').value,
+            nombre: document.getElementById('nombre').value,
+            dni: document.getElementById('dni').value,
+            telefono: document.getElementById('telefono').value
+          };
+        
+          modal.style.display = 'none';
+        
+          generarPDFDerivacion(filiatorios, estadoApp.datosPaciente, document.getElementById('texto-hc').value);
+        });
     }
+        
    
     
     // Función para mostrar datos en la UI (adaptada de tu popup.js)
@@ -261,7 +312,7 @@ const labValor = document.getElementById('lab-valor');
         inicializarAutocompletado();
     });
     
-    // Función para cargar terminología (de tu popup.js)
+    // Función para cargar terminología 
     async function cargarTerminologia() {
         try {
             const response = await fetch('data/terminologia_medica.json');
@@ -276,8 +327,105 @@ const labValor = document.getElementById('lab-valor');
             console.error("Error cargando terminología:", error);
         }
     }
-    
-    // Variables globales (de tu popup.js)
+    console.log(estadoApp.resultadosEvaluacion);
+
+    async function generarPDFDerivacion(filiatorios, datosPaciente, textoHC) {
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF();
+      
+        const addLinesWithPageBreak = (doc, lines, startY) => {
+          let y = startY;
+          for (const line of lines) {
+            if (y > 270) { doc.addPage(); y = 20; }
+            doc.text(line, 15, y);
+            y += 7;
+          }
+          return y;
+        };
+      
+        const fechaActual = new Date().toLocaleString("es-AR", {
+          dateStyle: "short", timeStyle: "short"
+        });
+      
+        const estudiosElems = document.querySelectorAll("#lista-estudios .estudio");
+        const estudiosCumplidos = [];
+      
+        estudiosElems.forEach(est => {
+          const nombre = est.querySelector(".estudio-header")?.childNodes[0]?.textContent?.trim() || '';
+          const estado = est.querySelector(".estado")?.textContent?.trim();
+          if (estado?.includes("Cumple") || estado?.includes("Parcial")) {
+            estudiosCumplidos.push({ nombre, estado });
+          }
+        });
+      
+        let y = 20;
+      
+        doc.setFont("helvetica", "bold");
+        doc.setFontSize(16);
+        doc.text(filiatorios.titulo || "Informe de Derivación", 105, y, { align: "center" });
+        y += 8;
+      
+        doc.setFontSize(10);
+        doc.setFont("helvetica", "normal");
+        doc.text(`Generado el: ${fechaActual}`, 105, y, { align: "center" });
+        y += 12;
+      
+        doc.setFontSize(12);
+        doc.text(`Apellido: ${filiatorios.apellido}`, 15, y); y += 7;
+        doc.text(`Nombre: ${filiatorios.nombre}`, 15, y); y += 7;
+        doc.text(`DNI: ${filiatorios.dni}`, 15, y); y += 7;
+        doc.text(`Teléfono: ${filiatorios.telefono}`, 15, y); y += 10;
+      
+        doc.setFont("helvetica", "bold");
+        doc.text("Estudios clínicos sugeridos:", 15, y); y += 7;
+        doc.setFont("helvetica", "normal");
+      
+        for (const est of estudiosCumplidos) {
+            const headerLine = `• ${est.nombre}`;
+            const estadoLine = `    Estado: ${est.estado}`;
+            const lines = doc.splitTextToSize(`${headerLine}\n${estadoLine}`, 180);
+            y = addLinesWithPageBreak(doc, lines, y);
+            y += 3;
+          }
+          
+      
+        doc.setFont("helvetica", "bold");
+        doc.text("Datos clínicos extraídos:", 15, y); y += 7;
+        doc.setFont("helvetica", "normal");
+      
+        doc.text(`Edad: ${datosPaciente.edad}`, 15, y); y += 7;
+        doc.text(`Antecedentes: ${datosPaciente.antecedentes?.join(", ") || "-"}`, 15, y); y += 7;
+        doc.text(`Factores de riesgo: ${datosPaciente.factoresRiesgo?.join(", ") || "-"}`, 15, y); y += 7;
+        doc.text(`Medicación: ${datosPaciente.medicacion?.join(", ") || "-"}`, 15, y); y += 7;
+      
+        const labStr = Object.entries(datosPaciente.laboratorio || {})
+          .map(([k,v]) => `${k}: ${v}`)
+          .join(", ") || "-";
+        const labLines = doc.splitTextToSize(`Laboratorio: ${labStr}`, 180);
+        y = addLinesWithPageBreak(doc, labLines, y); y += 3;
+      
+        doc.setFont("helvetica", "bold");
+        doc.text("Historia clínica aportada:", 15, y); y += 7;
+        doc.setFont("helvetica", "normal");
+      
+        const hcLines = doc.splitTextToSize(textoHC || "-", 180);
+        y = addLinesWithPageBreak(doc, hcLines, y);
+      
+        // Mostrar PDF en una nueva pestaña para imprimir
+        const pdfBlob = doc.output("blob");
+        const pdfURL = URL.createObjectURL(pdfBlob);
+        const printWindow = window.open(pdfURL);
+      
+        if (printWindow) {
+          printWindow.onload = () => {
+            printWindow.focus();
+            printWindow.print();
+          };
+        }
+      }
+      
+      
+    // Variables globales
     const terminosMedicos = {
         antecedentes: new Set(),
         riesgo: new Set(),
