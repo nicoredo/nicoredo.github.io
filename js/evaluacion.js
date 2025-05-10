@@ -198,6 +198,8 @@ export function mostrarResultadosDetallados(resultados, contenedorId = 'lista-es
         const encabezado = document.createElement('div');
         encabezado.className = 'estudio-header';
         encabezado.textContent = estudio;
+        encabezado.title = criteriosEstudios.estudios[estudio]?.descripcion || 'Estudio sin descripción';
+        
 
         const estado = document.createElement('span');
         estado.className = `estado ${resultado.estado}`;
@@ -233,7 +235,21 @@ export function mostrarResultadosDetallados(resultados, contenedorId = 'lista-es
         wrapper.appendChild(encabezado);
         wrapper.appendChild(cuerpo);
         contenedor.appendChild(wrapper);
+
+        // Habilitar o deshabilitar el botón de derivación según si hay estudios cumplidos
+const hayEstudioElegible = Object.values(resultados).some(res =>
+    res.estado === 'cumple' || res.estado === 'parcial'
+);
+
+const botonDerivacion = document.getElementById('btn-generar-derivacion');
+if (botonDerivacion) {
+    botonDerivacion.disabled = !hayEstudioElegible;
+    botonDerivacion.style.opacity = hayEstudioElegible ? '1' : '0.5';
+    botonDerivacion.style.cursor = hayEstudioElegible ? 'pointer' : 'not-allowed';
+}
+
     }
 }
+
 
 export { parseLaboratorio};
