@@ -1,7 +1,7 @@
 import { extraerDatosHC } from './web-content.js';
 import { evaluarPaciente, mostrarResultadosDetallados } from './evaluacion.js';
 import { cargarDatosIniciales, terminologiaMedica } from './data-loader.js';
-
+import { parseLaboratorio } from './evaluacion.js';
 
 document.addEventListener('DOMContentLoaded', function() {
     // Elementos UI
@@ -57,31 +57,28 @@ const labValor = document.getElementById('lab-valor');
                 alert('Primero debe evaluar al paciente');
                 return;
             }
-            evaluarPaciente(estadoApp.datosPaciente);
+            
+            // Prepara los datos con la estructura EXACTA que espera evaluacion.js
+            const datosParaEvaluar = {
+                edad: parseInt(edadValor.textContent) || 0,
+                antecedentes: antecedentesValor.textContent !== '-' ? 
+                    antecedentesValor.textContent.split(', ') : [],
+                riesgo: riesgoValor.textContent !== '-' ?  // Nota: usa "riesgo" no "factoresRiesgo"
+                    riesgoValor.textContent.split(', ') : [],
+                medicacion: medValor.textContent !== '-' ? 
+                    medValor.textContent.split(', ') : [],
+                laboratorio: parseLaboratorio(labValor.textContent !== '-' ? 
+                    labValor.textContent : "")
+            };
+            
+            console.log("Datos para evaluar:", datosParaEvaluar); // Para depuración
+            
+            const resultados = evaluarPaciente(datosParaEvaluar);
+            mostrarResultadosDetallados(resultados);
         });
+        
     }
-    
-    // 1. Evaluar paciente (extraer datos)
-    btnEvaluarPaciente.addEventListener('click', function() {
-        if (!textoHC.value.trim()) {
-            alert('Por favor ingrese el texto de la historia clínica');
-            return;
-        }
-        
-        // Extraer datos usando la función de web-content.js
-        estadoApp.datosPaciente = extraerDatosHC(textoHC.value);
-        mostrarDatos(estadoApp.datosPaciente);
-    });
-    
-    // 2. Evaluar estudios clínicos
-    btnEvaluarEstudios.addEventListener('click', function() {
-        if (!estadoApp.datosPaciente?.edad && estadoApp.datosPaciente?.edad !== 0) {
-            alert('Primero extraiga los datos del paciente');
-            return;
-        }
-        
-        evaluarPaciente(); // Usamos tu función original de evaluación
-    });
+   
     
     // Función para mostrar datos en la UI (adaptada de tu popup.js)
 
@@ -91,14 +88,17 @@ const labValor = document.getElementById('lab-valor');
             antecedentes: Array.isArray(datos.antecedentes) ? datos.antecedentes : [],
             riesgo: Array.isArray(datos.factoresRiesgo) ? datos.factoresRiesgo : [],
             medicacion: Array.isArray(datos.medicacion) ? datos.medicacion : [],
-            laboratorio: Array.isArray(datos.laboratorio) ? datos.laboratorio : []
+            laboratorio: parseLaboratorio(Array.isArray(datos.laboratorio) ? datos.laboratorio.join(", ") : "")
         };
     
         edadValor.textContent = datosCompletos.edad;
         antecedentesValor.textContent = datosCompletos.antecedentes.join(", ") || "-";
         riesgoValor.textContent = datosCompletos.riesgo.join(", ") || "-";
         medValor.textContent = datosCompletos.medicacion.join(", ") || "-";
-        labValor.textContent = datosCompletos.laboratorio.join(", ") || "-";
+        labValor.textContent = Object.entries(datosCompletos.laboratorio)
+  .map(([k, v]) => `${k}: ${v}`)
+  .join(", ") || "-";
+
         
         // Actualizar objeto datosPaciente
         estadoApp.datosPaciente = {
@@ -113,7 +113,7 @@ const labValor = document.getElementById('lab-valor');
         configurarBotonesEdicion();
     }
     
-    // Función para configurar botones de edición (de tu popup.js)
+    // Función para configurar botones de edición 
     function configurarBotonesEdicion() {
         const campos = [
             { id: 'edad', esTexto: false, autocomplete: false },
@@ -171,6 +171,7 @@ const labValor = document.getElementById('lab-valor');
                 btnEditar.style.display = 'inline-block';
     
                 // Actualizar datos internos
+                const datosPaciente = estadoApp.datosPaciente;
                 const valores = nuevoValor
                     ? nuevoValor.split(',').map(s => s.trim()).filter(s => s)
                     : [];
@@ -184,7 +185,8 @@ const labValor = document.getElementById('lab-valor');
         });
     }
     
-    // Inicializar autocompletado (similar a tu popup.js)
+    // Inicializar autocompletado
+    
     function inicializarAutocompletado() {
         const campos = [
             { id: 'antecedentes', tipo: 'antecedentes' },
