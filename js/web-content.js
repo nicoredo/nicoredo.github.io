@@ -112,19 +112,28 @@ function buscarMedicacionConDosis(texto) {
 function buscarLaboratorio(texto) {
     const resultados = [];
     if (!texto) return [];
-    
+
     for (const [base, sinonimos] of Object.entries(terminologiaMedica.laboratorio)) {
-        const patrones = [base, ...sinonimos];
-        const regexGlobal = new RegExp(`\\b(${patrones.join("|")})\\b[\\s:]*([\\d.,]+)\\s*(mg/dL|%|mmol/L|g/dL|mEq/L|U/L|ng/mL)`, "gi");
+        const patrones = [base, ...sinonimos].map(t => t.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'));  // escapar regex
+        const regex = new RegExp(
+            `\\b(${patrones.join("|")})\\b(?:\\s*(?:[:=]|es|es de)?\\s*)(\\d+(?:[.,]\\d+)?)(?:\\s*(mg/dL|%|mmol/L|g/dL|mEq/L|U/L|ng/mL|μg/mL|ng/dL|ml/min|mL\\/min|))?`,
+            "gi"
+        );
+
         let match;
-        while ((match = regexGlobal.exec(texto))) {
-            const estado = evaluarValorContraRango(match[1], match[2], match[3]);
-            const estadoTexto = estado ? ` (${estado})` : "";
-            resultados.push(`${match[1]}: ${match[2]} ${match[3]}${estadoTexto}`);
+        while ((match = regex.exec(texto))) {
+            const matchTerm = match[1].toLowerCase();
+            const nombre = patrones.find(p => p.toLowerCase() === matchTerm) ? base : matchTerm;
+            const valor = match[2].replace(',', '.'); // convertir a punto decimal
+            const unidad = match[3] || ''; // puede estar vacía
+            const estadoTexto = '';
+            resultados.push(`${nombre}: ${valor}${unidad ? ' ' + unidad : ''}${estadoTexto}`);
         }
     }
+
     return resultados;
 }
+
 
 export function extraerDatosHC(textoHC) {
     const bloques = extraerBloquesPorEncabezado(textoHC);
