@@ -1,19 +1,25 @@
+// evaluacion.js funcional adaptado para entorno web
 import { criteriosEstudios } from './data-loader.js';
 
 function parseLaboratorio(textoLab) {
     const resultados = {};
     if (!textoLab || textoLab.trim() === '-' || textoLab.trim() === '') return resultados;
 
-    textoLab.split(', ').forEach(item => {
+    // Maneja tanto ", " como "," como separadores
+    const items = textoLab.split(/,\s*/).filter(item => item.includes(':'));
+    
+    items.forEach(item => {
         const [key, value] = item.split(':').map(part => part.trim());
         if (key && value) {
-            const numericValue = parseFloat(value.replace(/[^\d.]/g, ''));
+            // Extrae el valor numérico eliminando todo lo que no sea número, punto o coma
+            const numericValue = parseFloat(value.replace(/[^\d.,]/g, '').replace(',', '.'));
             if (!isNaN(numericValue)) {
                 resultados[key.toLowerCase()] = numericValue;
             }
         }
     });
     return resultados;
+    
 }
 
 function evaluarRango(edad, criterio) {
@@ -27,8 +33,8 @@ function evaluarRango(edad, criterio) {
         const [_, operador, valorStr] = match;
         const valor = Number(valorStr);
         if (isNaN(valor)) return false;
-        
-        switch(operador) {
+
+        switch (operador) {
             case '>': return edad > valor;
             case '<': return edad < valor;
             case '>=': return edad >= valor;
@@ -40,6 +46,8 @@ function evaluarRango(edad, criterio) {
 }
 
 function evaluarLaboratorio(labData, criterio) {
+    if (!labData || typeof labData !== 'object') return false;
+
     const match = criterio.match(/(.+?)\s*(>=|<=|>|<|=)\s*(\d+(?:[.,]\d+)?)/);
     if (!match) return false;
 
@@ -62,14 +70,43 @@ function evaluarLaboratorio(labData, criterio) {
 
 function cumpleCriterio(datos, grupo, criterio) {
     try {
-        switch(grupo) {
+        // Mapeo de alias para compatibilidad
+        const grupoMapeado = {
+            'factores': 'riesgo',
+            'factoresRiesgo': 'riesgo'
+        }[grupo] || grupo;
+
+        // Verificación de estructura de datos
+        if (!datos || typeof datos !== 'object') {
+            console.error('Datos del paciente no válidos', datos);
+            return false;
+        }
+
+        switch(grupoMapeado) {
             case 'edad':
+                if (typeof datos.edad !== 'number') {
+                    console.warn('Edad no es número:', datos.edad);
+                    return false;
+                }
                 return evaluarRango(datos.edad, criterio);
+                
             case 'laboratorio':
+                if (!datos.laboratorio || typeof datos.laboratorio !== 'object') {
+                    console.warn('Datos de laboratorio no válidos');
+                    return false;
+                }
                 return evaluarLaboratorio(datos.laboratorio, criterio);
+                
             default:
+                // Asegurarnos que la propiedad existe y es array
+                if (!datos.hasOwnProperty(grupoMapeado) || !Array.isArray(datos[grupoMapeado])) {
+                    console.warn(`Propiedad ${grupoMapeado} no existe o no es array`);
+                    return false;
+                }
+                
+                const valores = datos[grupoMapeado];
                 const regex = new RegExp(criterio.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'i');
-                return datos[grupo].some(item => regex.test(item));
+                return valores.some(item => regex.test(item));
         }
     } catch (error) {
         console.error(`Error evaluando criterio: ${grupo}=${criterio}`, error);
@@ -84,7 +121,6 @@ function evaluarEstudioPriorizado(datos, criterios) {
         exclusiones: []
     };
 
-    // Evaluar exclusiones primero
     for (const [grupo, items] of Object.entries(criterios.exclusion || {})) {
         for (const item of items) {
             if (cumpleCriterio(datos, grupo, item)) {
@@ -92,13 +128,12 @@ function evaluarEstudioPriorizado(datos, criterios) {
             }
         }
     }
-    
+
     if (resultado.exclusiones.length > 0) {
         resultado.estado = "excluido";
         return resultado;
     }
 
-    // Evaluar edad si existe como criterio
     if (criterios.inclusion.edad) {
         const cumpleEdad = criterios.inclusion.edad.some(item => 
             cumpleCriterio(datos, "edad", item)
@@ -110,7 +145,6 @@ function evaluarEstudioPriorizado(datos, criterios) {
         }
     }
 
-    // Evaluar otros criterios
     const gruposEvaluar = ['antecedentes', 'factores', 'laboratorio'];
     let totalCumplidos = 0;
     let totalRequerido = 0;
@@ -128,7 +162,6 @@ function evaluarEstudioPriorizado(datos, criterios) {
         }
     });
 
-    // Determinar estado final
     if (totalCumplidos === totalRequerido) {
         resultado.estado = "cumple";
     } else if (totalCumplidos >= 2 && totalCumplidos >= totalRequerido * 0.5) {
@@ -138,13 +171,14 @@ function evaluarEstudioPriorizado(datos, criterios) {
     return resultado;
 }
 
+
+// EXPORTACION//
+
 export function evaluarPaciente(datosPaciente) {
     const resultados = {};
-    
     for (const [nombreEstudio, criterios] of Object.entries(criteriosEstudios.estudios)) {
         resultados[nombreEstudio] = evaluarEstudioPriorizado(datosPaciente, criterios);
     }
-    
     return resultados;
 }
 
@@ -181,7 +215,6 @@ export function mostrarResultadosDetallados(resultados, contenedorId = 'lista-es
         cuerpo.className = 'estudio-body';
         cuerpo.style.display = 'none';
 
-        // Detalles
         let html = '';
         if (resultado.exclusiones.length > 0) {
             html += `<p><strong>Excluido por:</strong> ${resultado.exclusiones.join(', ')}</p>`;
@@ -193,7 +226,6 @@ export function mostrarResultadosDetallados(resultados, contenedorId = 'lista-es
 
         cuerpo.innerHTML = html;
 
-        // Toggle acordeón
         encabezado.addEventListener('click', () => {
             cuerpo.style.display = cuerpo.style.display === 'none' ? 'block' : 'none';
         });
@@ -203,3 +235,5 @@ export function mostrarResultadosDetallados(resultados, contenedorId = 'lista-es
         contenedor.appendChild(wrapper);
     }
 }
+
+export { parseLaboratorio};
