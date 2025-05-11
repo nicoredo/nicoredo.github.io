@@ -1,181 +1,1453 @@
 {
-  "antecedentes": {
-    "infarto agudo de miocardio": ["iam", "infarto cardiaco", "iamcest", "iamsest", "ataque al corazon"],
-    "angina estable": ["angor cronico estable", "angina cronica estable", "ACE"],
-    "insuficiencia cardiaca": ["ic", "ic cronica", "ic descompensada"],
-    "internacion por IC": ["ica", "eap", "fallo cardiaco", "internacion por icc", "balance negativo", "internacion por falla", "internada por icc", "internado por icc","internado por congestion", "internada por congestion"],
-    "fibrilacion auricular": ["fa", "fib a", "fap", "faarv"],
-    "aleteo auricular": ["aa", "aaf", "aa alta rta"],
-    "arritmia supraventricular": ["taquicardia supraventricular", "taquicardia paroxistica", "taquicardia paroxistica supraventricular"],
-    "taquicardia ventricular": ["tv", "taquicardia monomorfica", "taquicardia polimorfica"],
-    "bloqueo de rama izquierda": ["bcri", "bloqueo de rama izquierda", "brdiz"],
-    "bloqueo de rama derecha": ["brd", "bcrd", "bloqueo de rama derecha", "brdiz"],
-    "accidente cerebrovascular": ["acv", "ictus", "derrame cerebral"],
-    "enfermedad arterial periferica": ["claudicacion intermitente", "angioplastia periferica"],
-    "miocardiopatia dilatada": ["mcd", "mcpd"],
-    "miocardiopatia hipertrofica": ["mch"],
-    "estenosis aortica": ["eao"],
-    "aorta bicuspide": ["eao biscuspide", "ao bicuspide", "bicuspide"],
-    "prolapso mitral": ["pvm"],
-    "trombosis venosa profunda": ["tvp"],
-    "embolia pulmonar": ["tep", "tromboembolismo pulmonar", "infarto pulmonar", "embolia de pulmon", "embolismo pulmonar"],
-    "arritmia ventricular": ["taquicardia ventricular", "tv"],
-    "bloqueo cardiaco": ["bloqueo av"],
-    "cardiopatia isquemica necrotica": ["cic","enfermedad coronaria", "mcpd isquemico-necrotica"],
-    "sindrome coronario agudo": ["sca"],
-    "shock cardiogenico": ["fallo cardiaco agudo"],
-    "endocarditis": ["infeccion valvular"],
-    "pericarditis": ["inflamacion pericardica"],
-    "cardiopatia congenita": ["defecto cardiaco congenito"],
-    "foramen oval permeable": ["fop"],
-    "comunicacion interauricular": ["cia"],
-    "comunicacion interventricular": ["civ"],
-    "tetralogia de Fallot": ["tof"],
-    "coartacion de aorta": ["estenosis aortica congenita"],
-    "sindrome de Brugada": ["arritmia genetica"],
-    "sindrome de QT largo": ["sqlt"],
-    "sindrome wolff-parkinson-white": ["wpw", "swpw"],
-    "miocarditis": ["inflamacion del miocardio"],
-    "taponamiento cardiaco": ["derrame pericardico"],
-    "aneurisma aortico": ["dilatacion aortica"],
-    "diseccion aortica": ["desgarro aortico"],
-    "arteriopatia coronaria no obstructiva": ["anc"],
-    "sindrome de Dressler": ["pericarditis post-IAM"],
-    "sindrome de takotsubo": ["cardiomiopatia por estres","takotsubo"],
-    "minoca": ["infarto con coronarias normales"],
-    "hipertension pulmonar": ["htp"],
-    "cor pulmonale": ["cardiopatia pulmonar"],
-    "varices esofagicas": ["varices gastroesofagicas"],
-    "trombofilia": ["hipercoagulabilidad"],
-    "angioplastia": ["atc", "stent", "1 DES", "2 DES", "3 DES", "atc multiple", "angioplastia simple", "angioplastia con balon", "balon con droga", "implante de stent", "implante DES","intervencion coronaria percutanea", "ptca"],
-    "bypass aortocoronario": ["crm", "cirugia de revascularizacion", "cabg"],
-    "valvuloplastia aortica": ["dilatacion valvular aortica"],
-    "reemplazo valvular aortico": ["rvao", "RVAO", "tavi", "savr"],
-    "ablacion por cateter": ["arf", "ablacion con radiofrecuencia", "crioablacion"],
-    "marcapasos definitivo": ["mcp","implante de marcapasos"],
-    "cardiodesfibrilador implantable": ["cdi"],
-    "cierre de orejuela izquierda": ["oclusion de auricula izquierda"],
-    "estudio electrofisiologico": ["eef"],
-    "cardioversion electrica": ["cve","cardioversion"],
-    "cateterismo cardiaco derecho": ["cateterismo pulmonar"],
-    "pericardiocentesis": ["drenaje pericardico"],
-    "embolizacion de arterias coronarias": ["oclusion coronaria"],
-    "cirugia de aneurisma aortico": ["reemplazo aortico"],
-    "endarterectomia carotidea": ["cirugia de carotida"],
-    "bypass femoropopliteo": ["revascularizacion arterial"],
-    "endoprotesis aortica": ["evar", "endoproptesis AAA"],
-    "escleroterapia de varices": ["tratamiento de varices"],
-    "flebectomia": ["extraccion venosa"],
-    "anticoagulacion": ["ACO", "DOAC", "apixaban", "xarelto", "sintrom", "AVK", "azecar", "warfarina", "rivaroxa", "rivaroxaban"],
-    "terapia trombolitica": ["stk", "estrepto", "tpa", "rtpa", "alteplase", "trombolisis", "trombolizado", "trombolizada"]
+  "categorias": {
+    "evento cardiovascular": {
+      "tipo": "antecedente",
+      "incluye": [
+        "infarto agudo de miocardio",
+        "accidente cerebrovascular"
+      ],
+      "sinonimos": [
+        "evento cardiovascular",
+        "evento vascular",
+        "evento isquemico",
+        "evento CV"
+      ]
+    },
+  "fevi reducida": {
+     "tipo": "antecedente",
+     "incluye": ["fraccion de eyeccion del ventrículo izquierdo"],
+     "sinonimos": [
+       "ic fey severa",
+       "ic fevi reducida",
+       "ic avanzada",
+       "fey <40%",
+        "fevi <40%",
+       "fraccion de eyeccion baja"
+    ],
+      "criterio_valor": {
+        "umbral": 40,
+       "comparador": "<=",
+        "unidad": "%"
+      }
+    },
+    "arritmia": {
+      "tipo": "antecedente",
+      "incluye": [
+        "fibrilacion auricular",
+        "aleteo auricular",
+        "arritmia supraventricular",
+        "taquicardia ventricular",
+        "arritmia ventricular"
+      ],
+      "sinonimos": [
+        "trastorno del ritmo",
+        "problemas de ritmo",
+        "arritmias"
+      ]
+    }
   },
-  "riesgo": {
-    "diabetes mellitus tipo 1": ["dm1", "diabetes insulinodependiente", "insulina", "insulinizado", "insulinizada", "dbt ir"],
-    "diabetes mellitus tipo 2": ["diabetico", "diabetica", "dm2", "dbt", "diabetes tipo 2", "dbt no ir", "metformina"],
-    "hipertension arterial": ["hta", "hipertension", "hipertenso", "hipertensa", "presion alta"],
-    "dislipidemia": ["dislipemia", "dlp", "DLP", "dislipemico", "dislipemica", "hipercolesterolemia", "colesterol alto"],
-    "hipertrigliceridemia": ["trigliceridos elevados", "hipertg", "TG elevado", "hipertrigliceridos"],
-    "tabaquismo": ["tbq", "extbq", "fumadora","fumador", "tabaquista", "extabaquista", "consumo de tabaco"],
-    "obesidad": ["obs", "obeso", "obesa", "indice de masa corporal elevado", "sobrepeso", "imc >27"],
-    "sedentarismo": ["falta de actividad fisica", "sdt"],
-    "dieta no saludable": ["dieta hipercalorica"],
-    "consumo excesivo de alcohol": ["alcoholismo", "enolismo", "alcohol", "consumo oh", "ex oh", "enolista", "acholico", "alcoholica"],
-    "consumo drogas": ["cocaina", "cocainomano", "adiccion", "habitos toxicos"],
-    "estres cronico": ["tension emocional persistente", "estres", "stress"],
-    "historia familiar cardiovascular": ["antecedentes familiares patologicos", "padre con enf coronaria", "padre IAM", "padre operado CRM", "padre con stent", "hno muerte subita", "hermano operado CRM", "madre DBT", "madre diabetica", "padre infarto", "padre cardiopatia", "antecedentes familiares de enfermedad coronaria", "antecedentes familiares de infarto", "antecedentes familiares de accidente cerebrovascular", "antecedentes familiares de hipertension arterial", "antecedentes familiares de diabetes"],
-    "apnea del sueño": ["sahos"],
-    "enfermedad renal cronica": ["erc", "irc", "dialisis", "enf renal", "enf renal cronica", "sdme renal", "enfermo renal"],
-    "sindrome de ovario poliquistico": ["sop"],
-    "hiperuricemia": ["acido urico elevado"],
-    "sindrome de apnea obstructiva": ["saos"],
-    "hipotiroidismo": ["hipotiroideo", "hipotiroidea", "tsh alta", "tsh alterada", "hipotiroidismo subclinico", "hipotiroidismo primario", "hipotiroidismo secundario"],
-    "hipertiroidismo": ["hipertiroidismo subclinico", "tsh baja", "hipertiroidismo primario", "hipertiroidismo secundario"],
-    "enfermedad autoinmune": ["lupus", "artritis reumatoide", "ar", "artritis", "enfermedad de graves", "enfermedad de hashimoto", "tiroiditis autoinmune"],
-    "quimioterapia": ["qt", "quimio", "quimio adyuvante", "quimio neoadyuvante"],
-    "radioterapia": ["cardiopatia por radiacion", "radioterapia previa", "rdt"]
-  },
-  "medicacion": {
-    "ticagrelor": ["brilinta"],
-    "prasugrel": ["prasu", "procardia", "effient"],
-    "clopidogrel": ["clopi","troken"],
-    "heparina": ["heparina no fraccionada", "hnf", "heparina sodica"],
-    "enoxaparina": ["enoxa", "clexane"],
-    "fondaparinux": ["arixtra"],
-    "dabigatran": ["pradaxa"],
-    "apixaban": ["ixipen", "apixa", "eliquis"],
-    "nitroprusiato": ["nipride"],
-    "dobutamina": ["dobutrex"],
-    "milrinona": ["primacor"],
-    "levosimendan": ["simdax"],
-    "ivabradina": ["procoralan"],
-    "hidralazina": ["apresolina"],
-    "minoxidil": ["loniten"],
-    "nicorandil": ["dancor"],
-    "trimetazidina": ["vastarel"],
-    "ranolazina": ["ranexa"],
-    "colchicina": ["colchicina"],
-    "alopurinol": ["zyloric"],
-    "metformina": ["metformina 850", "glucophage", "dbi"],
-    "losartan": ["losacor", "loplac", "prisonil", "presimax", "cozaar"],
-    "atorvastatina": ["atorva", "lipitor", "ampliar", "atv"],
-    "rosuvastatina": ["rovartal", "rosuvast", "reovex", "rosuber", "rosu"],
-    "simvastatina": ["zocor"],
-    "ac fenofibrico": ["fenofibrato"],
-    "ramipril": ["triatec"],
-    "enalapril": ["renitec", "ieca", "lotrial", "glioten", "tencas"],
-    "bisoprolol": ["biso","concor", "corbis", "bicardil"],
-    "carvedilol": ["carve","dilatrend", "carvedil"],
-    "furosemida": ["furo", "lasix", "furotral", "errolon"],
-    "espironolactona": ["espiro", "aldactone"],
-    "acido acetilsalicilico": ["AAS","aspirina", "asa"],
-    "warfarina": ["coumadin"],
-    "rivaroxaban": ["rivaroxa", "xaroban", "xarelto"],
-    "amiodarona": ["atlansil"],
-    "digoxina": ["lanoxin"],
-    "isosorbide mononitrato": ["nsl", "isordil", "medocor"],
-    "amlodipina": ["amlo", "pelmec", "ilduc", "amloc"],
-    "hidroclorotiazida": ["hctz", "diurex", "hidrocloro"],
-    "insulina": ["glargina", "lantus"],
-    "empaglifozina": ["empa", "edogan", "jardiance"],
-    "dapaglifozina": ["dapa", "dapax", "acus", "nedal", "forxiga"],
-    "allopurinol": ["allopu"],
-    "metoprolol": ["seloken"],
-    "valsartan": ["sarval","diovan"],
-    "sacubitrilo/valsartan": ["arnis", "sv", "sacubitrilo", "dupertan", "entresto"],
-    "diosmina-hesperidina": ["daflon"],
-    "levotiroxina": ["t4","levo", "hipotiroidismo"]
-  },
-  "laboratorio": {
-    "hemoglobina glicosilada": ["glicozilada", "glicosilada", "hb1ac", "hba1c", "hemoglobina a1c"],
-    "colesterol LDL": ["ldl", "colesterol malo"],
-    "colesterol HDL": ["hdl", "colesterol bueno"],
-    "colesterol total": ["col total", "col"],
-    "trigliceridos": ["tg"],
-    "lipoproteina A": ["Lpa", "Lp(a)", "lipoA"],
-    "creatinina": ["creat", "creati", "cr", "crea"],
-    "troponina": ["tnt", "tus", "tn", "ttus"],
-    "pro-BNP": ["nt-probnp", "probnp","bnp"],
-    "RIN": ["indice internacional normalizado", "inr"],
-    "glucemia": ["gluc","glucosa", "glicemia", "gluc basal", "glucemia basal", "glucemia en ayunas"],
-    "acido urico": ["uricemia"],
-    "proteina C reactiva": ["pcr"],
-    "CPK-MB": ["creatina quinasa mb"],
-    "microalbuminuria": ["albumina en orina"],
-    "proteinuria": ["RAC"],
-    "filtrado glomerular": ["cl de creatinina", "clearence", "fg", "tfg", "eGFR"],
-    "RAC": ["relacion albumina creatinina"],
-    "potasio serico": ["k", "potasio", "potasemia"],
-    "sodio serico": ["na+"],
-    "dimero D": ["d-dimero"],
-    "tiempo de protrombina": ["tp"],
-    "tiempo de tromboplastina": ["ttpa"],
-    "gasometria arterial": ["ga"],
-    "lactato": ["acido lactico"],
-    "procalcitonina": ["pct"],
-    "interleucina-6": ["il-6"],
-    "ferritina": ["depositos de hierro"],
-    "transferrina": ["capacidad de fijacion"],
-    "fibrinogeno": ["factor i"],
-    "FEVI": ["fey", "funcion del vi", "fraccion de eyeccion del ventrículo izquierdo", "eyeccion del ventrículo izquierdo", "FEY", "fevi"]
+  "terminos": {
+    "infarto agudo de miocardio": {
+      "tipo": "antecedentes",
+      "sinonimos": [
+        "iam",
+        "infarto cardiaco",
+        "iamcest",
+        "iamsest",
+        "ataque al corazon"
+      ],
+      "equivalente_a": [
+        "sindrome coronario agudo"
+      ]
+    },
+    "angina estable": {
+      "tipo": "antecedentes",
+      "sinonimos": [
+        "angor cronico estable",
+        "angina cronica estable",
+        "ACE"
+      ]
+    },
+    "insuficiencia cardiaca": {
+      "tipo": "antecedentes",
+      "sinonimos": [
+        "ic",
+        "ic cronica",
+        "ic descompensada"
+      ]
+    },
+    "internacion por IC": {
+      "tipo": "antecedentes",
+      "sinonimos": [
+        "ica",
+        "eap",
+        "fallo cardiaco",
+        "internacion por icc",
+        "balance negativo",
+        "internacion por falla",
+        "internada por icc",
+        "internado por icc",
+        "internado por congestion",
+        "internada por congestion"
+      ]
+    },
+    "fibrilacion auricular": {
+      "tipo": "antecedentes",
+      "sinonimos": [
+        "fa",
+        "fib a",
+        "fap",
+        "faarv"
+      ],
+      "forma_parte_de": [
+        "arritmia"
+      ]
+    },
+    "aleteo auricular": {
+      "tipo": "antecedentes",
+      "sinonimos": [
+        "aa",
+        "aaf",
+        "aa alta rta"
+      ]
+    },
+    "arritmia supraventricular": {
+      "tipo": "antecedentes",
+      "sinonimos": [
+        "taquicardia supraventricular",
+        "taquicardia paroxistica",
+        "taquicardia paroxistica supraventricular"
+      ],
+      "forma_parte_de": [
+        "arritmia"
+      ]
+    },
+    "taquicardia ventricular": {
+      "tipo": "antecedentes",
+      "sinonimos": [
+        "tv",
+        "taquicardia monomorfica",
+        "taquicardia polimorfica"
+      ]
+    },
+    "bloqueo de rama izquierda": {
+      "tipo": "antecedentes",
+      "sinonimos": [
+        "bcri",
+        "bloqueo de rama izquierda",
+        "brdiz"
+      ]
+    },
+    "bloqueo de rama derecha": {
+      "tipo": "antecedentes",
+      "sinonimos": [
+        "brd",
+        "bcrd",
+        "bloqueo de rama derecha",
+        "brdiz"
+      ]
+    },
+    "accidente cerebrovascular": {
+      "tipo": "antecedentes",
+      "sinonimos": [
+        "acv",
+        "ictus",
+        "derrame cerebral"
+      ]
+    },
+    "enfermedad arterial periferica": {
+      "tipo": "antecedentes",
+      "sinonimos": [
+        "claudicacion intermitente",
+        "angioplastia periferica"
+      ]
+    },
+    "miocardiopatia dilatada": {
+      "tipo": "antecedentes",
+      "sinonimos": [
+        "mcd",
+        "mcpd"
+      ]
+    },
+    "miocardiopatia hipertrofica": {
+      "tipo": "antecedentes",
+      "sinonimos": [
+        "mch"
+      ]
+    },
+    "estenosis aortica": {
+      "tipo": "antecedentes",
+      "sinonimos": [
+        "eao"
+      ]
+    },
+    "aorta bicuspide": {
+      "tipo": "antecedentes",
+      "sinonimos": [
+        "eao biscuspide",
+        "ao bicuspide",
+        "bicuspide"
+      ]
+    },
+    "prolapso mitral": {
+      "tipo": "antecedentes",
+      "sinonimos": [
+        "pvm"
+      ]
+    },
+    "trombosis venosa profunda": {
+      "tipo": "antecedentes",
+      "sinonimos": [
+        "tvp"
+      ]
+    },
+    "embolia pulmonar": {
+      "tipo": "antecedentes",
+      "sinonimos": [
+        "tep",
+        "tromboembolismo pulmonar",
+        "infarto pulmonar",
+        "embolia de pulmon",
+        "embolismo pulmonar"
+      ]
+    },
+    "arritmia ventricular": {
+      "tipo": "antecedentes",
+      "sinonimos": [
+        "taquicardia ventricular",
+        "tv"
+      ],
+      "forma_parte_de": [
+        "arritmia"
+      ]
+    },
+    "bloqueo cardiaco": {
+      "tipo": "antecedentes",
+      "sinonimos": [
+        "bloqueo av"
+      ]
+    },
+    "cardiopatia isquemica necrotica": {
+      "tipo": "antecedentes",
+      "sinonimos": [
+        "cic",
+        "enfermedad coronaria",
+        "mcpd isquemico-necrotica"
+      ]
+    },
+    "sindrome coronario agudo": {
+      "tipo": "antecedentes",
+      "sinonimos": [
+        "sca"
+      ]
+    },
+    "shock cardiogenico": {
+      "tipo": "antecedentes",
+      "sinonimos": [
+        "fallo cardiaco agudo"
+      ]
+    },
+    "endocarditis": {
+      "tipo": "antecedentes",
+      "sinonimos": [
+        "infeccion valvular"
+      ]
+    },
+    "pericarditis": {
+      "tipo": "antecedentes",
+      "sinonimos": [
+        "inflamacion pericardica"
+      ]
+    },
+    "cardiopatia congenita": {
+      "tipo": "antecedentes",
+      "sinonimos": [
+        "defecto cardiaco congenito"
+      ]
+    },
+    "foramen oval permeable": {
+      "tipo": "antecedentes",
+      "sinonimos": [
+        "fop"
+      ]
+    },
+    "comunicacion interauricular": {
+      "tipo": "antecedentes",
+      "sinonimos": [
+        "cia"
+      ]
+    },
+    "comunicacion interventricular": {
+      "tipo": "antecedentes",
+      "sinonimos": [
+        "civ"
+      ]
+    },
+    "tetralogia de Fallot": {
+      "tipo": "antecedentes",
+      "sinonimos": [
+        "tof"
+      ]
+    },
+    "coartacion de aorta": {
+      "tipo": "antecedentes",
+      "sinonimos": [
+        "estenosis aortica congenita"
+      ]
+    },
+    "sindrome de Brugada": {
+      "tipo": "antecedentes",
+      "sinonimos": [
+        "arritmia genetica"
+      ]
+    },
+    "sindrome de QT largo": {
+      "tipo": "antecedentes",
+      "sinonimos": [
+        "sqlt"
+      ]
+    },
+    "sindrome wolff-parkinson-white": {
+      "tipo": "antecedentes",
+      "sinonimos": [
+        "wpw",
+        "swpw"
+      ]
+    },
+    "miocarditis": {
+      "tipo": "antecedentes",
+      "sinonimos": [
+        "inflamacion del miocardio"
+      ]
+    },
+    "taponamiento cardiaco": {
+      "tipo": "antecedentes",
+      "sinonimos": [
+        "derrame pericardico"
+      ]
+    },
+    "aneurisma aortico": {
+      "tipo": "antecedentes",
+      "sinonimos": [
+        "dilatacion aortica"
+      ]
+    },
+    "diseccion aortica": {
+      "tipo": "antecedentes",
+      "sinonimos": [
+        "desgarro aortico"
+      ]
+    },
+    "arteriopatia coronaria no obstructiva": {
+      "tipo": "antecedentes",
+      "sinonimos": [
+        "anc"
+      ]
+    },
+    "sindrome de Dressler": {
+      "tipo": "antecedentes",
+      "sinonimos": [
+        "pericarditis post-IAM"
+      ]
+    },
+    "sindrome de takotsubo": {
+      "tipo": "antecedentes",
+      "sinonimos": [
+        "cardiomiopatia por estres",
+        "takotsubo"
+      ]
+    },
+    "minoca": {
+      "tipo": "antecedentes",
+      "sinonimos": [
+        "infarto con coronarias normales"
+      ]
+    },
+    "hipertension pulmonar": {
+      "tipo": "antecedentes",
+      "sinonimos": [
+        "htp"
+      ]
+    },
+    "cor pulmonale": {
+      "tipo": "antecedentes",
+      "sinonimos": [
+        "cardiopatia pulmonar"
+      ]
+    },
+    "varices esofagicas": {
+      "tipo": "antecedentes",
+      "sinonimos": [
+        "varices gastroesofagicas"
+      ]
+    },
+    "trombofilia": {
+      "tipo": "antecedentes",
+      "sinonimos": [
+        "hipercoagulabilidad"
+      ]
+    },
+    "angioplastia": {
+      "tipo": "antecedentes",
+      "sinonimos": [
+        "atc",
+        "stent",
+        "1 DES",
+        "2 DES",
+        "3 DES",
+        "atc multiple",
+        "angioplastia simple",
+        "angioplastia con balon",
+        "balon con droga",
+        "implante de stent",
+        "implante DES",
+        "intervencion coronaria percutanea",
+        "ptca"
+      ]
+    },
+    "bypass aortocoronario": {
+      "tipo": "antecedentes",
+      "sinonimos": [
+        "crm",
+        "cirugia de revascularizacion",
+        "cabg"
+      ]
+    },
+    "valvuloplastia aortica": {
+      "tipo": "antecedentes",
+      "sinonimos": [
+        "dilatacion valvular aortica"
+      ]
+    },
+    "reemplazo valvular aortico": {
+      "tipo": "antecedentes",
+      "sinonimos": [
+        "rvao",
+        "RVAO",
+        "tavi",
+        "savr"
+      ]
+    },
+    "ablacion por cateter": {
+      "tipo": "antecedentes",
+      "sinonimos": [
+        "arf",
+        "ablacion con radiofrecuencia",
+        "crioablacion"
+      ]
+    },
+    "marcapasos definitivo": {
+      "tipo": "antecedentes",
+      "sinonimos": [
+        "mcp",
+        "implante de marcapasos"
+      ]
+    },
+    "cardiodesfibrilador implantable": {
+      "tipo": "antecedentes",
+      "sinonimos": [
+        "cdi"
+      ]
+    },
+    "cierre de orejuela izquierda": {
+      "tipo": "antecedentes",
+      "sinonimos": [
+        "oclusion de auricula izquierda"
+      ]
+    },
+    "estudio electrofisiologico": {
+      "tipo": "antecedentes",
+      "sinonimos": [
+        "eef"
+      ]
+    },
+    "cardioversion electrica": {
+      "tipo": "antecedentes",
+      "sinonimos": [
+        "cve",
+        "cardioversion"
+      ]
+    },
+    "cateterismo cardiaco derecho": {
+      "tipo": "antecedentes",
+      "sinonimos": [
+        "cateterismo pulmonar"
+      ]
+    },
+    "pericardiocentesis": {
+      "tipo": "antecedentes",
+      "sinonimos": [
+        "drenaje pericardico"
+      ]
+    },
+    "embolizacion de arterias coronarias": {
+      "tipo": "antecedentes",
+      "sinonimos": [
+        "oclusion coronaria"
+      ]
+    },
+    "cirugia de aneurisma aortico": {
+      "tipo": "antecedentes",
+      "sinonimos": [
+        "reemplazo aortico"
+      ]
+    },
+    "endarterectomia carotidea": {
+      "tipo": "antecedentes",
+      "sinonimos": [
+        "cirugia de carotida"
+      ]
+    },
+    "bypass femoropopliteo": {
+      "tipo": "antecedentes",
+      "sinonimos": [
+        "revascularizacion arterial"
+      ]
+    },
+    "endoprotesis aortica": {
+      "tipo": "antecedentes",
+      "sinonimos": [
+        "evar",
+        "endoproptesis AAA"
+      ]
+    },
+    "escleroterapia de varices": {
+      "tipo": "antecedentes",
+      "sinonimos": [
+        "tratamiento de varices"
+      ]
+    },
+    "flebectomia": {
+      "tipo": "antecedentes",
+      "sinonimos": [
+        "extraccion venosa"
+      ]
+    },
+    "anticoagulacion": {
+      "tipo": "antecedentes",
+      "sinonimos": [
+        "ACO",
+        "DOAC",
+        "apixaban",
+        "xarelto",
+        "sintrom",
+        "AVK",
+        "azecar",
+        "warfarina",
+        "rivaroxa",
+        "rivaroxaban"
+      ]
+    },
+    "terapia trombolitica": {
+      "tipo": "antecedentes",
+      "sinonimos": [
+        "stk",
+        "estrepto",
+        "tpa",
+        "rtpa",
+        "alteplase",
+        "trombolisis",
+        "trombolizado",
+        "trombolizada"
+      ]
+    },
+    "diabetes mellitus tipo 1": {
+      "tipo": "riesgo",
+      "sinonimos": [
+        "dm1",
+        "diabetes insulinodependiente",
+        "insulina",
+        "insulinizado",
+        "insulinizada",
+        "dbt ir"
+      ]
+    },
+    "diabetes mellitus tipo 2": {
+      "tipo": "riesgo",
+      "sinonimos": [
+        "diabetico",
+        "diabetica",
+        "dm2",
+        "dbt",
+        "diabetes tipo 2",
+        "dbt no ir",
+        "metformina"
+      ]
+    },
+    "hipertension arterial": {
+      "tipo": "riesgo",
+      "sinonimos": [
+        "hta",
+        "hipertension",
+        "hipertenso",
+        "hipertensa",
+        "presion alta"
+      ]
+    },
+    "dislipidemia": {
+      "tipo": "riesgo",
+      "sinonimos": [
+        "dislipemia",
+        "dlp",
+        "DLP",
+        "dislipemico",
+        "dislipemica",
+        "hipercolesterolemia",
+        "colesterol alto"
+      ]
+    },
+    "hipertrigliceridemia": {
+      "tipo": "riesgo",
+      "sinonimos": [
+        "trigliceridos elevados",
+        "hipertg",
+        "TG elevado",
+        "hipertrigliceridos"
+      ]
+    },
+    "tabaquismo": {
+      "tipo": "riesgo",
+      "sinonimos": [
+        "tbq",
+        "extbq",
+        "fumadora",
+        "fumador",
+        "tabaquista",
+        "extabaquista",
+        "consumo de tabaco"
+      ]
+    },
+    "obesidad": {
+      "tipo": "riesgo",
+      "sinonimos": [
+        "obs",
+        "obeso",
+        "obesa",
+        "indice de masa corporal elevado",
+        "sobrepeso",
+        "imc >27"
+      ]
+    },
+    "sedentarismo": {
+      "tipo": "riesgo",
+      "sinonimos": [
+        "falta de actividad fisica",
+        "sdt"
+      ]
+    },
+    "dieta no saludable": {
+      "tipo": "riesgo",
+      "sinonimos": [
+        "dieta hipercalorica"
+      ]
+    },
+    "consumo excesivo de alcohol": {
+      "tipo": "riesgo",
+      "sinonimos": [
+        "alcoholismo",
+        "enolismo",
+        "alcohol",
+        "consumo oh",
+        "ex oh",
+        "enolista",
+        "acholico",
+        "alcoholica"
+      ]
+    },
+    "consumo drogas": {
+      "tipo": "riesgo",
+      "sinonimos": [
+        "cocaina",
+        "cocainomano",
+        "adiccion",
+        "habitos toxicos"
+      ]
+    },
+    "estres cronico": {
+      "tipo": "riesgo",
+      "sinonimos": [
+        "tension emocional persistente",
+        "estres",
+        "stress"
+      ]
+    },
+    "historia familiar cardiovascular": {
+      "tipo": "riesgo",
+      "sinonimos": [
+        "antecedentes familiares patologicos",
+        "padre con enf coronaria",
+        "padre IAM",
+        "padre operado CRM",
+        "padre con stent",
+        "hno muerte subita",
+        "hermano operado CRM",
+        "madre DBT",
+        "madre diabetica",
+        "padre infarto",
+        "padre cardiopatia",
+        "antecedentes familiares de enfermedad coronaria",
+        "antecedentes familiares de infarto",
+        "antecedentes familiares de accidente cerebrovascular",
+        "antecedentes familiares de hipertension arterial",
+        "antecedentes familiares de diabetes"
+      ]
+    },
+    "apnea del sueño": {
+      "tipo": "riesgo",
+      "sinonimos": [
+        "sahos"
+      ]
+    },
+    "enfermedad renal cronica": {
+      "tipo": "riesgo",
+      "sinonimos": [
+        "erc",
+        "irc",
+        "dialisis",
+        "enf renal",
+        "enf renal cronica",
+        "sdme renal",
+        "enfermo renal"
+      ]
+    },
+    "sindrome de ovario poliquistico": {
+      "tipo": "riesgo",
+      "sinonimos": [
+        "sop"
+      ]
+    },
+    "hiperuricemia": {
+      "tipo": "riesgo",
+      "sinonimos": [
+        "acido urico elevado"
+      ]
+    },
+    "sindrome de apnea obstructiva": {
+      "tipo": "riesgo",
+      "sinonimos": [
+        "saos"
+      ]
+    },
+    "hipotiroidismo": {
+      "tipo": "riesgo",
+      "sinonimos": [
+        "hipotiroideo",
+        "hipotiroidea",
+        "tsh alta",
+        "tsh alterada",
+        "hipotiroidismo subclinico",
+        "hipotiroidismo primario",
+        "hipotiroidismo secundario"
+      ]
+    },
+    "hipertiroidismo": {
+      "tipo": "riesgo",
+      "sinonimos": [
+        "hipertiroidismo subclinico",
+        "tsh baja",
+        "hipertiroidismo primario",
+        "hipertiroidismo secundario"
+      ]
+    },
+    "enfermedad autoinmune": {
+      "tipo": "riesgo",
+      "sinonimos": [
+        "lupus",
+        "artritis reumatoide",
+        "ar",
+        "artritis",
+        "enfermedad de graves",
+        "enfermedad de hashimoto",
+        "tiroiditis autoinmune"
+      ]
+    },
+    "quimioterapia": {
+      "tipo": "riesgo",
+      "sinonimos": [
+        "qt",
+        "quimio",
+        "quimio adyuvante",
+        "quimio neoadyuvante"
+      ]
+    },
+    "radioterapia": {
+      "tipo": "riesgo",
+      "sinonimos": [
+        "cardiopatia por radiacion",
+        "radioterapia previa",
+        "rdt"
+      ]
+    },
+    "ticagrelor": {
+      "tipo": "medicacion",
+      "sinonimos": [
+        "brilinta"
+      ],
+      "implica": [
+        "angioplastia"
+      ]
+    },
+    "prasugrel": {
+      "tipo": "medicacion",
+      "sinonimos": [
+        "prasu",
+        "procardia",
+        "effient"
+      ],
+      "implica": [
+        "angioplastia"
+      ]
+    },
+    "clopidogrel": {
+      "tipo": "medicacion",
+      "sinonimos": [
+        "clopi",
+        "troken"
+      ],
+      "implica": [
+        "angioplastia"
+      ]
+    },
+    "heparina": {
+      "tipo": "medicacion",
+      "sinonimos": [
+        "heparina no fraccionada",
+        "hnf",
+        "heparina sodica"
+      ],
+      "implica": [
+        "anticoagulacion"
+      ]
+    },
+    "enoxaparina": {
+      "tipo": "medicacion",
+      "sinonimos": [
+        "enoxa",
+        "clexane"
+      ]      ,
+      "implica": [
+        "anticoagulacion"
+      ]
+    },
+    "fondaparinux": {
+      "tipo": "medicacion",
+      "sinonimos": [
+        "arixtra"
+      ],
+      "implica": [
+        "angioplastia"
+      ]
+    },
+    "dabigatran": {
+      "tipo": "medicacion",
+      "sinonimos": [
+        "pradaxa"
+      ],
+      "implica": [
+        "doac",
+        "anticoagulacion"
+      ]
+    },
+    "apixaban": {
+      "tipo": "medicacion",
+      "sinonimos": [
+        "ixipen",
+        "apixa",
+        "eliquis"
+      ],
+      "implica": [
+         "doac",
+        "anticoagulacion"
+      ]
+    },
+    "warfarina": {
+      "tipo": "medicacion",
+      "sinonimos": [
+        "coumadin"
+      ],
+      "implica": [
+         "avk",
+        "anticoagulacion"
+      ]
+    },
+    "rivaroxaban": {
+      "tipo": "medicacion",
+      "sinonimos": [
+        "rivaroxa",
+        "xaroban",
+        "xarelto",
+        "remexal",
+        "antitrom"
+      ],
+      "implica": [
+         "doac",
+        "anticoagulacion"
+      ]
+    },
+    "nitroprusiato": {
+      "tipo": "medicacion",
+      "sinonimos": [
+        "nipride"
+      ]
+    },
+    "dobutamina": {
+      "tipo": "medicacion",
+      "sinonimos": [
+        "dobutrex"
+      ]
+    },
+    "milrinona": {
+      "tipo": "medicacion",
+      "sinonimos": [
+        "primacor"
+      ]
+    },
+    "levosimendan": {
+      "tipo": "medicacion",
+      "sinonimos": [
+        "simdax"
+      ]
+    },
+    "ivabradina": {
+      "tipo": "medicacion",
+      "sinonimos": [
+        "procoralan"
+      ]
+    },
+    "hidralazina": {
+      "tipo": "medicacion",
+      "sinonimos": [
+        "apresolina"
+      ]
+    },
+    "minoxidil": {
+      "tipo": "medicacion",
+      "sinonimos": [
+        "loniten"
+      ]
+    },
+    "trimetazidina": {
+      "tipo": "medicacion",
+      "sinonimos": [
+        "vastarel"
+      ],
+      "implica": [
+         "angina estable"
+      ]
+    },
+    "colchicina": {
+      "tipo": "medicacion",
+      "sinonimos": [
+        "colchi"
+      ]
+    },
+    "alopurinol": {
+      "tipo": "medicacion",
+      "sinonimos": [
+        "zyloric"
+      ],
+      "implica": [
+         "hiperuricemia"
+      ]
+    },
+    "metformina": {
+      "tipo": "medicacion",
+      "sinonimos": [
+        "metformina 850",
+        "glucophage",
+        "dbi",
+        "metfomrina"
+      ],
+      "implica": [
+        "diabetes mellitus tipo 2"
+      ]
+    },
+    "losartan": {
+      "tipo": "medicacion",
+      "sinonimos": [
+        "losacor",
+        "loplac",
+        "prisonil",
+        "presimax",
+        "cozaar"
+      ],
+      "implica": [
+        "hipertension arterial"
+      ]
+    },
+    "atorvastatina": {
+      "tipo": "medicacion",
+      "sinonimos": [
+        "atorva",
+        "lipitor",
+        "ampliar",
+        "atv"
+      ],
+      "implica": [
+        "dislipemia"
+      ]
+    },
+    "rosuvastatina": {
+      "tipo": "medicacion",
+      "sinonimos": [
+        "rovartal",
+        "rosuvast",
+        "reovex",
+        "rosuber",
+        "rosu"
+      ],
+      "implica": [
+        "dislipemia"
+      ]
+    },
+    "simvastatina": {
+      "tipo": "medicacion",
+      "sinonimos": [
+        "zocor"
+      ],
+      "implica": [
+        "dislipemia"
+      ]
+    },
+    "ac fenofibrico": {
+      "tipo": "medicacion",
+      "sinonimos": [
+        "fenofibrato"
+      ],
+      "implica": [
+        "dislipemia",
+        "hipertrigliceridemia"
+      ]
+    },
+    "ramipril": {
+      "tipo": "medicacion",
+      "sinonimos": [
+        "triatec"
+      ],
+      "implica": [
+        "hipertension arterial"
+      ]
+    },
+    "enalapril": {
+      "tipo": "medicacion",
+      "sinonimos": [
+        "renitec",
+        "ieca",
+        "lotrial",
+        "glioten",
+        "tencas"
+      ],
+      "implica": [
+        "hipertension arterial"
+      ]
+    },
+    "bisoprolol": {
+      "tipo": "medicacion",
+      "sinonimos": [
+        "biso",
+        "concor",
+        "corbis",
+        "bicardil"
+      ]
+    },
+    "carvedilol": {
+      "tipo": "medicacion",
+      "sinonimos": [
+        "carve",
+        "dilatrend",
+        "carvedil"
+      ]
+    },
+    "furosemida": {
+      "tipo": "medicacion",
+      "sinonimos": [
+        "furo",
+        "lasix",
+        "furotral",
+        "errolon"
+      ],
+      "implica": [
+        "insuficiencia cardiaca"
+      ]
+    },
+    "espironolactona": {
+      "tipo": "medicacion",
+      "sinonimos": [
+        "espiro",
+        "aldactone"
+      ],
+      "implica": [
+        "insuficiencia cardiaca"
+      ]
+    },
+    "acido acetilsalicilico": {
+      "tipo": "medicacion",
+      "sinonimos": [
+        "aas",
+        "aspirina",
+        "asa"
+      ]
+     },
+    "amiodarona": {
+      "tipo": "medicacion",
+      "sinonimos": [
+        "atlansil"
+      ],
+      "implica": [
+        "fibrilacion auricular",
+        "arritmia",
+        "aleteo auricular"
+      ]
+    },
+    "digoxina": {
+      "tipo": "medicacion",
+      "sinonimos": [
+        "lanoxin"
+      ],
+      "implica": [
+        "fibrilacion auricular",
+        "arritmia",
+        "aleteo auricular"
+      ]
+    },
+    "isosorbide mononitrato": {
+      "tipo": "medicacion",
+      "sinonimos": [
+        "nsl",
+        "isordil",
+        "medocor"
+      ]
+    },
+    "amlodipina": {
+      "tipo": "medicacion",
+      "sinonimos": [
+        "amlo",
+        "pelmec",
+        "ilduc",
+        "amloc"
+      ],
+      "implica": [
+        "hipertension arterial"
+      ]
+    },
+    "hidroclorotiazida": {
+      "tipo": "medicacion",
+      "sinonimos": [
+        "hctz",
+        "diurex",
+        "hidrocloro"
+      ],
+      "implica": [
+        "hipertension arterial"
+      ]
+    },
+    "insulina": {
+      "tipo": "medicacion",
+      "sinonimos": [
+        "glargina",
+        "lantus"
+      ],
+      "implica": [
+        "diabetes"
+      ]
+    },
+    "empaglifozina": {
+      "tipo": "medicacion",
+      "sinonimos": [
+        "empa",
+        "edogan",
+        "jardiance"
+      ],
+      "implica": [
+        "diabetes mellitus tipo 2",
+        "insuficiencia cardiaca"
+      ]
+    },
+    "dapaglifozina": {
+      "tipo": "medicacion",
+      "sinonimos": [
+        "dapa",
+        "dapax",
+        "acus",
+        "nedal",
+        "forxiga"
+      ],
+      "implica": [
+        "diabetes mellitus tipo 2",
+        "insuficiencia cardiaca"
+      ]
+    },
+    "allopurinol": {
+      "tipo": "medicacion",
+      "sinonimos": [
+        "allopu"
+      ]
+    },
+    "metoprolol": {
+      "tipo": "medicacion",
+      "sinonimos": [
+        "seloken"
+      ]
+    },
+    "valsartan": {
+      "tipo": "medicacion",
+      "sinonimos": [
+        "sarval",
+        "diovan"
+      ]
+    },
+    "sacubitrilo/valsartan": {
+      "tipo": "medicacion",
+      "sinonimos": [
+        "arnis",
+        "sv",
+        "sacu",
+        "sacubitrilo",
+        "dupertan",
+        "entresto"
+      ],
+      "implica": [
+        "insuficiencia cardiaca"
+      ]
+    },
+    "diosmina-hesperidina": {
+      "tipo": "medicacion",
+      "sinonimos": [
+        "daflon"
+      ],
+      "implica": [
+        "insuficiencia venosa"
+      ]
+    },
+    "levotiroxina": {
+      "tipo": "medicacion",
+      "sinonimos": [
+        "t4",
+        "levo"
+      ],
+      "implica": [
+        "hipotiroidismo"
+      ]
+    },
+    "hemoglobina glicosilada": {
+      "tipo": "laboratorio",
+      "sinonimos": [
+        "glicozilada",
+        "glicosilada",
+        "hb1ac",
+        "hba1c",
+        "hemoglobina a1c"
+      ]
+    },
+    "colesterol LDL": {
+      "tipo": "laboratorio",
+      "sinonimos": [
+        "ldl",
+        "colesterol malo"
+      ]
+    },
+    "colesterol HDL": {
+      "tipo": "laboratorio",
+      "sinonimos": [
+        "hdl",
+        "colesterol bueno"
+      ]
+    },
+    "colesterol total": {
+      "tipo": "laboratorio",
+      "sinonimos": [
+        "col total",
+        "col"
+      ]
+    },
+    "trigliceridos": {
+      "tipo": "laboratorio",
+      "sinonimos": [
+        "tg"
+      ]
+    },
+    "lipoproteina A": {
+      "tipo": "laboratorio",
+      "sinonimos": [
+        "Lpa",
+        "Lp(a)",
+        "lipoA"
+      ]
+    },
+    "creatinina": {
+      "tipo": "laboratorio",
+      "sinonimos": [
+        "creat",
+        "creati",
+        "cr",
+        "crea"
+      ]
+    },
+    "troponina": {
+      "tipo": "laboratorio",
+      "sinonimos": [
+        "tnt",
+        "tus",
+        "tn",
+        "ttus"
+      ]
+    },
+    "pro-BNP": {
+      "tipo": "laboratorio",
+      "sinonimos": [
+        "nt-probnp",
+        "probnp",
+        "bnp"
+      ]
+    },
+    "RIN": {
+      "tipo": "laboratorio",
+      "sinonimos": [
+        "indice internacional normalizado",
+        "inr"
+      ]
+    },
+    "glucemia": {
+      "tipo": "laboratorio",
+      "sinonimos": [
+        "gluc",
+        "glucosa",
+        "glicemia",
+        "gluc basal",
+        "glucemia basal",
+        "glucemia en ayunas"
+      ]
+    },
+    "acido urico": {
+      "tipo": "laboratorio",
+      "sinonimos": [
+        "uricemia"
+      ]
+    },
+    "proteina C reactiva": {
+      "tipo": "laboratorio",
+      "sinonimos": [
+        "pcr"
+      ]
+    },
+    "CPK-MB": {
+      "tipo": "laboratorio",
+      "sinonimos": [
+        "creatina quinasa mb"
+      ]
+    },
+    "microalbuminuria": {
+      "tipo": "laboratorio",
+      "sinonimos": [
+        "albumina en orina"
+      ]
+    },
+    "proteinuria": {
+      "tipo": "laboratorio",
+      "sinonimos": [
+        "RAC"
+      ]
+    },
+    "filtrado glomerular": {
+      "tipo": "laboratorio",
+      "sinonimos": [
+        "cl de creatinina",
+        "clearence",
+        "fg",
+        "tfg",
+        "eGFR"
+      ]
+    },
+    "RAC": {
+      "tipo": "laboratorio",
+      "sinonimos": [
+        "relacion albumina creatinina"
+      ]
+    },
+    "potasio serico": {
+      "tipo": "laboratorio",
+      "sinonimos": [
+        "k",
+        "potasio",
+        "potasemia"
+      ]
+    },
+    "sodio serico": {
+      "tipo": "laboratorio",
+      "sinonimos": [
+        "na+"
+      ]
+    },
+    "dimero D": {
+      "tipo": "laboratorio",
+      "sinonimos": [
+        "d-dimero"
+      ]
+    },
+    "tiempo de protrombina": {
+      "tipo": "laboratorio",
+      "sinonimos": [
+        "tp"
+      ]
+    },
+    "tiempo de tromboplastina": {
+      "tipo": "laboratorio",
+      "sinonimos": [
+        "ttpa"
+      ]
+    },
+    "gasometria arterial": {
+      "tipo": "laboratorio",
+      "sinonimos": [
+        "ga"
+      ]
+    },
+    "lactato": {
+      "tipo": "laboratorio",
+      "sinonimos": [
+        "acido lactico"
+      ]
+    },
+    "procalcitonina": {
+      "tipo": "laboratorio",
+      "sinonimos": [
+        "pct"
+      ]
+    },
+    "interleucina-6": {
+      "tipo": "laboratorio",
+      "sinonimos": [
+        "il-6"
+      ]
+    },
+    "ferritina": {
+      "tipo": "laboratorio",
+      "sinonimos": [
+        "depositos de hierro"
+      ]
+    },
+    "transferrina": {
+      "tipo": "laboratorio",
+      "sinonimos": [
+        "capacidad de fijacion"
+      ]
+    },
+    "fibrinogeno": {
+      "tipo": "laboratorio",
+      "sinonimos": [
+        "factor i"
+      ]
+    },
+    "FEVI": {
+      "tipo": "laboratorio",
+      "sinonimos": [
+        "fey",
+        "funcion del vi",
+        "fraccion de eyeccion del ventrículo izquierdo",
+        "eyeccion del ventrículo izquierdo",
+        "FEY",
+        "fevi"
+      ]
+    }
   }
 }
