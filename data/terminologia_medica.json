@@ -856,8 +856,7 @@
         "eliquis"
       ],
       "implica": [
-         "doac",
-        "anticoagulacion"
+         "doac"
       ]
     },
     "warfarina": {
@@ -866,8 +865,7 @@
         "coumadin"
       ],
       "implica": [
-         "avk",
-        "anticoagulacion"
+         "avk"
       ]
     },
     "rivaroxaban": {
@@ -880,8 +878,7 @@
         "antitrom"
       ],
       "implica": [
-         "doac",
-        "anticoagulacion"
+         "doac"
       ]
     },
     "nitroprusiato": {
@@ -1157,10 +1154,6 @@
         "empa",
         "edogan",
         "jardiance"
-      ],
-      "implica": [
-        "diabetes mellitus tipo 2",
-        "insuficiencia cardiaca"
       ]
     },
     "dapaglifozina": {
@@ -1171,10 +1164,6 @@
         "acus",
         "nedal",
         "forxiga"
-      ],
-      "implica": [
-        "diabetes mellitus tipo 2",
-        "insuficiencia cardiaca"
       ]
     },
     "allopurinol": {
@@ -1200,7 +1189,6 @@
       "tipo": "medicacion",
       "sinonimos": [
         "arnis",
-        "sv",
         "sacu",
         "sacubitrilo",
         "dupertan",
