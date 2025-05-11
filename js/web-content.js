@@ -119,6 +119,32 @@ function evaluarLaboratorioConCategorias(valores) {
   return inferidos;
 }
 
+
+function buscarLaboratorio(texto) {
+  const resultados = {};
+  const textoPlano = normalizarTexto(texto);
+
+  for (const [nombre, data] of Object.entries(terminologiaMedica.terminos)) {
+    if (data.tipo === "laboratorio") {
+      for (const sinonimo of data.sinonimos) {
+        const sinNormal = normalizarTexto(sinonimo);
+        const regex = new RegExp(`${sinNormal}[\s:]*([\d.,]+)`, "i");
+        const match = textoPlano.match(regex);
+        if (match && match[1]) {
+          let valor = parseFloat(match[1].replace(",", "."));
+          if (!isNaN(valor)) {
+            resultados[nombre] = valor;
+          }
+          break;
+        }
+      }
+    }
+  }
+
+  return resultados;
+}
+
+
 // FUNCION PRINCIPAL
 export function extraerDatosHC(texto) {
   const hallazgos = detectarTerminosTexto(texto);
