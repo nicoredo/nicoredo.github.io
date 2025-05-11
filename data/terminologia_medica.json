@@ -2,7 +2,7 @@
   "antecedentes": {
     "infarto agudo de miocardio": ["iam", "infarto cardiaco", "iamcest", "iamsest", "ataque al corazon"],
     "angina estable": ["angor cronico estable", "angina cronica estable", "ACE"],
-    "insuficiencia cardiaca": ["ic", "ic cronica", "IC descompensada"],
+    "insuficiencia cardiaca": ["ic", "ic cronica", "ic descompensada"],
     "internacion por IC": ["ica", "eap", "fallo cardiaco", "internacion por icc", "balance negativo", "internacion por falla", "internada por icc", "internado por icc","internado por congestion", "internada por congestion"],
     "fibrilacion auricular": ["fa", "fib a", "fap", "faarv"],
     "aleteo auricular": ["aa", "aaf", "aa alta rta"],
