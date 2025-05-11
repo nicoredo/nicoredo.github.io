@@ -1,147 +1,157 @@
-import { terminologiaMedica, cargarDatosIniciales } from './data-loader.js';
+// Nuevas funciones de extracción adaptadas a terminologia_medica estructurada
 
+import { terminologiaMedica } from './data-loader.js';
 
-const encabezados = {
-    antecedentes: /\b(AP:|Antec(?:edentes)?(?: de)?:)/i,
-    riesgo: /\b(FR:|Factores de riesgo:)/i,
-    medicacion: /\b(MH:|Med(?:icación)?(?: habitual)?:)/i,
-    laboratorio: /\b(Lab:|Labo:)/i
-};
-
-function contieneNegacion(oracion, termino) {
-    const negaciones = ["no", "niega", "sin", "ausencia de", "desconoce", "sin evidencia de", "negativo para"];
-    const afirmaciones = ["sí", "si", "presenta", "refiere", "con", "diagnosticado de"];
-    const reversores = ["pero", "aunque", "sin embargo", "no obstante"];
-
-    const separadores = /[,;]|(?:\bpero\b|\baunque\b|\bsin embargo\b|\bno obstante\b)/i;
-    const partes = oracion.toLowerCase().split(separadores);
-    const terminoLower = termino.toLowerCase();
-
-    let negado = false;
-    for (const parte of partes) {
-        const palabras = parte.trim().split(/\s+/);
-        for (let i = 0; i < palabras.length; i++) {
-            const palabra = palabras[i];
-            if (negaciones.includes(palabra)) {
-                negado = true;
-            } else if (afirmaciones.includes(palabra)) {
-                negado = false;
-            } else if (reversores.includes(palabra)) {
-                negado = false;
-            }
-            if (palabra === terminoLower) {
-                return negado;
-            }
-        }
-    }
-    return false;
+// Utilidades
+function normalizarTexto(texto) {
+  return texto.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "");
 }
 
-function extraerEdad(texto) {
-    const regexEdad = /\b(?:edad|paciente|de)\s*[:=]?\s*(\d{1,3})\s*(?:años|a)?\b|\b(\d{1,3})\s*a(?:ños)?\b/i;
-    const match = texto.match(regexEdad);
-    return match ? parseInt(match[1] || match[2]) : null;
+function contieneNegacion(texto, indice) {
+  const ventana = 10;
+  const tokens = texto.slice(Math.max(0, indice - ventana), indice).split(/\s+/);
+  return tokens.some(t => ["no", "niega", "sin"].includes(t));
 }
 
-function extraerBloquesPorEncabezado(texto) {
-    const bloques = {};
-    let actual = null;
-    
-    texto.split(/\n|\r/).forEach(linea => {
-        linea = linea.trim();
-        if (!linea) return;
-        
-        for (const [cat, regex] of Object.entries(encabezados)) {
-            if (regex.test(linea)) {
-                actual = cat;
-                bloques[cat] = [];
-                linea = linea.replace(regex, "").trim();
-                break;
-            }
-        }
-        
-        if (actual && linea) {
-            bloques[actual].push(linea);
-        }
-    });
-    
-    return bloques;
-}
+// Detección base de términos por sinónimos
+function detectarTerminosTexto(texto) {
+  const resultado = [];
+  const textoPlano = normalizarTexto(texto);
 
-function buscarTerminos(texto, categoria) {
-    const encontrados = new Set();
-    if (!texto || !terminologiaMedica[categoria]) return [];
+  for (const [nombre, data] of Object.entries(terminologiaMedica.terminos)) {
+    for (const sinonimo of data.sinonimos) {
+      const sinNormal = normalizarTexto(sinonimo);
+      const index = textoPlano.indexOf(sinNormal);
+      if (index !== -1 && !contieneNegacion(textoPlano, index)) {
+        resultado.push({
+          nombre,
+          tipo: data.tipo,
+          fuente: "texto"
+        });
 
-    texto.split(/(?<=[.!?])/).forEach(oracion => {
-        for (const [base, sinonimos] of Object.entries(terminologiaMedica[categoria])) {
-            const patrones = [base, ...sinonimos];
-            patrones.forEach(termino => {
-                const regex = new RegExp(`\\b${termino.replace(/ /g, "\\s+")}\\b`, "i");
-                if (regex.test(oracion) && !contieneNegacion(oracion, termino)) {
-                    encontrados.add(base);
-                }
+        // Inferencias directas
+        if (data.implica) {
+          for (const implicado of data.implica) {
+            resultado.push({
+              nombre: implicado,
+              tipo: "antecedente",
+              fuente: "inferencia"
             });
+          }
         }
-    });
-    return Array.from(encontrados);
-}
 
-function buscarMedicacionConDosis(texto) {
-    const resultados = [];
-    if (!texto) return [];
-    
-    for (const [base, sinonimos] of Object.entries(terminologiaMedica.medicacion)) {
-        const patrones = [base, ...sinonimos];
-        for (const termino of patrones) {
-            const terminoEscapado = termino.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-            const pattern = `\\b${terminoEscapado}\\b(?:[^\\d\\n\\r]{0,10})?(\\d+(?:[.,]\\d+)?\\s*(?:mg|mcg|g|ml|ug))?`;
-            const expresion = new RegExp(pattern, "gi");
-            let match;
-            while ((match = expresion.exec(texto))) {
-                if (!contieneNegacion(match[0], termino)) {
-                    const dosis = match[1] ? ` ${match[1].trim()}` : "";
-                    resultados.push(`${base}${dosis}`);
-                }
-            }
+        // Equivalencias
+        if (data.equivalente_a) {
+          for (const eq of data.equivalente_a) {
+            resultado.push({
+              nombre: eq,
+              tipo: data.tipo,
+              fuente: "equivalente"
+            });
+          }
         }
+
+        // Subtipos
+        if (data.forma_parte_de) {
+          for (const cat of data.forma_parte_de) {
+            resultado.push({
+              nombre: cat,
+              tipo: "antecedente",
+              fuente: "categoria"
+            });
+          }
+        }
+        break; // evitar duplicados por sinónimos
+      }
     }
-    return resultados;
+  }
+
+  return resultado;
 }
 
+// Evaluar categorías compuestas
+function evaluarCategorias(terminosDetectados) {
+  const presentes = new Set(terminosDetectados.map(t => t.nombre));
+  const categorias = [];
 
-function buscarLaboratorio(texto) {
-    const resultados = [];
-    if (!texto) return [];
-
-    for (const [base, sinonimos] of Object.entries(terminologiaMedica.laboratorio)) {
-        const patrones = [base, ...sinonimos].map(t => t.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'));  // escapar regex
-        const regex = new RegExp(
-            `\\b(${patrones.join("|")})\\b(?:\\s*(?:[:=]|es|es de)?\\s*)(\\d+(?:[.,]\\d+)?)(?:\\s*(mg/dL|%|mmol/L|g/dL|mEq/L|U/L|ng/mL|μg/mL|ng/dL|ml/min|mL\\/min|))?`,
-            "gi"
-        );
-
-        let match;
-        while ((match = regex.exec(texto))) {
-            const matchTerm = match[1].toLowerCase();
-            const nombre = patrones.find(p => p.toLowerCase() === matchTerm) ? base : matchTerm;
-            const valor = match[2].replace(',', '.'); // convertir a punto decimal
-            const unidad = match[3] || ''; // puede estar vacía
-            const estadoTexto = '';
-            resultados.push(`${nombre}: ${valor}${unidad ? ' ' + unidad : ''}${estadoTexto}`);
-        }
+  for (const [cat, data] of Object.entries(terminologiaMedica.categorias)) {
+    const contiene = data.incluye.every(t => presentes.has(t));
+    if (contiene) {
+      categorias.push({
+        nombre: cat,
+        tipo: data.tipo,
+        fuente: "categoria"
+      });
     }
+  }
 
-    return resultados;
+  return categorias;
 }
 
+// Evaluar laboratorio con criterio_valor
+function evaluarLaboratorioConCategorias(valores) {
+  const inferidos = [];
 
-export function extraerDatosHC(textoHC) {
-    const bloques = extraerBloquesPorEncabezado(textoHC);
-    return {
-        edad: extraerEdad(textoHC),
-        antecedentes: buscarTerminos(bloques.antecedentes?.join(" ") || textoHC, "antecedentes"),
-        factoresRiesgo: buscarTerminos(bloques.riesgo?.join(" ") || textoHC, "riesgo"),
-        medicacion: buscarMedicacionConDosis(bloques.medicacion?.join(" ") || textoHC),
-        laboratorio: buscarLaboratorio(bloques.laboratorio?.join(" ") || textoHC)
-    };
+  for (const [cat, data] of Object.entries(terminologiaMedica.categorias)) {
+    if (data.criterio_valor && data.incluye) {
+      for (const relacionado of data.incluye) {
+        const valorDetectado = valores[relacionado];
+        if (valorDetectado !== undefined) {
+          const umbral = data.criterio_valor.umbral;
+          const comparador = data.criterio_valor.comparador;
+          if (
+            (comparador === "<=" && valorDetectado <= umbral) ||
+            (comparador === "<" && valorDetectado < umbral) ||
+            (comparador === ">=" && valorDetectado >= umbral) ||
+            (comparador === ">" && valorDetectado > umbral)
+          ) {
+            inferidos.push({
+              nombre: cat,
+              tipo: data.tipo,
+              fuente: "valor_laboratorio"
+            });
+          }
+        }
+      }
+    }
+  }
+
+  return inferidos;
+}
+
+// FUNCION PRINCIPAL
+export function extraerDatosHC(texto) {
+  const hallazgos = detectarTerminosTexto(texto);
+  const categorias = evaluarCategorias(hallazgos);
+
+  // Agrupar por tipo
+  const agrupados = {
+    antecedentes: [],
+    riesgo: [],
+    medicacion: [],
+    laboratorio: {}
+  };
+
+  for (const item of [...hallazgos, ...categorias]) {
+    if (item.tipo === "laboratorio") continue;
+    if (!agrupados[item.tipo].includes(item.nombre)) {
+      agrupados[item.tipo].push(item.nombre);
+    }
+  }
+
+  // Procesar laboratorio
+  agrupados.laboratorio = buscarLaboratorio(texto); // usa función existente
+
+  // Evaluar inferencias por valor
+  const categoriasDesdeValores = evaluarLaboratorioConCategorias(agrupados.laboratorio);
+  for (const c of categoriasDesdeValores) {
+    if (!agrupados[c.tipo].includes(c.nombre)) {
+      agrupados[c.tipo].push(c.nombre);
+    }
+  }
+
+  // Edad
+  agrupados.edad = extraerEdad(texto); // usa función existente
+
+  return agrupados;
 }
