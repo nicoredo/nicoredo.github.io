@@ -196,9 +196,3 @@ export function extraerDatosHC(texto) {
 
   return agrupados;
 }
-
-  // Edad
-  agrupados.edad = extraerEdad(texto); // usa función existente
-
-  return agrupados;
-}
