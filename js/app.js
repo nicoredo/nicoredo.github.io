@@ -137,7 +137,7 @@ const labValor = document.getElementById('lab-valor');
         const datosCompletos = {
             edad: datos.edad || "No detectada",
             antecedentes: Array.isArray(datos.antecedentes) ? datos.antecedentes : [],
-            riesgo: Array.isArray(datos.factoresRiesgo) ? datos.factoresRiesgo : [],
+            riesgo: Array.isArray(datos.riesgo) ? datos.riesgo : [],
             medicacion: Array.isArray(datos.medicacion) ? datos.medicacion : [],
             laboratorio: parseLaboratorio(Array.isArray(datos.laboratorio) ? datos.laboratorio.join(", ") : "")
         };
