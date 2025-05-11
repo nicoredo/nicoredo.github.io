@@ -3,6 +3,19 @@
 import { terminologiaMedica } from './data-loader.js';
 
 // Utilidades
+function extraerEdad(texto) {
+  const textoPlano = texto.toLowerCase();
+  const regex = /(?:paciente|pac|edad)[^\d]{0,10}(\d{1,3})\s?(años|a)?/i;
+  const match = textoPlano.match(regex);
+  if (match && match[1]) {
+    const edad = parseInt(match[1]);
+    if (edad > 0 && edad < 120) {
+      return edad;
+    }
+  }
+  return null;
+}
+
 function normalizarTexto(texto) {
   return texto.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "");
 }
