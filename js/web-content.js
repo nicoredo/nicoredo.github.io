@@ -3,19 +3,6 @@
 import { terminologiaMedica } from './data-loader.js';
 
 // Utilidades
-function extraerEdad(texto) {
-  const textoPlano = texto.toLowerCase();
-  const regex = /(?:paciente|pac|edad)[^\d]{0,10}(\d{1,3})\s?(años|a)?/i;
-  const match = textoPlano.match(regex);
-  if (match && match[1]) {
-    const edad = parseInt(match[1]);
-    if (edad > 0 && edad < 120) {
-      return edad;
-    }
-  }
-  return null;
-}
-
 function normalizarTexto(texto) {
   return texto.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "");
 }
@@ -158,6 +145,21 @@ function buscarLaboratorio(texto) {
 }
 
 
+
+function extraerEdad(texto) {
+  const textoPlano = texto.toLowerCase();
+  const regex = /(?:paciente|pac|edad)[^\d]{0,10}(\d{1,3})\s?(años|a)?/i;
+  const match = textoPlano.match(regex);
+  if (match && match[1]) {
+    const edad = parseInt(match[1]);
+    if (edad > 0 && edad < 120) {
+      return edad;
+    }
+  }
+  return null;
+}
+
+
 // FUNCION PRINCIPAL
 export function extraerDatosHC(texto) {
   const hallazgos = detectarTerminosTexto(texto);
@@ -188,6 +190,12 @@ export function extraerDatosHC(texto) {
       agrupados[c.tipo].push(c.nombre);
     }
   }
+
+  // Edad
+  agrupados.edad = extraerEdad(texto); // usa función existente
+
+  return agrupados;
+}
 
   // Edad
   agrupados.edad = extraerEdad(texto); // usa función existente
