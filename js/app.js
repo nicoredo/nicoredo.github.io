@@ -137,7 +137,7 @@ const labValor = document.getElementById('lab-valor');
         const datosCompletos = {
             edad: datos.edad || "No detectada",
             antecedentes: Array.isArray(datos.antecedentes) ? datos.antecedentes : [],
-            riesgo: Array.isArray(datos.riesgo) ? datos.riesgo : [],
+            riesgo: Array.isArray(datos.factoresRiesgo) ? datos.factoresRiesgo : [],
             medicacion: Array.isArray(datos.medicacion) ? datos.medicacion : [],
             laboratorio: parseLaboratorio(Array.isArray(datos.laboratorio) ? datos.laboratorio.join(", ") : "")
         };
@@ -313,35 +313,20 @@ const labValor = document.getElementById('lab-valor');
     });
     
     // Función para cargar terminología 
-  // Función para cargar terminología 
-async function cargarTerminologia() {
-    try {
-        const response = await fetch('data/terminologia_medica.json');
-        const data = await response.json();
-
-        // Reiniciar sets
-        Object.keys(terminosMedicos).forEach(k => terminosMedicos[k].clear());
-
-        // Procesar los términos base
-        Object.entries(data.terminos).forEach(([nombre, info]) => {
-            const tipo = info.tipo;
-            if (terminosMedicos[tipo]) {
-                terminosMedicos[tipo].add(nombre.toLowerCase());
-            }
-        });
-
-        // Incluir también las categorías
-        Object.entries(data.categorias).forEach(([nombre, info]) => {
-            const tipo = info.tipo;
-            if (terminosMedicos[tipo]) {
-                terminosMedicos[tipo].add(nombre.toLowerCase());
-            }
-        });
-
-    } catch (error) {
-        console.error("Error cargando terminología:", error);
+    async function cargarTerminologia() {
+        try {
+            const response = await fetch('data/terminologia_medica.json');
+            const data = await response.json();
+            
+            Object.entries(data).forEach(([categoria, terminos]) => {
+                Object.keys(terminos).forEach(termino => {
+                    terminosMedicos[categoria].add(termino.toLowerCase());
+                });
+            });
+        } catch (error) {
+            console.error("Error cargando terminología:", error);
+        }
     }
-}
     console.log(estadoApp.resultadosEvaluacion);
 
     async function generarPDFDerivacion(filiatorios, datosPaciente, textoHC) {

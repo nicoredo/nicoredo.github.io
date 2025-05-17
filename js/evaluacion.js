@@ -253,3 +253,5 @@ if (botonDerivacion) {
 
 
 export { parseLaboratorio};
+
+
