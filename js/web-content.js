@@ -12,12 +12,18 @@ function contieneNegacion(oracion, termino) {
     const afirmaciones = ["sí", "si", "presenta", "refiere", "con", "dx de", "dx", "diagnosticado de"];
     const reversores = ["pero", "aunque", "sin embargo", "no obstante", "excepto", "salvo", "aunque luego"];
 
-    const tokens = oracion.toLowerCase().split(/\s|,|;/).filter(Boolean);
+    const oracionLower = oracion.toLowerCase();
     const terminoLower = termino.toLowerCase();
 
+    const indexTermino = oracionLower.indexOf(terminoLower);
+    if (indexTermino === -1) return false; // no lo encontró, no niega
+
+    // Solo analizamos lo que aparece antes del término
+    const antesDelTermino = oracionLower.slice(0, indexTermino);
+    const tokens = antesDelTermino.split(/\s|,|;/).filter(Boolean).reverse();
+
     let negado = false;
-    for (let i = tokens.length - 1; i >= 0; i--) {
-        const palabra = tokens[i];
+    for (const palabra of tokens) {
         if (reversores.includes(palabra) || afirmaciones.includes(palabra)) break;
         if (negaciones.includes(palabra)) {
             negado = true;
@@ -27,6 +33,7 @@ function contieneNegacion(oracion, termino) {
 
     return negado;
 }
+
 
 function normalizarTexto(texto) {
     return texto.toLowerCase().replace(/[\s\-_.]+/g, '');
