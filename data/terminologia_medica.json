@@ -147,7 +147,7 @@
     "valsartan": ["sarval","diovan", "vst", "alpertan", "corosan", "diapresan", "dilcoran", "hiperval", "paliax", "racorval", "simultan"],
     "sacubitrilo/valsartan": ["arnis", "sacu", "sacubitrilo", "dupertan", "entresto"],
     "diosmina-hesperidina": ["daflon"],
-    "levotiroxina": ["t4","levo", "hipotiroidismo"],
+    "levotiroxina": ["t4","levo"],
     "tamsulosina": ["tamsu", "aclosan", "denverprost", "reduprost", "sulos", "uroprost"]
   },
   "laboratorio": {
