@@ -72,7 +72,7 @@ function buscarTerminos(texto, categoria) {
     const encontrados = new Set();
     if (!texto || !terminologiaMedica[categoria]) return [];
 
-   texto.split(/(?<=[.!?\\n\\r\\-])|(?=\\b[A-Z]{2,}\\b)/).forEach(oracion => {
+   texto.split(/(?<=[.!?\n\r\-])|(?=\b[A-Z]{2,}\b)/).forEach(oracion => {
         for (const [base, sinonimos] of Object.entries(terminologiaMedica[categoria])) {
             const patrones = [base, ...sinonimos];
             patrones.forEach(termino => {
