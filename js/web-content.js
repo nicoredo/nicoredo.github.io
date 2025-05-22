@@ -1,4 +1,3 @@
-
 import { terminologiaMedica, cargarDatosIniciales } from './data-loader.js';
 
 const encabezados = {
@@ -27,6 +26,10 @@ function contieneNegacion(oracion, termino) {
     }
 
     return negado;
+}
+
+function normalizarTexto(texto) {
+    return texto.toLowerCase().replace(/[\s\-_.]+/g, '');
 }
 
 function extraerEdad(texto) {
@@ -71,8 +74,9 @@ function buscarTerminos(texto, categoria) {
             const patrones = [base, ...sinonimos];
 
             for (const termino of patrones) {
-                const terminoFlexible = termino.replace(/ /g, "[\s\-]*");
-                const regex = new RegExp(`\b${terminoFlexible}\b`, "i");
+                // Permite detectar variantes como "exTBQ" o "ex-tbq"
+                const terminoFlexible = termino.replace(/ /g, "[\\s\\-]*");
+                const regex = new RegExp(`\\b${terminoFlexible}\\b`, "i");
 
                 if (regex.test(oracion)) {
                     const match = regex.exec(oracion);
@@ -87,6 +91,7 @@ function buscarTerminos(texto, categoria) {
 
     return Array.from(encontrados);
 }
+
 
 function buscarMedicacionConDosis(texto) {
     const resultados = new Map();
