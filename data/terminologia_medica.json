@@ -79,6 +79,7 @@
     "dislipidemia": ["dislipemia", "dlp", "DLP", "dislipemico", "dislipemica", "hipercolesterolemia", "colesterol alto"],
     "hipertrigliceridemia": ["trigliceridos elevados", "hipertg", "tg elevado", "hipertrigliceridos"],
     "tabaquismo": ["tbq", "extbq", "fumadora","fumador", "tabaquista", "extabaquista", "consumo de tabaco"],
+    "epoc": ["enfermedad pulmonar obstructiva", "enfisema", "bronquitis cronica"],
     "obesidad": ["obs", "obeso", "obesa", "indice de masa corporal elevado", "sobrepeso", "imc >27"],
     "sedentarismo": ["falta de actividad fisica", "sdt"],
     "dieta no saludable": ["dieta hipercalorica"],
