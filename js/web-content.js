@@ -73,8 +73,9 @@ function buscarTerminos(texto, categoria) {
         for (const [base, sinonimos] of Object.entries(terminologiaMedica[categoria])) {
             const patrones = [base, ...sinonimos];
             for (const termino of patrones) {
-                const terminoFlexible = termino.replace(/ /g, "[\\s\\-]*");
-                const regex = new RegExp(`\\b${terminoFlexible}\\b`, "i");
+         const terminoFlexible = termino.replace(/ /g, "[\\s\\-]*");  // literal en código
+const regex = new RegExp(`\\b${terminoFlexible}\\b`, "i");   // funciona como patrón real
+
 
                 if (regex.test(oracion)) {
                     const match = regex.exec(oracion);
