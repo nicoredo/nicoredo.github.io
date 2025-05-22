@@ -116,7 +116,7 @@ function buscarLaboratorio(texto) {
     for (const [base, sinonimos] of Object.entries(terminologiaMedica.laboratorio)) {
         const patrones = [base, ...sinonimos].map(t => t.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'));  // escapar regex
         const regex = new RegExp(
-            `\\b(${patrones.join("|")})\\b(?:\\s*(?:[:=]|es|es de)?\\s*)(\\d+(?:[.,]\\d+)?)(?:\\s*(mg/dL|%|mmol/L|g/dL|mEq/L|U/L|ng/mL|μg/mL|ng/dL|ml/min|mL\\/min|))?`,
+            `\\b(${patrones.join("|")})\\b(?:\\s*(?:[:=]|es|es de|de)?\\s*)(\\d+(?:[.,]\\d+)?)(?:\\s*(mg/dL|%|mmol/L|g/dL|mEq/L|U/L|ng/mL|μg/mL|ng/dL|ml/min|mL\\/min|))?`,
             "gi"
         );
 
