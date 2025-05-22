@@ -13,24 +13,29 @@ function contieneNegacion(oracion, termino) {
     const afirmaciones = ["sí", "si", "presenta", "refiere", "con", "dx de", "dx", "diagnosticado de"];
     const reversores = ["pero", "aunque", "sin embargo", "no obstante"];
 
-  const tokens = textoAntes.split(/\\s|,|;/).filter(Boolean);
+    const separadores = /[,;]|(?:\\bpero\\b|\\baunque\\b|\\bsin embargo\\b|\\bno obstante\\b)/i;
+    const partes = oracion.toLowerCase().split(separadores);
+    const terminoLower = termino.toLowerCase();
 
-  let negado = false;
-  for (let i = tokens.length - 1; i >= 0; i--) {
-    const palabra = tokens[i];
-    if (reversores.includes(palabra)) {
-      break; // reversor encontrado: cancelamos efecto de negación previa
-    }
-    if (afirmadores.includes(palabra)) {
-      break; // afirmación clara: se termina la negación
-    }
-    if (negaciones.includes(palabra)) {
-      negado = true;
-      break;
-    }
-  }
+    let negado = false;
+    for (const parte of partes) {
+        const palabras = parte.trim().split(/\\s+/);
+        for (let i = 0; i < palabras.length; i++) {
+            const palabra = palabras[i];
+            if (negaciones.includes(palabra)) {
+                negado = true;
+            } else if (afirmaciones.includes(palabra)) {
+                negado = false;
+            } else if (reversores.includes(palabra)) {
+                negado = false;
+            }
 
-  return negado;
+            if (palabra === terminoLower) {
+                return negado;
+            }
+        }
+    }
+    return false;
 }
 
 function extraerEdad(texto) {
