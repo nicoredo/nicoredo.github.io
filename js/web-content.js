@@ -1,4 +1,3 @@
-
 import { terminologiaMedica, cargarDatosIniciales } from './data-loader.js';
 
 const encabezados = {
@@ -75,12 +74,15 @@ function buscarTerminos(texto, categoria) {
     texto.split(/(?<=[.!?\n\r\-])|(?=\b[A-Z]{2,}\b)/).forEach(oracion => {
         for (const [base, sinonimos] of Object.entries(terminologiaMedica[categoria])) {
             const patrones = [base, ...sinonimos];
-            patrones.forEach(termino => {
+            for (const termino of patrones) {
                 const regex = new RegExp(`\\b${termino.replace(/ /g, "\\s+")}\\b`, "i");
-                if (regex.test(oracion) && !contieneNegacion(oracion, termino)) {
-                    encontrados.add(base);
+                if (regex.test(oracion)) {
+                    const coincidente = regex.exec(oracion)?.[0].toLowerCase();
+                    if (coincidente && !contieneNegacion(oracion, coincidente)) {
+                        encontrados.add(base);
+                    }
                 }
-            });
+            }
         }
     });
     return Array.from(encontrados);
