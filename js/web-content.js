@@ -10,7 +10,7 @@ const encabezados = {
 
 function contieneNegacion(oracion, termino) {
     const negaciones = ["no", "niega", "sin", "ausencia de", "desconoce", "sin evidencia de", "negativo para"];
-    const afirmaciones = ["sí", "si", "presenta", "refiere", "con", "diagnosticado de"];
+    const afirmaciones = ["sí", "si", "presenta", "refiere", "con", "dx de", "dx", "diagnosticado de"];
     const reversores = ["pero", "aunque", "sin embargo", "no obstante"];
 
     const separadores = /[,;]|(?:\bpero\b|\baunque\b|\bsin embargo\b|\bno obstante\b)/i;
@@ -72,7 +72,7 @@ function buscarTerminos(texto, categoria) {
     const encontrados = new Set();
     if (!texto || !terminologiaMedica[categoria]) return [];
 
-    texto.split(/(?<=[.!?])/).forEach(oracion => {
+   texto.split(/(?<=[.!?\\n\\r\\-])|(?=\\b[A-Z]{2,}\\b)/).forEach(oracion => {
         for (const [base, sinonimos] of Object.entries(terminologiaMedica[categoria])) {
             const patrones = [base, ...sinonimos];
             patrones.forEach(termino => {
