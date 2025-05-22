@@ -86,26 +86,32 @@ function buscarTerminos(texto, categoria) {
 }
 
 function buscarMedicacionConDosis(texto) {
-    const resultados = [];
+    const resultados = new Map(); // Usamos Map para evitar duplicados
+
     if (!texto) return [];
 
     for (const [base, sinonimos] of Object.entries(terminologiaMedica.medicacion)) {
         const patrones = [base, ...sinonimos];
+
         for (const termino of patrones) {
             const terminoEscapado = termino.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
             const pattern = `\\b${terminoEscapado}\\b(?:[^\\d\\n\\r]{0,10})?(\\d+(?:[.,]\\d+)?\\s*(?:mg|mcg|g|ml|ug))?`;
-            const expresion = new RegExp(pattern, "gi");
+            const regex = new RegExp(pattern, "gi");
+
             let match;
-            while ((match = expresion.exec(texto))) {
-                if (!contieneNegacion(match[0], termino)) {
+            while ((match = regex.exec(texto))) {
+                if (!contieneNegacion(match[0], termino) && !resultados.has(base)) {
                     const dosis = match[1] ? ` ${match[1].trim()}` : "";
-                    resultados.push(`${base}${dosis}`);
+                    resultados.set(base, `${base}${dosis}`);
+                    break; // ✅ Solo tomamos la primera aparición
                 }
             }
         }
     }
-    return resultados;
+
+    return Array.from(resultados.values());
 }
+
 
 function buscarLaboratorio(texto) {
     const resultados = [];
