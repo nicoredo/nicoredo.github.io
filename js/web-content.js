@@ -29,10 +29,6 @@ function contieneNegacion(oracion, termino) {
     return negado;
 }
 
-function normalizarTexto(texto) {
-    return texto.toLowerCase().replace(/[\s\-_.]+/g, '');
-}
-
 function extraerEdad(texto) {
     const regexEdad = /\b(?:edad|paciente|de)\s*[:=]?\s*(\d{1,3})\s*(?:años|a)?\b|\b(\d{1,3})\s*a(?:ños)?\b/i;
     const match = texto.match(regexEdad);
@@ -75,9 +71,8 @@ function buscarTerminos(texto, categoria) {
             const patrones = [base, ...sinonimos];
 
             for (const termino of patrones) {
-                // Permite detectar variantes como "exTBQ" o "ex-tbq"
-                const terminoFlexible = termino.replace(/ /g, "[\\s\\-]*");
-                const regex = new RegExp(`\\b${terminoFlexible}\\b`, "i");
+                const terminoFlexible = termino.replace(/ /g, "[\s\-]*");
+                const regex = new RegExp(`\b${terminoFlexible}\b`, "i");
 
                 if (regex.test(oracion)) {
                     const match = regex.exec(oracion);
@@ -92,7 +87,6 @@ function buscarTerminos(texto, categoria) {
 
     return Array.from(encontrados);
 }
-
 
 function buscarMedicacionConDosis(texto) {
     const resultados = new Map();
