@@ -67,14 +67,12 @@ function buscarTerminos(texto, categoria) {
     const encontrados = new Set();
     if (!texto || !terminologiaMedica[categoria]) return [];
 
-    const oraciones = texto.split(/(?<=[.!?\n\r])/);
+    const oraciones = texto.split(/(?<=[.!?\n\r])|(?=\s*-\s*)|[,;]/);
 
     for (const oracion of oraciones) {
         for (const [base, sinonimos] of Object.entries(terminologiaMedica[categoria])) {
             const patrones = [base, ...sinonimos];
-
             for (const termino of patrones) {
-                // Permite detectar variantes como "exTBQ" o "ex-tbq"
                 const terminoFlexible = termino.replace(/ /g, "[\\s\\-]*");
                 const regex = new RegExp(`\\b${terminoFlexible}\\b`, "i");
 
