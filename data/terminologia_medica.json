@@ -130,7 +130,7 @@
     "bisoprolol": ["biso","concor", "corbis", "bicardil"],
     "carvedilol": ["carve","dilatrend", "carvedil"],
     "furosemida": ["furo", "lasix", "furotral", "errolon"],
-    "espironolactona": ["espiro", "aldactone", "lanx", "kenob"],
+    "espironolactona": ["espiro", "espirono", "esporinolactona","aldactone", "lanx", "kenob"],
     "eplerenona": ["oldren"],
     "acido acetilsalicilico": ["aas","aspirina", "asa"],
     "warfarina": ["coumadin"],
