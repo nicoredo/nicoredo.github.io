@@ -71,17 +71,18 @@ function buscarTerminos(texto, categoria) {
     const oraciones = texto.split(/(?<=[.!?\n\r])/);
 
     for (const oracion of oraciones) {
-        const oracionNormalizada = normalizarTexto(oracion);
-
         for (const [base, sinonimos] of Object.entries(terminologiaMedica[categoria])) {
             const patrones = [base, ...sinonimos];
 
             for (const termino of patrones) {
-                const normalizado = normalizarTexto(termino);
-                const regex = new RegExp(`\b${normalizado}\b`, "i");
+                // Permite detectar variantes como "exTBQ" o "ex-tbq"
+                const terminoFlexible = termino.replace(/ /g, "[\\s\\-]*");
+                const regex = new RegExp(`\\b${terminoFlexible}\\b`, "i");
 
-                if (oracionNormalizada.includes(normalizado)) {
-                    if (!contieneNegacion(oracion, termino)) {
+                if (regex.test(oracion)) {
+                    const match = regex.exec(oracion);
+                    const encontrado = match ? match[0].toLowerCase() : termino.toLowerCase();
+                    if (!contieneNegacion(oracion, encontrado)) {
                         encontrados.add(base);
                     }
                 }
@@ -91,6 +92,7 @@ function buscarTerminos(texto, categoria) {
 
     return Array.from(encontrados);
 }
+
 
 function buscarMedicacionConDosis(texto) {
     const resultados = new Map();
