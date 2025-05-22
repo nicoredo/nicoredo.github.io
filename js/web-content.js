@@ -29,6 +29,10 @@ function contieneNegacion(oracion, termino) {
     return negado;
 }
 
+function normalizarTexto(texto) {
+    return texto.toLowerCase().replace(/[\s\-_.]+/g, '');
+}
+
 function extraerEdad(texto) {
     const regexEdad = /\b(?:edad|paciente|de)\s*[:=]?\s*(\d{1,3})\s*(?:años|a)?\b|\b(\d{1,3})\s*a(?:ños)?\b/i;
     const match = texto.match(regexEdad);
@@ -67,14 +71,17 @@ function buscarTerminos(texto, categoria) {
     const oraciones = texto.split(/(?<=[.!?\n\r])/);
 
     for (const oracion of oraciones) {
+        const oracionNormalizada = normalizarTexto(oracion);
+
         for (const [base, sinonimos] of Object.entries(terminologiaMedica[categoria])) {
             const patrones = [base, ...sinonimos];
+
             for (const termino of patrones) {
-                const regex = new RegExp(`\\b${termino.replace(/ /g, "\\s+")}\\b`, "i");
-                if (regex.test(oracion)) {
-                    const match = regex.exec(oracion);
-                    const encontrado = match ? match[0].toLowerCase() : termino.toLowerCase();
-                    if (!contieneNegacion(oracion, encontrado)) {
+                const normalizado = normalizarTexto(termino);
+                const regex = new RegExp(`\b${normalizado}\b`, "i");
+
+                if (oracionNormalizada.includes(normalizado)) {
+                    if (!contieneNegacion(oracion, termino)) {
                         encontrados.add(base);
                     }
                 }
@@ -86,24 +93,21 @@ function buscarTerminos(texto, categoria) {
 }
 
 function buscarMedicacionConDosis(texto) {
-    const resultados = new Map(); // Usamos Map para evitar duplicados
-
+    const resultados = new Map();
     if (!texto) return [];
 
     for (const [base, sinonimos] of Object.entries(terminologiaMedica.medicacion)) {
         const patrones = [base, ...sinonimos];
-
         for (const termino of patrones) {
             const terminoEscapado = termino.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
             const pattern = `\\b${terminoEscapado}\\b(?:[^\\d\\n\\r]{0,10})?(\\d+(?:[.,]\\d+)?\\s*(?:mg|mcg|g|ml|ug))?`;
-            const regex = new RegExp(pattern, "gi");
-
+            const expresion = new RegExp(pattern, "gi");
             let match;
-            while ((match = regex.exec(texto))) {
+            while ((match = expresion.exec(texto))) {
                 if (!contieneNegacion(match[0], termino) && !resultados.has(base)) {
                     const dosis = match[1] ? ` ${match[1].trim()}` : "";
                     resultados.set(base, `${base}${dosis}`);
-                    break; // ✅ Solo tomamos la primera aparición
+                    break;
                 }
             }
         }
@@ -111,7 +115,6 @@ function buscarMedicacionConDosis(texto) {
 
     return Array.from(resultados.values());
 }
-
 
 function buscarLaboratorio(texto) {
     const resultados = [];
