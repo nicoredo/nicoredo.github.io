@@ -168,7 +168,7 @@
     "CPK-MB": ["creatina quinasa mb"],
     "microalbuminuria": ["albumina en orina"],
     "proteinuria": ["RAC"],
-    "filtrado glomerular": ["cl de creatinina", "clearence", "fg", "tfg", "eGFR"],
+    "filtrado glomerular": ["cl de creatinina", "clearence", "Cl calculado", "cl calculado", "Cl calc", "fg", "tfg", "eGFR"],
     "RAC": ["relacion albumina creatinina"],
     "potasio serico": ["k", "potasio", "potasemia"],
     "sodio serico": ["na+"],
