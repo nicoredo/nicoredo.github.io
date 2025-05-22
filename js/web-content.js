@@ -1,5 +1,5 @@
-import { terminologiaMedica, cargarDatosIniciales } from './data-loader.js';
 
+import { terminologiaMedica, cargarDatosIniciales } from './data-loader.js';
 
 const encabezados = {
     antecedentes: /\b(AP:|Antec(?:edentes)?(?: de)?:)/i,
@@ -11,15 +11,15 @@ const encabezados = {
 function contieneNegacion(oracion, termino) {
     const negaciones = ["no", "niega", "sin", "ausencia de", "desconoce", "sin evidencia de", "negativo para"];
     const afirmaciones = ["sí", "si", "presenta", "refiere", "con", "dx de", "dx", "diagnosticado de"];
-    const reversores = ["pero", "aunque", "sin embargo", "no obstante"];
+    const reversores = ["pero", "aunque", "sin embargo", "no obstante", "excepto", "salvo", "aunque luego"];
 
-    const separadores = /[,;]|(?:\\bpero\\b|\\baunque\\b|\\bsin embargo\\b|\\bno obstante\\b)/i;
+    const separadores = /[,;]|(?:\bpero\b|\baunque\b|\bsin embargo\b|\bno obstante\b|\bexcepto\b|\bsalvo\b)/i;
     const partes = oracion.toLowerCase().split(separadores);
     const terminoLower = termino.toLowerCase();
 
     let negado = false;
     for (const parte of partes) {
-        const palabras = parte.trim().split(/\\s+/);
+        const palabras = parte.trim().split(/\s+/);
         for (let i = 0; i < palabras.length; i++) {
             const palabra = palabras[i];
             if (negaciones.includes(palabra)) {
@@ -29,7 +29,6 @@ function contieneNegacion(oracion, termino) {
             } else if (reversores.includes(palabra)) {
                 negado = false;
             }
-
             if (palabra === terminoLower) {
                 return negado;
             }
@@ -47,11 +46,11 @@ function extraerEdad(texto) {
 function extraerBloquesPorEncabezado(texto) {
     const bloques = {};
     let actual = null;
-    
+
     texto.split(/\n|\r/).forEach(linea => {
         linea = linea.trim();
         if (!linea) return;
-        
+
         for (const [cat, regex] of Object.entries(encabezados)) {
             if (regex.test(linea)) {
                 actual = cat;
@@ -60,12 +59,12 @@ function extraerBloquesPorEncabezado(texto) {
                 break;
             }
         }
-        
+
         if (actual && linea) {
             bloques[actual].push(linea);
         }
     });
-    
+
     return bloques;
 }
 
@@ -73,7 +72,7 @@ function buscarTerminos(texto, categoria) {
     const encontrados = new Set();
     if (!texto || !terminologiaMedica[categoria]) return [];
 
-   texto.split(/(?<=[.!?\n\r\-])|(?=\b[A-Z]{2,}\b)/).forEach(oracion => {
+    texto.split(/(?<=[.!?\n\r\-])|(?=\b[A-Z]{2,}\b)/).forEach(oracion => {
         for (const [base, sinonimos] of Object.entries(terminologiaMedica[categoria])) {
             const patrones = [base, ...sinonimos];
             patrones.forEach(termino => {
@@ -90,7 +89,7 @@ function buscarTerminos(texto, categoria) {
 function buscarMedicacionConDosis(texto) {
     const resultados = [];
     if (!texto) return [];
-    
+
     for (const [base, sinonimos] of Object.entries(terminologiaMedica.medicacion)) {
         const patrones = [base, ...sinonimos];
         for (const termino of patrones) {
@@ -109,13 +108,12 @@ function buscarMedicacionConDosis(texto) {
     return resultados;
 }
 
-
 function buscarLaboratorio(texto) {
     const resultados = [];
     if (!texto) return [];
 
     for (const [base, sinonimos] of Object.entries(terminologiaMedica.laboratorio)) {
-        const patrones = [base, ...sinonimos].map(t => t.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'));  // escapar regex
+        const patrones = [base, ...sinonimos].map(t => t.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'));
         const regex = new RegExp(
             `\\b(${patrones.join("|")})\\b(?:\\s*(?:[:=]|es|es de|de)?\\s*)(\\d+(?:[.,]\\d+)?)(?:\\s*(mg/dL|%|mmol/L|g/dL|mEq/L|U/L|ng/mL|μg/mL|ng/dL|ml/min|mL\\/min|))?`,
             "gi"
@@ -125,16 +123,14 @@ function buscarLaboratorio(texto) {
         while ((match = regex.exec(texto))) {
             const matchTerm = match[1].toLowerCase();
             const nombre = patrones.find(p => p.toLowerCase() === matchTerm) ? base : matchTerm;
-            const valor = match[2].replace(',', '.'); // convertir a punto decimal
-            const unidad = match[3] || ''; // puede estar vacía
-            const estadoTexto = '';
-            resultados.push(`${nombre}: ${valor}${unidad ? ' ' + unidad : ''}${estadoTexto}`);
+            const valor = match[2].replace(',', '.');
+            const unidad = match[3] || '';
+            resultados.push(`${nombre}: ${valor}${unidad ? ' ' + unidad : ''}`);
         }
     }
 
     return resultados;
 }
-
 
 export function extraerDatosHC(textoHC) {
     const bloques = extraerBloquesPorEncabezado(textoHC);
