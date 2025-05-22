@@ -1,3 +1,4 @@
+
 import { terminologiaMedica, cargarDatosIniciales } from './data-loader.js';
 
 const encabezados = {
@@ -12,28 +13,20 @@ function contieneNegacion(oracion, termino) {
     const afirmaciones = ["sí", "si", "presenta", "refiere", "con", "dx de", "dx", "diagnosticado de"];
     const reversores = ["pero", "aunque", "sin embargo", "no obstante", "excepto", "salvo", "aunque luego"];
 
-    const separadores = /[,;]|(?:\bpero\b|\baunque\b|\bsin embargo\b|\bno obstante\b|\bexcepto\b|\bsalvo\b)/i;
-    const partes = oracion.toLowerCase().split(separadores);
+    const tokens = oracion.toLowerCase().split(/\s|,|;/).filter(Boolean);
     const terminoLower = termino.toLowerCase();
 
     let negado = false;
-    for (const parte of partes) {
-        const palabras = parte.trim().split(/\s+/);
-        for (let i = 0; i < palabras.length; i++) {
-            const palabra = palabras[i];
-            if (negaciones.includes(palabra)) {
-                negado = true;
-            } else if (afirmaciones.includes(palabra)) {
-                negado = false;
-            } else if (reversores.includes(palabra)) {
-                negado = false;
-            }
-            if (palabra === terminoLower) {
-                return negado;
-            }
+    for (let i = tokens.length - 1; i >= 0; i--) {
+        const palabra = tokens[i];
+        if (reversores.includes(palabra) || afirmaciones.includes(palabra)) break;
+        if (negaciones.includes(palabra)) {
+            negado = true;
+            break;
         }
     }
-    return false;
+
+    return negado;
 }
 
 function extraerEdad(texto) {
@@ -71,20 +64,24 @@ function buscarTerminos(texto, categoria) {
     const encontrados = new Set();
     if (!texto || !terminologiaMedica[categoria]) return [];
 
-    texto.split(/(?<=[.!?\n\r\-])|(?=\b[A-Z]{2,}\b)/).forEach(oracion => {
+    const oraciones = texto.split(/(?<=[.!?\n\r])/);
+
+    for (const oracion of oraciones) {
         for (const [base, sinonimos] of Object.entries(terminologiaMedica[categoria])) {
             const patrones = [base, ...sinonimos];
             for (const termino of patrones) {
                 const regex = new RegExp(`\\b${termino.replace(/ /g, "\\s+")}\\b`, "i");
                 if (regex.test(oracion)) {
-                    const coincidente = regex.exec(oracion)?.[0].toLowerCase();
-                    if (coincidente && !contieneNegacion(oracion, coincidente)) {
+                    const match = regex.exec(oracion);
+                    const encontrado = match ? match[0].toLowerCase() : termino.toLowerCase();
+                    if (!contieneNegacion(oracion, encontrado)) {
                         encontrados.add(base);
                     }
                 }
             }
         }
-    });
+    }
+
     return Array.from(encontrados);
 }
 
