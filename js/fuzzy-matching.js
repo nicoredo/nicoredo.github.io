@@ -1,5 +1,5 @@
 // fuzzy-matching.js
-// 🔍 Módulo para detección clínica flexible usando Fuse.js
+// 🔍 Módulo para detección clínica flexible usando Fuse.js por oración
 
 import Fuse from 'https://cdn.jsdelivr.net/npm/fuse.js@6.6.2/dist/fuse.esm.js';
 
@@ -8,7 +8,8 @@ function normalizar(texto) {
     .toLowerCase()
     .normalize("NFD")
     .replace(/\p{Diacritic}/gu, '')
-    .replace(/[\s_\-.]+/g, '');
+    .replace(/[^a-z0-9]+/g, ' ')
+    .trim();
 }
 
 function contieneNegacion(oracion, termino) {
@@ -18,7 +19,6 @@ function contieneNegacion(oracion, termino) {
 
   const oracionLower = oracion.toLowerCase();
   const terminoLower = termino.toLowerCase();
-
   const indexTermino = oracionLower.indexOf(terminoLower);
   if (indexTermino === -1) return false;
 
@@ -37,27 +37,24 @@ export function buscarTerminosFuzzy(texto, categoria, terminologiaCategoria) {
   if (!texto || !terminologiaCategoria) return [];
 
   const oraciones = texto.split(/(?<=[.!?\n\r])|(?=\s*-\s*)|[,;]/);
-  const fuse = new Fuse(
-    Object.entries(terminologiaCategoria).flatMap(([base, sinonimos]) =>
-      [base, ...sinonimos].map(s => ({ termino: s, base }))
-    ),
-    {
-      keys: ['termino'],
-      includeScore: true,
-      threshold: 0.2 // más estricto aún
-    }
+
+  const listaTerminos = Object.entries(terminologiaCategoria).flatMap(([base, sinonimos]) =>
+    [base, ...sinonimos].map(s => ({ termino: normalizar(s), base }))
   );
 
+  const fuse = new Fuse(listaTerminos, {
+    keys: ['termino'],
+    includeScore: true,
+    threshold: 0.2 // muy estricto
+  });
+
   for (const oracion of oraciones) {
-    const tokens = oracion.split(/[\s,;.]+/);
-    for (const token of tokens) {
-      if (token.length < 5) continue; // ⚠️ Evitar términos cortos que inducen falsos positivos
-      const resultado = fuse.search(token);
-      if (resultado.length > 0 && resultado[0].score < 0.2) {
-        const match = resultado[0].item;
-        if (!contieneNegacion(oracion, match.termino) && !encontrados.has(match.base)) {
-          encontrados.add(match.base);
-        }
+    const oracionNorm = normalizar(oracion);
+    const resultado = fuse.search(oracionNorm);
+    for (const r of resultado) {
+      const { termino, base } = r.item;
+      if (r.score < 0.2 && !contieneNegacion(oracion, termino) && !encontrados.has(base)) {
+        encontrados.add(base);
       }
     }
   }
