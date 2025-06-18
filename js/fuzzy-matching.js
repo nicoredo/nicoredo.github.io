@@ -52,7 +52,7 @@ export function buscarTerminosFuzzy(texto, categoria, terminologiaCategoria) {
     const tokens = oracion.split(/[\s,;.]+/);
     for (const token of tokens) {
       const resultado = fuse.search(token);
-      if (resultado.length > 0 && resultado[0].score < 0.3) {
+      if (resultado.length > 0 && resultado[0].score < 0.1) {
         const match = resultado[0].item;
         if (!contieneNegacion(oracion, match.termino) && !encontrados.has(match.base)) {
           encontrados.add(match.base);
