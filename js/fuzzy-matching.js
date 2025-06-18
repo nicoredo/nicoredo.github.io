@@ -44,7 +44,7 @@ export function buscarTerminosFuzzy(texto, categoria, terminologiaCategoria) {
     {
       keys: ['termino'],
       includeScore: true,
-      threshold: 0.3
+      threshold: 0.1
     }
   );
 
