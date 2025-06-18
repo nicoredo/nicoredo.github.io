@@ -44,15 +44,16 @@ export function buscarTerminosFuzzy(texto, categoria, terminologiaCategoria) {
     {
       keys: ['termino'],
       includeScore: true,
-      threshold: 0.1
+      threshold: 0.2 // más estricto aún
     }
   );
 
   for (const oracion of oraciones) {
     const tokens = oracion.split(/[\s,;.]+/);
     for (const token of tokens) {
+      if (token.length < 5) continue; // ⚠️ Evitar términos cortos que inducen falsos positivos
       const resultado = fuse.search(token);
-      if (resultado.length > 0 && resultado[0].score < 0.1) {
+      if (resultado.length > 0 && resultado[0].score < 0.2) {
         const match = resultado[0].item;
         if (!contieneNegacion(oracion, match.termino) && !encontrados.has(match.base)) {
           encontrados.add(match.base);
