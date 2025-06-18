@@ -1,4 +1,5 @@
 import { terminologiaMedica, cargarDatosIniciales } from './data-loader.js';
+import { buscarTerminosFuzzy } from './fuzzy-matching.js';
 
 const encabezados = {
     antecedentes: /\b(AP:|Antec(?:edentes)?(?: de)?:)/i,
