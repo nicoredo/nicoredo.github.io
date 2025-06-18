@@ -119,6 +119,9 @@ function buscarMedicacionConDosis(texto) {
 
     for (const [base, sinonimos] of Object.entries(terminologiaMedica.medicacion)) {
         const patrones = [base, ...sinonimos];
+        let encontrado = false;
+
+        // 1. Búsqueda exacta con dosis
         for (const termino of patrones) {
             const terminoEscapado = termino.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
             const pattern = `\\b${terminoEscapado}\\b(?:[^\\d\\n\\r]{0,10})?(\\d+(?:[.,]\\d+)?\\s*(?:mg|mcg|g|ml|ug))?`;
@@ -128,15 +131,32 @@ function buscarMedicacionConDosis(texto) {
                 if (!contieneNegacion(match[0], termino) && !resultados.has(base)) {
                     const dosis = match[1] ? ` ${match[1].trim()}` : "";
                     resultados.set(base, `${base}${dosis}`);
+                    encontrado = true;
                     break;
                 }
+            }
+            if (encontrado) break;
+        }
+
+        // 2. Si no encontró nada, usar Levenshtein sobre palabras del texto
+        if (!resultados.has(base)) {
+            const palabras = texto.split(/\s+/);
+            for (const palabra of palabras) {
+                if (palabra.length < 5) continue;
+                for (const termino of patrones) {
+                    const distancia = levenshtein.distance(palabra.toLowerCase(), termino.toLowerCase());
+                    if (distancia <= 2 && !contieneNegacion(texto, palabra)) {
+                        resultados.set(base, base);  // sin dosis
+                        break;
+                    }
+                }
+                if (resultados.has(base)) break;
             }
         }
     }
 
     return Array.from(resultados.values());
 }
-
 function buscarLaboratorio(texto) {
     const resultados = [];
     if (!texto) return [];
