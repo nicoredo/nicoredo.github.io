@@ -45,7 +45,7 @@ export function buscarTerminosFuzzy(texto, categoria, terminologiaCategoria) {
   const fuse = new Fuse(listaTerminos, {
     keys: ['termino'],
     includeScore: true,
-    threshold: 0.2 // muy estricto
+    threshold: 0.3 // muy estricto
   });
 
   for (const oracion of oraciones) {
