@@ -3,7 +3,6 @@
 
 import Fuse from 'https://cdn.jsdelivr.net/npm/fuse.js@6.6.2/dist/fuse.esm.js';
 
-// ✅ Normaliza texto para comparar sin acentos, espacios o mayúsculas
 function normalizar(texto) {
   return texto
     .toLowerCase()
@@ -12,7 +11,6 @@ function normalizar(texto) {
     .replace(/[\s_\-.]+/g, '');
 }
 
-// 🔎 Evalúa si hay negación antes del término en una oración
 function contieneNegacion(oracion, termino) {
   const negaciones = ["no", "niega", "sin", "ausencia de", "desconoce", "sin evidencia de", "negativo para"];
   const afirmaciones = ["sí", "si", "presenta", "refiere", "con", "dx de", "dx", "diagnosticado de"];
@@ -34,7 +32,6 @@ function contieneNegacion(oracion, termino) {
   return false;
 }
 
-// 📊 Función principal exportable
 export function buscarTerminosFuzzy(texto, categoria, terminologiaCategoria) {
   const encontrados = new Set();
   if (!texto || !terminologiaCategoria) return [];
@@ -47,7 +44,7 @@ export function buscarTerminosFuzzy(texto, categoria, terminologiaCategoria) {
     {
       keys: ['termino'],
       includeScore: true,
-      threshold: 0.3 // más estricto
+      threshold: 0.3
     }
   );
 
