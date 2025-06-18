@@ -72,31 +72,35 @@ function extraerBloquesPorEncabezado(texto) {
 }
 
 function buscarTerminos(texto, categoria) {
-    const encontrados = new Set();
+    const exactos = new Set();
+    const flexibles = new Set();
     if (!texto || !terminologiaMedica[categoria]) return [];
 
     const oraciones = texto.split(/(?<=[.!?\n\r])|(?=\s*-\s*)|[,;]/);
 
+    // Matching exacto como antes
     for (const oracion of oraciones) {
         for (const [base, sinonimos] of Object.entries(terminologiaMedica[categoria])) {
             const patrones = [base, ...sinonimos];
             for (const termino of patrones) {
-         const terminoFlexible = termino.replace(/ /g, "[\\s\\-]*");  // literal en código
-const regex = new RegExp(`\\b${terminoFlexible}\\b`, "i");   // funciona como patrón real
-
-
+                const terminoFlexible = termino.replace(/ /g, "[\\s\\-]*");
+                const regex = new RegExp(`\\b${terminoFlexible}\\b`, "i");
                 if (regex.test(oracion)) {
                     const match = regex.exec(oracion);
                     const encontrado = match ? match[0].toLowerCase() : termino.toLowerCase();
                     if (!contieneNegacion(oracion, encontrado)) {
-                        encontrados.add(base);
+                        exactos.add(base);
                     }
                 }
             }
         }
     }
 
-    return Array.from(encontrados);
+    // Matching fuzzy adicional
+    const fuzzyResultados = buscarTerminosFuzzy(texto, categoria, terminologiaMedica[categoria]);
+    fuzzyResultados.forEach(t => flexibles.add(t));
+
+    return Array.from(new Set([...exactos, ...flexibles]));
 }
 
 
