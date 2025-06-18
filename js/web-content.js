@@ -1,5 +1,6 @@
 import { terminologiaMedica, cargarDatosIniciales } from './data-loader.js';
 import { buscarTerminosFuzzy } from './fuzzy-matching.js';
+import levenshtein from 'https://cdn.jsdelivr.net/npm/fastest-levenshtein/+esm';
 
 const encabezados = {
     antecedentes: /\b(AP:|Antec(?:edentes)?(?: de)?:)/i,
@@ -17,24 +18,17 @@ function contieneNegacion(oracion, termino) {
     const terminoLower = termino.toLowerCase();
 
     const indexTermino = oracionLower.indexOf(terminoLower);
-    if (indexTermino === -1) return false; // no lo encontró, no niega
+    if (indexTermino === -1) return false;
 
-    // Solo analizamos lo que aparece antes del término
     const antesDelTermino = oracionLower.slice(0, indexTermino);
     const tokens = antesDelTermino.split(/\s|,|;/).filter(Boolean).reverse();
 
-    let negado = false;
     for (const palabra of tokens) {
         if (reversores.includes(palabra) || afirmaciones.includes(palabra)) break;
-        if (negaciones.includes(palabra)) {
-            negado = true;
-            break;
-        }
+        if (negaciones.includes(palabra)) return true;
     }
-
-    return negado;
+    return false;
 }
-
 
 function normalizarTexto(texto) {
     return texto.toLowerCase().replace(/[\s\-_.]+/g, '');
@@ -74,11 +68,11 @@ function extraerBloquesPorEncabezado(texto) {
 function buscarTerminos(texto, categoria) {
     const exactos = new Set();
     const flexibles = new Set();
+    const respaldo = new Set();
     if (!texto || !terminologiaMedica[categoria]) return [];
 
     const oraciones = texto.split(/(?<=[.!?\n\r])|(?=\s*-\s*)|[,;]/);
 
-    // Matching exacto como antes
     for (const oracion of oraciones) {
         for (const [base, sinonimos] of Object.entries(terminologiaMedica[categoria])) {
             const patrones = [base, ...sinonimos];
@@ -96,13 +90,28 @@ function buscarTerminos(texto, categoria) {
         }
     }
 
-    // Matching fuzzy adicional
     const fuzzyResultados = buscarTerminosFuzzy(texto, categoria, terminologiaMedica[categoria]);
     fuzzyResultados.forEach(t => flexibles.add(t));
 
-    return Array.from(new Set([...exactos, ...flexibles]));
-}
+    // Respaldo con Levenshtein si no encontró nada
+    if (exactos.size + flexibles.size === 0) {
+        for (const oracion of oraciones) {
+            for (const [base, sinonimos] of Object.entries(terminologiaMedica[categoria])) {
+                const patrones = [base, ...sinonimos];
+                for (const palabra of oracion.split(/\s+/)) {
+                    for (const termino of patrones) {
+                        const distancia = levenshtein.distance(palabra.toLowerCase(), termino.toLowerCase());
+                        if (distancia <= 2 && palabra.length > 5 && !contieneNegacion(oracion, palabra)) {
+                            respaldo.add(base);
+                        }
+                    }
+                }
+            }
+        }
+    }
 
+    return Array.from(new Set([...exactos, ...flexibles, ...respaldo]));
+}
 
 function buscarMedicacionConDosis(texto) {
     const resultados = new Map();
@@ -162,3 +171,4 @@ export function extraerDatosHC(textoHC) {
         laboratorio: buscarLaboratorio(bloques.laboratorio?.join(" ") || textoHC)
     };
 }
+
