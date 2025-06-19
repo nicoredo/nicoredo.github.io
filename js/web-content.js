@@ -192,7 +192,7 @@ function buscarLaboratorio(texto) {
     return resultados;
 }
 
-export function extraerDatosHCSNOMED(textoHC) {
+export function extraerDatosHC(textoHC) {
     const bloques = extraerBloquesPorEncabezado(textoHC);
     return {
         edad: extraerEdad(textoHC),
