@@ -21,12 +21,16 @@ function contieneNegacion(oracion, termino) {
     const antesDelTermino = oracionLower.slice(0, indexTermino);
     const tokens = antesDelTermino.split(/\s|,|;/).filter(Boolean).reverse();
 
-    for (const palabra of tokens) {
-        if (reversores.includes(palabra) || afirmaciones.includes(palabra)) break;
-        if (negaciones.includes(palabra)) return true;
+ let negado = false;
+for (const palabra of tokens) {
+    if (reversores.includes(palabra) || afirmaciones.includes(palabra)) break;
+    if (negaciones.includes(palabra)) {
+        negado = true;
+        break;
     }
-    return false;
 }
+return negado;
+
 
 function distanciaLevenshtein(a, b) {
     const matrix = [];
