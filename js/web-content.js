@@ -94,6 +94,7 @@ function buscarTerminos(texto, categoria) {
 
     const oraciones = texto.split(/(?<=[.!?\n\r])|(?=\s*-\s*)|[,;]/);
 
+    // 1. Matching exacto
     for (const oracion of oraciones) {
         for (const [base, sinonimos] of Object.entries(terminologiaMedica[categoria])) {
             const patrones = [base, ...sinonimos];
@@ -111,21 +112,19 @@ function buscarTerminos(texto, categoria) {
         }
     }
 
+    // 2. Matching difuso (respaldo Levenshtein)
     if (exactos.size === 0) {
         for (const oracion of oraciones) {
+            const palabras = oracion.split(/\s+/);
             for (const [base, sinonimos] of Object.entries(terminologiaMedica[categoria])) {
                 const patrones = [base, ...sinonimos];
-                for (const palabra of oracion.split(/\s+/)) {
+                for (const palabra of palabras) {
+                    if (palabra.length < 4) continue;
                     for (const termino of patrones) {
                         const distancia = distanciaLevenshtein(palabra.toLowerCase(), termino.toLowerCase());
-                        if (
-    distancia <= 2 &&
-    palabra.length > 5 &&
-    !contieneNegacion(oracion, termino)
-) {
-    respaldo.add(base);
-}
-
+                        if (distancia <= 2 && !contieneNegacion(oracion, palabra)) {
+                            respaldo.add(base);
+                        }
                     }
                 }
             }
@@ -134,6 +133,7 @@ function buscarTerminos(texto, categoria) {
 
     return Array.from(new Set([...exactos, ...respaldo]));
 }
+
 
 function buscarMedicacionConDosis(texto) {
     const resultados = new Map();
