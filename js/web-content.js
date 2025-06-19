@@ -1,6 +1,7 @@
 import { terminologiaMedica, cargarDatosIniciales } from './data-loader.js';
 import { buscarTerminosFuzzy } from './fuzzy-matching.js';
-import levenshtein from 'https://cdn.jsdelivr.net/npm/fastest-levenshtein/+esm';
+import { distance as levenshteinDistance } from 'https://cdn.jsdelivr.net/npm/fastest-levenshtein@1.0.12/esm/mod.js';
+
 
 const encabezados = {
     antecedentes: /\b(AP:|Antec(?:edentes)?(?: de)?:)/i,
@@ -100,7 +101,7 @@ function buscarTerminos(texto, categoria) {
                 const patrones = [base, ...sinonimos];
                 for (const palabra of oracion.split(/\s+/)) {
                     for (const termino of patrones) {
-                        const distancia = levenshtein.distance(palabra.toLowerCase(), termino.toLowerCase());
+                        const distancia = levenshteinDistance(palabra.toLowerCase(), termino.toLowerCase());
                         if (distancia <= 2 && palabra.length > 5 && !contieneNegacion(oracion, palabra)) {
                             respaldo.add(base);
                         }
@@ -144,7 +145,7 @@ function buscarMedicacionConDosis(texto) {
             for (const palabra of palabras) {
                 if (palabra.length < 5) continue;
                 for (const termino of patrones) {
-                    const distancia = levenshtein.distance(palabra.toLowerCase(), termino.toLowerCase());
+                    const distancia = levenshteinDistance(palabra.toLowerCase(), termino.toLowerCase());
                     if (distancia <= 2 && !contieneNegacion(texto, palabra)) {
                         resultados.set(base, base);  // sin dosis
                         break;
