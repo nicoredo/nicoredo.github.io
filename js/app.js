@@ -66,8 +66,14 @@ const labValor = document.getElementById('lab-valor');
             }
             
             try {
-                estadoApp.datosPaciente = await extraerDatosHC(textoHC.value);
-                mostrarDatos(estadoApp.datosPaciente);
+         const datos = await extraerDatosHC(textoHC.value);
+estadoApp.datosPaciente = datos;
+mostrarDatos(datos);
+console.log("✅ Datos extraídos:", datos);  // ✅ ahora sí existe
+
+            } catch (error) {
+                console.error("Error al extraer datos:", error);
+                alert("Error al procesar la historia clínica");
            
             }
         });
