@@ -16,27 +16,44 @@ function contieneNegacion(oracion, termino) {
     const terminoLower = termino.toLowerCase();
 
     const indexTermino = oracionLower.indexOf(terminoLower);
-    if (indexTermino === -1) return false; // no lo encontró, no niega
+    if (indexTermino === -1) return false;
 
-    // Solo analizamos lo que aparece antes del término
     const antesDelTermino = oracionLower.slice(0, indexTermino);
     const tokens = antesDelTermino.split(/\s|,|;/).filter(Boolean).reverse();
 
-    let negado = false;
     for (const palabra of tokens) {
         if (reversores.includes(palabra) || afirmaciones.includes(palabra)) break;
-        if (negaciones.includes(palabra)) {
-            negado = true;
-            break;
+        if (negaciones.includes(palabra)) return true;
+    }
+    return false;
+}
+
+function distanciaLevenshtein(a, b) {
+    const matrix = [];
+    const alen = a.length;
+    const blen = b.length;
+
+    if (alen === 0) return blen;
+    if (blen === 0) return alen;
+
+    for (let i = 0; i <= blen; i++) matrix[i] = [i];
+    for (let j = 0; j <= alen; j++) matrix[0][j] = j;
+
+    for (let i = 1; i <= blen; i++) {
+        for (let j = 1; j <= alen; j++) {
+            if (b.charAt(i - 1) === a.charAt(j - 1)) {
+                matrix[i][j] = matrix[i - 1][j - 1];
+            } else {
+                matrix[i][j] = Math.min(
+                    matrix[i - 1][j] + 1,
+                    matrix[i][j - 1] + 1,
+                    matrix[i - 1][j - 1] + 1
+                );
+            }
         }
     }
 
-    return negado;
-}
-
-
-function normalizarTexto(texto) {
-    return texto.toLowerCase().replace(/[\s\-_.]+/g, '');
+    return matrix[blen][alen];
 }
 
 function extraerEdad(texto) {
@@ -71,7 +88,8 @@ function extraerBloquesPorEncabezado(texto) {
 }
 
 function buscarTerminos(texto, categoria) {
-    const encontrados = new Set();
+    const exactos = new Set();
+    const respaldo = new Set();
     if (!texto || !terminologiaMedica[categoria]) return [];
 
     const oraciones = texto.split(/(?<=[.!?\n\r])|(?=\s*-\s*)|[,;]/);
@@ -80,41 +98,68 @@ function buscarTerminos(texto, categoria) {
         for (const [base, sinonimos] of Object.entries(terminologiaMedica[categoria])) {
             const patrones = [base, ...sinonimos];
             for (const termino of patrones) {
-         const terminoFlexible = termino.replace(/ /g, "[\\s\\-]*");  // literal en código
-const regex = new RegExp(`\\b${terminoFlexible}\\b`, "i");   // funciona como patrón real
-
-
+                const terminoFlexible = termino.replace(/ /g, "[\\s\\-]*");
+                const regex = new RegExp(`\\b${terminoFlexible}\\b`, "i");
                 if (regex.test(oracion)) {
                     const match = regex.exec(oracion);
                     const encontrado = match ? match[0].toLowerCase() : termino.toLowerCase();
                     if (!contieneNegacion(oracion, encontrado)) {
-                        encontrados.add(base);
+                        exactos.add(base);
                     }
                 }
             }
         }
     }
 
-    return Array.from(encontrados);
-}
+    if (exactos.size === 0) {
+        for (const oracion of oraciones) {
+            for (const [base, sinonimos] of Object.entries(terminologiaMedica[categoria])) {
+                const patrones = [base, ...sinonimos];
+                for (const palabra of oracion.split(/\s+/)) {
+                    for (const termino of patrones) {
+                        const distancia = distanciaLevenshtein(palabra.toLowerCase(), termino.toLowerCase());
+                        if (distancia <= 2 && palabra.length > 5 && !contieneNegacion(oracion, palabra)) {
+                            respaldo.add(base);
+                        }
+                    }
+                }
+            }
+        }
+    }
 
+    return Array.from(new Set([...exactos, ...respaldo]));
+}
 
 function buscarMedicacionConDosis(texto) {
     const resultados = new Map();
     if (!texto) return [];
 
-    for (const [base, sinonimos] of Object.entries(terminologiaMedica.medicacion)) {
-        const patrones = [base, ...sinonimos];
-        for (const termino of patrones) {
-            const terminoEscapado = termino.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-            const pattern = `\\b${terminoEscapado}\\b(?:[^\\d\\n\\r]{0,10})?(\\d+(?:[.,]\\d+)?\\s*(?:mg|mcg|g|ml|ug))?`;
-            const expresion = new RegExp(pattern, "gi");
-            let match;
-            while ((match = expresion.exec(texto))) {
-                if (!contieneNegacion(match[0], termino) && !resultados.has(base)) {
-                    const dosis = match[1] ? ` ${match[1].trim()}` : "";
-                    resultados.set(base, `${base}${dosis}`);
-                    break;
+    const oraciones = texto.split(/(?<=[.!?\n\r])|(?=\s*-\s*)|[,;]/);
+
+    for (const oracion of oraciones) {
+        for (const [base, sinonimos] of Object.entries(terminologiaMedica.medicacion)) {
+            const patrones = [base, ...sinonimos];
+            for (const termino of patrones) {
+                const terminoEscapado = termino.replace(/[.*+?^${}()|[\\]\\]/g, '\\$&');
+                const pattern = `\\b${terminoEscapado}\\b(?:[^\\d\\n\\r]{0,10})?(\\d+(?:[.,]\\d+)?\\s*(?:mg|mcg|g|ml|ug))?`;
+                const expresion = new RegExp(pattern, "gi");
+                let match;
+                while ((match = expresion.exec(oracion))) {
+                    if (!contieneNegacion(match[0], termino) && !resultados.has(base)) {
+                        const dosis = match[1] ? ` ${match[1].trim()}` : "";
+                        resultados.set(base, `${base}${dosis}`);
+                        break;
+                    }
+                }
+
+                if (!resultados.has(base)) {
+                    for (const palabra of oracion.split(/\s+/)) {
+                        const distancia = distanciaLevenshtein(palabra.toLowerCase(), termino.toLowerCase());
+                        if (distancia <= 2 && palabra.length > 5 && !contieneNegacion(oracion, palabra)) {
+                            resultados.set(base, base);
+                            break;
+                        }
+                    }
                 }
             }
         }
@@ -128,9 +173,9 @@ function buscarLaboratorio(texto) {
     if (!texto) return [];
 
     for (const [base, sinonimos] of Object.entries(terminologiaMedica.laboratorio)) {
-        const patrones = [base, ...sinonimos].map(t => t.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'));
+        const patrones = [base, ...sinonimos].map(t => t.replace(/[.*+?^${}()|[\\]\\]/g, '\\$&'));
         const regex = new RegExp(
-            `\\b(${patrones.join("|")})\\b(?:\\s*(?:[:=]|es|es de|de)?\\s*)(\\d+(?:[.,]\\d+)?)(?:\\s*(mg/dL|%|mmol/L|g/dL|mEq/L|U/L|ng/mL|μg/mL|ng/dL|ml/min|mL\\/min|))?`,
+            `\\b(${patrones.join("|")})\\b(?:\\s*(?::=|es|es de|de)?\\s*)(\\d+(?:[.,]\\d+)?)(?:\\s*(mg/dL|%|mmol/L|g/dL|mEq/L|U/L|ng/mL|μg/mL|ng/dL|ml/min|mL\\/min|))?`,
             "gi"
         );
 
@@ -147,7 +192,7 @@ function buscarLaboratorio(texto) {
     return resultados;
 }
 
-export function extraerDatosHC(textoHC) {
+export function extraerDatosHCSNOMED(textoHC) {
     const bloques = extraerBloquesPorEncabezado(textoHC);
     return {
         edad: extraerEdad(textoHC),
@@ -157,3 +202,4 @@ export function extraerDatosHC(textoHC) {
         laboratorio: buscarLaboratorio(bloques.laboratorio?.join(" ") || textoHC)
     };
 }
+
