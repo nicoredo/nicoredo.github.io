@@ -1,4 +1,4 @@
- import { terminologiaMedica, cargarDatosIniciales } from './data-loader.js';
+import { terminologiaMedica, cargarDatosIniciales } from './data-loader.js';
 
 const encabezados = {
     antecedentes: /\b(AP:|Antec(?:edentes)?(?: de)?:)/i,
@@ -94,25 +94,20 @@ function buscarTerminos(texto, categoria) {
 
     const oraciones = texto.split(/(?<=[.!?\n\r])|(?=\s*-\s*)|[,;]/);
 
-    // 1. Matching exacto
     for (const oracion of oraciones) {
         for (const [base, sinonimos] of Object.entries(terminologiaMedica[categoria])) {
             const patrones = [base, ...sinonimos];
             for (const termino of patrones) {
                 const terminoFlexible = termino.replace(/ /g, "[\\s\\-]*");
                 const regex = new RegExp(`\\b${terminoFlexible}\\b`, "i");
-                if (regex.test(oracion)) {
-                    const match = regex.exec(oracion);
-                    const encontrado = match ? match[0].toLowerCase() : termino.toLowerCase();
-                    if (!contieneNegacion(oracion, encontrado)) {
-                        exactos.add(base);
-                    }
+                const match = regex.exec(oracion);
+                if (match && !contieneNegacion(oracion, match[0])) {
+                    exactos.add(base);
                 }
             }
         }
     }
 
-    // 2. Matching difuso (respaldo Levenshtein)
     if (exactos.size === 0) {
         for (const oracion of oraciones) {
             const palabras = oracion.split(/\s+/);
@@ -134,7 +129,6 @@ function buscarTerminos(texto, categoria) {
     return Array.from(new Set([...exactos, ...respaldo]));
 }
 
-
 function buscarMedicacionConDosis(texto) {
     const resultados = new Map();
     if (!texto) return [];
@@ -150,7 +144,7 @@ function buscarMedicacionConDosis(texto) {
                 const expresion = new RegExp(pattern, "gi");
                 let match;
                 while ((match = expresion.exec(oracion))) {
-                    if (!contieneNegacion(match[0], termino) && !resultados.has(base)) {
+                    if (!contieneNegacion(oracion, match[0]) && !resultados.has(base)) {
                         const dosis = match[1] ? ` ${match[1].trim()}` : "";
                         resultados.set(base, `${base}${dosis}`);
                         break;
