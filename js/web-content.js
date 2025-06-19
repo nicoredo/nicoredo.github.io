@@ -100,16 +100,19 @@ function buscarTerminos(texto, categoria) {
     const respaldo = new Set();
     if (!texto || !terminologiaMedica[categoria]) return [];
 
-    const oraciones = texto.split(/(?<=[.!?\n\r])|(?=\s*-\s*)|[,;]/);
+    // Dividimos en frases más pequeñas para detectar negaciones más efectivamente
+    const fragmentos = texto.split(/\n|\.|\||;|-/).flatMap(f =>
+        f.split(/,|y|\/|\\/).map(p => p.trim())
+    );
 
-    for (const oracion of oraciones) {
+    for (const fragmento of fragmentos) {
         for (const [base, sinonimos] of Object.entries(terminologiaMedica[categoria])) {
             const patrones = [base, ...sinonimos];
             for (const termino of patrones) {
                 const terminoFlexible = termino.replace(/ /g, "[\\s\\-]*");
                 const regex = new RegExp(`\\b${terminoFlexible}\\b`, "i");
-                const match = regex.exec(oracion);
-                if (match && !contieneNegacion(oracion, match[0])) {
+                const match = regex.exec(fragmento);
+                if (match && !contieneNegacion(fragmento, match[0])) {
                     exactos.add(base);
                 }
             }
@@ -117,15 +120,15 @@ function buscarTerminos(texto, categoria) {
     }
 
     if (exactos.size === 0) {
-        for (const oracion of oraciones) {
-            const palabras = oracion.split(/\s+/);
+        for (const fragmento of fragmentos) {
+            const palabras = fragmento.split(/\s+/);
             for (const [base, sinonimos] of Object.entries(terminologiaMedica[categoria])) {
                 const patrones = [base, ...sinonimos];
                 for (const palabra of palabras) {
                     if (palabra.length < 4) continue;
                     for (const termino of patrones) {
                         const distancia = distanciaLevenshtein(palabra.toLowerCase(), termino.toLowerCase());
-                        if (distancia <= 2 && !contieneNegacion(oracion, palabra)) {
+                        if (distancia <= 2 && !contieneNegacion(fragmento, palabra)) {
                             respaldo.add(base);
                         }
                     }
@@ -136,6 +139,7 @@ function buscarTerminos(texto, categoria) {
 
     return Array.from(new Set([...exactos, ...respaldo]));
 }
+
 
 function buscarMedicacionConDosis(texto) {
     const resultados = new Map();
