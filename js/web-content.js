@@ -32,6 +32,10 @@ for (const palabra of tokens) {
 return negado;
  }
 
+function normalizarTexto(texto) {
+    return texto.toLowerCase().replace(/[\s\-_.]+/g, '');
+}
+
 function distanciaLevenshtein(a, b) {
     const matrix = [];
     const alen = a.length;
