@@ -1,439 +1,220 @@
-import { extraerDatosHC } from './web-content.js';
-import { evaluarPaciente, mostrarResultadosDetallados } from './evaluacion.js';
-import { cargarDatosIniciales, terminologiaMedica } from './data-loader.js';
-import { parseLaboratorio } from './evaluacion.js';
+import { terminologiaMedica, cargarDatosIniciales } from './data-loader.js';
+import { buscarTerminosFuzzy } from './fuzzy-matching.js';
 
-document.addEventListener('DOMContentLoaded', function() {
-    // Elementos UI
-    const btnEvaluarPaciente = document.getElementById('evaluar-paciente');
-    const btnEvaluarEstudios = document.getElementById('evaluar-estudios');
-    const textoHC = document.getElementById('texto-hc');
-    const edadValor = document.getElementById('edad-valor');
-    const antecedentesValor = document.getElementById('antecedentes-valor');
-const riesgoValor = document.getElementById('riesgo-valor');
-const medValor = document.getElementById('med-valor');
-const labValor = document.getElementById('lab-valor');
+const encabezados = {
+    antecedentes: /\b(AP:|Antec(?:edentes)?(?: de)?:)/i,
+    riesgo: /\b(FR:|Factores de riesgo:)/i,
+    medicacion: /\b(MH:|Med(?:icación)?(?: habitual)?:)/i,
+    laboratorio: /\b(Lab:|Labo:)/i
+};
 
+function contieneNegacion(oracion, termino) {
+    const negaciones = ["no", "niega", "sin", "ausencia de", "desconoce", "sin evidencia de", "negativo para"];
+    const afirmaciones = ["sí", "si", "presenta", "refiere", "con", "dx de", "dx", "diagnosticado de"];
+    const reversores = ["pero", "aunque", "sin embargo", "no obstante", "excepto", "salvo", "aunque luego"];
 
-    // Estado global
-    const estadoApp = {
-        datosPaciente: null,
-        terminologiaCargada: false
-    };
+    const oracionLower = oracion.toLowerCase();
+    const terminoLower = termino.toLowerCase();
 
-    // Inicialización
-    init();
+    const indexTermino = oracionLower.indexOf(terminoLower);
+    if (indexTermino === -1) return false;
 
-    async function init() {
-        const cargado = await cargarDatosIniciales();
-        if (!cargado) {
-            alert("Error al cargar datos iniciales");
-            return;
+    const antesDelTermino = oracionLower.slice(0, indexTermino);
+    const tokens = antesDelTermino.split(/\s|,|;/).filter(Boolean).reverse();
+
+    for (const palabra of tokens) {
+        if (reversores.includes(palabra) || afirmaciones.includes(palabra)) break;
+        if (negaciones.includes(palabra)) return true;
+    }
+    return false;
+}
+
+function normalizarTexto(texto) {
+    return texto.toLowerCase().replace(/[\s\-_.]+/g, '');
+}
+
+function extraerEdad(texto) {
+    const regexEdad = /\b(?:edad|paciente|de)\s*[:=]?\s*(\d{1,3})\s*(?:años|a)?\b|\b(\d{1,3})\s*a(?:ños)?\b/i;
+    const match = texto.match(regexEdad);
+    return match ? parseInt(match[1] || match[2]) : null;
+}
+
+function extraerBloquesPorEncabezado(texto) {
+    const bloques = {};
+    let actual = null;
+
+    texto.split(/\n|\r/).forEach(linea => {
+        linea = linea.trim();
+        if (!linea) return;
+
+        for (const [cat, regex] of Object.entries(encabezados)) {
+            if (regex.test(linea)) {
+                actual = cat;
+                bloques[cat] = [];
+                linea = linea.replace(regex, "").trim();
+                break;
+            }
         }
-    
-        console.log("Terminología cargada:", terminologiaMedica);  // para verificar
-        configurarBotonesEdicion();
-        setupEventListeners();
 
-        document.getElementById('btn-limpiar-extraccion').addEventListener('click', () => {
-            edadValor.textContent = '-';
-            antecedentesValor.textContent = '-';
-            riesgoValor.textContent = '-';
-            medValor.textContent = '-';
-            labValor.textContent = '-';
-            document.getElementById('lista-estudios').innerHTML = '';
-            estadoApp.datosPaciente = null;
-        });
-        
-        document.getElementById('btn-limpiar-todo').addEventListener('click', () => {
-            document.getElementById('texto-hc').value = '';
-            edadValor.textContent = '-';
-            antecedentesValor.textContent = '-';
-            riesgoValor.textContent = '-';
-            medValor.textContent = '-';
-            labValor.textContent = '-';
-            document.getElementById('lista-estudios').innerHTML = '';
-            estadoApp.datosPaciente = null;
-        });
-        
-    }
-
-    function setupEventListeners() {
-        btnEvaluarPaciente.addEventListener('click', async () => {
-            if (!textoHC.value.trim()) {
-                alert('Por favor ingrese el texto de la historia clínica');
-                return;
-            }
-            
-            try {
-         const datos = await extraerDatosHC(textoHC.value);
-estadoApp.datosPaciente = datos;
-mostrarDatos(datos);
-console.log("✅ Datos extraídos:", datos);  // ✅ ahora sí existe
-
-            } catch (error) {
-                console.error("Error al extraer datos:", error);
-                alert("Error al procesar la historia clínica");
-           
-            }
-        });
-
-        btnEvaluarEstudios.addEventListener('click', () => {
-            if (!estadoApp.datosPaciente) {
-                alert('Primero debe evaluar al paciente');
-                return;
-            }
-            
-            // Prepara los datos con la estructura EXACTA que espera evaluacion.js
-            const datosParaEvaluar = {
-                edad: parseInt(edadValor.textContent) || 0,
-                antecedentes: antecedentesValor.textContent !== '-' ? 
-                    antecedentesValor.textContent.split(', ') : [],
-                riesgo: riesgoValor.textContent !== '-' ?  // Nota: usa "riesgo" no "factoresRiesgo"
-                    riesgoValor.textContent.split(', ') : [],
-                medicacion: medValor.textContent !== '-' ? 
-                    medValor.textContent.split(', ') : [],
-                laboratorio: parseLaboratorio(labValor.textContent !== '-' ? 
-                    labValor.textContent : "")
-            };
-            
-            console.log("Datos para evaluar:", datosParaEvaluar); // Para depuración
-            
-            const resultados = evaluarPaciente(datosParaEvaluar);
-            estadoApp.resultadosEvaluacion = resultados; // guardamos en memoria
-            mostrarResultadosDetallados(resultados);
-        });
-
-        //// Cuadro de dialogo para preguntar filiatorios del paciente
-        const modal = document.getElementById('modal-derivacion');
-        const btnGenerar = document.getElementById('btn-generar-derivacion');
-        const btnCancelar = document.getElementById('btn-cancelar-modal');
-        const btnConfirmar = document.getElementById('btn-confirmar-modal');
-        
-        btnGenerar.addEventListener('click', () => {
-          modal.style.display = 'flex';
-        });
-        
-        btnCancelar.addEventListener('click', () => {
-          modal.style.display = 'none';
-        });
-        
-        btnConfirmar.addEventListener('click', () => {
-          const filiatorios = {
-            derivador: document.getElementById('titulo-derivacion').value,
-            apellido: document.getElementById('apellido').value,
-            nombre: document.getElementById('nombre').value,
-            dni: document.getElementById('dni').value,
-            telefono: document.getElementById('telefono').value
-          };
-        
-          modal.style.display = 'none';
-        
-          generarPDFDerivacion(filiatorios, estadoApp.datosPaciente, document.getElementById('texto-hc').value);
-        });
-    }
-        
-   
-    
-    // Función para mostrar datos en la UI (adaptada de tu popup.js)
-
-    function mostrarDatos(datos = {}) {
-        const datosCompletos = {
-            edad: datos.edad || "No detectada",
-            antecedentes: Array.isArray(datos.antecedentes) ? datos.antecedentes : [],
-            riesgo: Array.isArray(datos.factoresRiesgo) ? datos.factoresRiesgo : [],
-            medicacion: Array.isArray(datos.medicacion) ? datos.medicacion : [],
-            laboratorio: parseLaboratorio(Array.isArray(datos.laboratorio) ? datos.laboratorio.join(", ") : "")
-        };
-    
-        edadValor.textContent = datosCompletos.edad;
-        antecedentesValor.textContent = datosCompletos.antecedentes.join(", ") || "-";
-        riesgoValor.textContent = datosCompletos.riesgo.join(", ") || "-";
-        medValor.textContent = datosCompletos.medicacion.join(", ") || "-";
-        labValor.textContent = Object.entries(datosCompletos.laboratorio)
-  .map(([k, v]) => `${k}: ${v}`)
-  .join(", ") || "-";
-
-        
-        // Actualizar objeto datosPaciente
-        estadoApp.datosPaciente = {
-            edad: typeof datosCompletos.edad === 'number' ? datosCompletos.edad : 0,
-            antecedentes: datosCompletos.antecedentes,
-            factoresRiesgo: datosCompletos.riesgo,
-            medicacion: datosCompletos.medicacion,
-            laboratorio: datosCompletos.laboratorio
-        };
-        
-        // Configurar botones de edición
-        configurarBotonesEdicion();
-    }
-    
-    // Función para configurar botones de edición 
-    function configurarBotonesEdicion() {
-        const campos = [
-            { id: 'edad', esTexto: false, autocomplete: false },
-            { id: 'antecedentes', esTexto: true, autocomplete: true },
-            { id: 'riesgo', esTexto: true, autocomplete: true },
-            { id: 'med', esTexto: true, autocomplete: true },
-            { id: 'lab', esTexto: true, autocomplete: true }
-        ];
-    
-        campos.forEach(({ id, esTexto, autocomplete }) => {
-            const btnEditar = document.getElementById(`btn-editar-${id}`);
-            const btnConfirmar = document.getElementById(`btn-confirmar-${id}`);
-            const valorSpan = document.getElementById(`${id}-valor`);
-            const input = document.getElementById(`${id}-input`);
-            const wrapper = autocomplete ? document.getElementById(`${id}-autocomplete`) : null;
-    
-            if (!btnEditar || !btnConfirmar || !valorSpan || !input) {
-                console.error(`Elementos no encontrados para ${id}`);
-                return;
-            }
-    
-            // --- EDITAR ---
-            btnEditar.addEventListener('click', () => {
-                valorSpan.style.display = 'none';
-    
-                if (autocomplete && wrapper) {
-                    wrapper.style.display = 'block';
-                    input.style.display = 'inline-block';
-                    document.getElementById(`${id}-suggestions`).innerHTML = '';
-                } else {
-                    input.style.display = 'inline-block';
-                }
-    
-                btnEditar.style.display = 'none';
-                btnConfirmar.style.display = 'inline-block';
-    
-                input.value = valorSpan.textContent !== '-' ? valorSpan.textContent : '';
-                input.focus();
-            });
-    
-            // --- CONFIRMAR ---
-            btnConfirmar.addEventListener('click', () => {
-                const nuevoValor = input.value.trim();
-                valorSpan.textContent = nuevoValor || '-';
-                valorSpan.style.display = 'inline';
-    
-                if (autocomplete && wrapper) {
-                    wrapper.style.display = 'none';
-                    input.style.display = 'none';
-                } else {
-                    input.style.display = 'none';
-                }
-    
-                btnConfirmar.style.display = 'none';
-                btnEditar.style.display = 'inline-block';
-    
-                // Actualizar datos internos
-                const datosPaciente = estadoApp.datosPaciente;
-                const valores = nuevoValor
-                    ? nuevoValor.split(',').map(s => s.trim()).filter(s => s)
-                    : [];
-    
-                if (id === 'edad') {
-                    datosPaciente.edad = parseFloat(nuevoValor) || 0;
-                } else {
-                    datosPaciente[id === 'med' ? 'medicacion' : id === 'lab' ? 'laboratorio' : id === 'riesgo' ? 'factoresRiesgo' : id] = valores;
-                }
-            });
-        });
-    }
-    
-    // Inicializar autocompletado
-    
-    function inicializarAutocompletado() {
-        const campos = [
-            { id: 'antecedentes', tipo: 'antecedentes' },
-            { id: 'riesgo', tipo: 'riesgo' },
-            { id: 'med', tipo: 'medicacion' },
-            { id: 'lab', tipo: 'laboratorio' }
-        ];
-    
-        campos.forEach(({ id, tipo }) => {
-            const input = document.getElementById(`${id}-input`);
-            const suggestionsContainer = document.getElementById(`${id}-suggestions`);
-    
-            if (!input || !suggestionsContainer) {
-                console.error(`Faltan elementos para ${id}`);
-                return;
-            }
-    
-            input.addEventListener('input', (e) => {
-                const currentText = e.target.value;
-                const lastTerm = currentText.split(',').pop().trim().toLowerCase();
-                mostrarSugerencias(lastTerm, tipo, suggestionsContainer, input);
-            });
-    
-            input.addEventListener('keydown', (e) => {
-                if (e.key === ',') {
-                    setTimeout(() => {
-                        const currentText = input.value;
-                        const lastTerm = currentText.split(',').pop().trim().toLowerCase();
-                        mostrarSugerencias(lastTerm, tipo, suggestionsContainer, input);
-                    }, 10);
-                }
-            });
-    
-            document.addEventListener('click', (e) => {
-                if (!input.contains(e.target) && !suggestionsContainer.contains(e.target)) {
-                    suggestionsContainer.innerHTML = '';
-                }
-            });
-        });
-    }
-    
-    // Función para mostrar sugerencias de autocompletado
-    function mostrarSugerencias(searchTerm, tipo, container, input) {
-        container.innerHTML = '';
-        if (!searchTerm || searchTerm.length < 1) return;
-    
-        const sugerencias = Array.from(terminosMedicos[tipo]);
-        const resultados = sugerencias
-            .filter(term => term.includes(searchTerm))
-            .slice(0, 8);
-    
-        resultados.forEach((term) => {
-            const item = document.createElement('div');
-            item.className = 'suggestion-item';
-            item.textContent = tipo === 'laboratorio' ? `${term}: ` : term;
-    
-            item.addEventListener('click', () => {
-                const currentText = input.value;
-                const terms = currentText.split(',').map(t => t.trim());
-                terms[terms.length - 1] = tipo === 'laboratorio' ? `${term}: ` : term;
-                input.value = terms.join(', ') + (tipo !== 'laboratorio' ? ', ' : '');
-                container.innerHTML = '';
-                input.focus();
-            });
-    
-            container.appendChild(item);
-        });
-    }
-    
-    // Cargar terminología médica al iniciar
-    cargarTerminologia().then(() => {
-        inicializarAutocompletado();
+        if (actual && linea) {
+            bloques[actual].push(linea);
+        }
     });
-    
-    // Función para cargar terminología 
-    async function cargarTerminologia() {
-        try {
-            const response = await fetch('data/terminologia_medica.json');
-            const data = await response.json();
-            
-            Object.entries(data).forEach(([categoria, terminos]) => {
-                Object.keys(terminos).forEach(termino => {
-                    terminosMedicos[categoria].add(termino.toLowerCase());
-                });
-            });
-        } catch (error) {
-            console.error("Error cargando terminología:", error);
+
+    return bloques;
+}
+
+function distanciaLevenshtein(a, b) {
+    const matrix = [];
+
+    const alen = a.length;
+    const blen = b.length;
+
+    if (alen === 0) return blen;
+    if (blen === 0) return alen;
+
+    for (let i = 0; i <= blen; i++) matrix[i] = [i];
+    for (let j = 0; j <= alen; j++) matrix[0][j] = j;
+
+    for (let i = 1; i <= blen; i++) {
+        for (let j = 1; j <= alen; j++) {
+            if (b.charAt(i - 1) === a.charAt(j - 1)) {
+                matrix[i][j] = matrix[i - 1][j - 1];
+            } else {
+                matrix[i][j] = Math.min(
+                    matrix[i - 1][j] + 1,
+                    matrix[i][j - 1] + 1,
+                    matrix[i - 1][j - 1] + 1
+                );
+            }
         }
     }
-    console.log(estadoApp.resultadosEvaluacion);
 
-    async function generarPDFDerivacion(filiatorios, datosPaciente, textoHC) {
-        const { jsPDF } = window.jspdf;
-        const doc = new jsPDF();
-      
-        const addLinesWithPageBreak = (doc, lines, startY) => {
-          let y = startY;
-          for (const line of lines) {
-            if (y > 270) { doc.addPage(); y = 20; }
-            doc.text(line, 15, y);
-            y += 7;
-          }
-          return y;
-        };
-      
-        const fechaActual = new Date().toLocaleString("es-AR", {
-          dateStyle: "short", timeStyle: "short"
-        });
-      
-        const estudiosElems = document.querySelectorAll("#lista-estudios .estudio");
-        const estudiosCumplidos = [];
-      
-        estudiosElems.forEach(est => {
-          const nombre = est.querySelector(".estudio-header")?.childNodes[0]?.textContent?.trim() || '';
-          const estado = est.querySelector(".estado")?.textContent?.trim();
-          if (estado?.includes("Cumple") || estado?.includes("Parcial")) {
-            estudiosCumplidos.push({ nombre, estado });
-          }
-        });
-      
-        let y = 20;
-      
-        doc.setFont("helvetica", "bold");
-        doc.setFontSize(16);
-        doc.text(filiatorios.titulo || "Informe de Derivación", 105, y, { align: "center" });
-        y += 8;
-      
-        doc.setFontSize(10);
-        doc.setFont("helvetica", "normal");
-        doc.text(`Generado el: ${fechaActual}`, 105, y, { align: "center" });
-        y += 12;
-      
-        doc.setFontSize(12);
-        doc.text(`Apellido: ${filiatorios.apellido}`, 15, y); y += 7;
-        doc.text(`Nombre: ${filiatorios.nombre}`, 15, y); y += 7;
-        doc.text(`DNI: ${filiatorios.dni}`, 15, y); y += 7;
-        doc.text(`Teléfono: ${filiatorios.telefono}`, 15, y); y += 10;
-      
-        doc.setFont("helvetica", "bold");
-        doc.text("Estudios clínicos sugeridos:", 15, y); y += 7;
-        doc.setFont("helvetica", "normal");
-      
-        for (const est of estudiosCumplidos) {
-            const headerLine = `• ${est.nombre}`;
-            const estadoLine = `    Estado: ${est.estado}`;
-            const lines = doc.splitTextToSize(`${headerLine}\n${estadoLine}`, 180);
-            y = addLinesWithPageBreak(doc, lines, y);
-            y += 3;
-          }
-          
-      
-        doc.setFont("helvetica", "bold");
-        doc.text("Datos clínicos extraídos:", 15, y); y += 7;
-        doc.setFont("helvetica", "normal");
-      
-        doc.text(`Edad: ${datosPaciente.edad}`, 15, y); y += 7;
-        doc.text(`Antecedentes: ${datosPaciente.antecedentes?.join(", ") || "-"}`, 15, y); y += 7;
-        doc.text(`Factores de riesgo: ${datosPaciente.factoresRiesgo?.join(", ") || "-"}`, 15, y); y += 7;
-        doc.text(`Medicación: ${datosPaciente.medicacion?.join(", ") || "-"}`, 15, y); y += 7;
-      
-        const labStr = Object.entries(datosPaciente.laboratorio || {})
-          .map(([k,v]) => `${k}: ${v}`)
-          .join(", ") || "-";
-        const labLines = doc.splitTextToSize(`Laboratorio: ${labStr}`, 180);
-        y = addLinesWithPageBreak(doc, labLines, y); y += 3;
-      
-        doc.setFont("helvetica", "bold");
-        doc.text("Historia clínica aportada:", 15, y); y += 7;
-        doc.setFont("helvetica", "normal");
-      
-        const hcLines = doc.splitTextToSize(textoHC || "-", 180);
-        y = addLinesWithPageBreak(doc, hcLines, y);
-      
-        // Mostrar PDF en una nueva pestaña para imprimir
-        const pdfBlob = doc.output("blob");
-        const pdfURL = URL.createObjectURL(pdfBlob);
-        const printWindow = window.open(pdfURL);
-      
-        if (printWindow) {
-          printWindow.onload = () => {
-            printWindow.focus();
-            printWindow.print();
-          };
+    return matrix[blen][alen];
+}
+
+function buscarTerminos(texto, categoria) {
+    const exactos = new Set();
+    const flexibles = new Set();
+    const respaldo = new Set();
+    if (!texto || !terminologiaMedica[categoria]) return [];
+
+    const oraciones = texto.split(/(?<=[.!?\n\r])|(?=\s*-\s*)|[,;]/);
+
+    for (const oracion of oraciones) {
+        for (const [base, sinonimos] of Object.entries(terminologiaMedica[categoria])) {
+            const patrones = [base, ...sinonimos];
+            for (const termino of patrones) {
+                const terminoFlexible = termino.replace(/ /g, "[\\s\\-]*");
+                const regex = new RegExp(`\\b${terminoFlexible}\\b`, "i");
+                if (regex.test(oracion)) {
+                    const match = regex.exec(oracion);
+                    const encontrado = match ? match[0].toLowerCase() : termino.toLowerCase();
+                    if (!contieneNegacion(oracion, encontrado)) {
+                        exactos.add(base);
+                    }
+                }
+            }
         }
-      }
-      
-      
-    // Variables globales
-    const terminosMedicos = {
-        antecedentes: new Set(),
-        riesgo: new Set(),
-        medicacion: new Set(),
-        laboratorio: new Set()
+    }
+
+    const fuzzyResultados = buscarTerminosFuzzy(texto, categoria, terminologiaMedica[categoria]);
+    fuzzyResultados.forEach(t => flexibles.add(t));
+
+    if (exactos.size + flexibles.size === 0) {
+        for (const oracion of oraciones) {
+            for (const [base, sinonimos] of Object.entries(terminologiaMedica[categoria])) {
+                const patrones = [base, ...sinonimos];
+                for (const palabra of oracion.split(/\s+/)) {
+                    for (const termino of patrones) {
+                        const distancia = distanciaLevenshtein(palabra.toLowerCase(), termino.toLowerCase());
+                        if (distancia <= 2 && palabra.length > 5 && !contieneNegacion(oracion, palabra)) {
+                            respaldo.add(base);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    return Array.from(new Set([...exactos, ...flexibles, ...respaldo]));
+}
+
+function buscarMedicacionConDosis(texto) {
+    const resultados = new Map();
+    if (!texto) return [];
+
+    for (const [base, sinonimos] of Object.entries(terminologiaMedica.medicacion)) {
+        const patrones = [base, ...sinonimos];
+        let encontrado = false;
+
+        for (const termino of patrones) {
+            const terminoEscapado = termino.replace(/[.*+?^${}()|[\\]\\]/g, '\\$&');
+            const pattern = `\\b${terminoEscapado}\\b(?:[^\\d\\n\\r]{0,10})?(\\d+(?:[.,]\\d+)?\\s*(?:mg|mcg|g|ml|ug))?`;
+            const expresion = new RegExp(pattern, "gi");
+            let match;
+            while ((match = expresion.exec(texto))) {
+                if (!contieneNegacion(match[0], termino) && !resultados.has(base)) {
+                    const dosis = match[1] ? ` ${match[1].trim()}` : "";
+                    resultados.set(base, `${base}${dosis}`);
+                    encontrado = true;
+                    break;
+                }
+            }
+            if (encontrado) break;
+        }
+
+        if (!resultados.has(base)) {
+            const palabras = texto.split(/\s+/);
+            for (const palabra of palabras) {
+                if (palabra.length < 5) continue;
+                for (const termino of patrones) {
+                    const distancia = distanciaLevenshtein(palabra.toLowerCase(), termino.toLowerCase());
+                    if (distancia <= 2 && !contieneNegacion(texto, palabra)) {
+                        resultados.set(base, base);
+                        break;
+                    }
+                }
+                if (resultados.has(base)) break;
+            }
+        }
+    }
+
+    return Array.from(resultados.values());
+}
+
+function buscarLaboratorio(texto) {
+    const resultados = [];
+    if (!texto) return [];
+
+    for (const [base, sinonimos] of Object.entries(terminologiaMedica.laboratorio)) {
+        const patrones = [base, ...sinonimos].map(t => t.replace(/[.*+?^${}()|[\\]\\]/g, '\\$&'));
+        const regex = new RegExp(
+            `\\b(${patrones.join("|")})\\b(?:\\s*(?:[:=]|es|es de|de)?\\s*)(\\d+(?:[.,]\\d+)?)(?:\\s*(mg/dL|%|mmol/L|g/dL|mEq/L|U/L|ng/mL|μg/mL|ng/dL|ml/min|mL\\/min|))?`,
+            "gi"
+        );
+
+        let match;
+        while ((match = regex.exec(texto))) {
+            const matchTerm = match[1].toLowerCase();
+            const nombre = patrones.find(p => p.toLowerCase() === matchTerm) ? base : matchTerm;
+            const valor = match[2].replace(',', '.');
+            const unidad = match[3] || '';
+            resultados.push(`${nombre}: ${valor}${unidad ? ' ' + unidad : ''}`);
+        }
+    }
+
+    return resultados;
+}
+
+export function extraerDatosHC(textoHC) {
+    const bloques = extraerBloquesPorEncabezado(textoHC);
+    return {
+        edad: extraerEdad(textoHC),
+        antecedentes: buscarTerminos(bloques.antecedentes?.join(" ") || textoHC, "antecedentes"),
+        factoresRiesgo: buscarTerminos(bloques.riesgo?.join(" ") || textoHC, "riesgo"),
+        medicacion: buscarMedicacionConDosis(bloques.medicacion?.join(" ") || textoHC),
+        laboratorio: buscarLaboratorio(bloques.laboratorio?.join(" ") || textoHC)
     };
-});
+}
+
