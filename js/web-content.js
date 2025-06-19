@@ -30,7 +30,7 @@ for (const palabra of tokens) {
     }
 }
 return negado;
-
+ }
 
 function distanciaLevenshtein(a, b) {
     const matrix = [];
