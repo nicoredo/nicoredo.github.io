@@ -118,9 +118,14 @@ function buscarTerminos(texto, categoria) {
                 for (const palabra of oracion.split(/\s+/)) {
                     for (const termino of patrones) {
                         const distancia = distanciaLevenshtein(palabra.toLowerCase(), termino.toLowerCase());
-                        if (distancia <= 2 && palabra.length > 5 && !contieneNegacion(oracion, palabra)) {
-                            respaldo.add(base);
-                        }
+                        if (
+    distancia <= 2 &&
+    palabra.length > 5 &&
+    !contieneNegacion(oracion, termino)
+) {
+    respaldo.add(base);
+}
+
                     }
                 }
             }
