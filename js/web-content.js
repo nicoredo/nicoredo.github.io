@@ -3,6 +3,7 @@ import { buscarTerminosFuzzy } from './fuzzy-matching.js';
 import { distance as levenshteinDistance } from 'https://cdn.jsdelivr.net/npm/fastest-levenshtein@1.0.12/esm/mod.js';
 
 
+
 const encabezados = {
     antecedentes: /\b(AP:|Antec(?:edentes)?(?: de)?:)/i,
     riesgo: /\b(FR:|Factores de riesgo:)/i,
