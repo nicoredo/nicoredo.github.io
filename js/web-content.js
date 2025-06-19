@@ -1,8 +1,5 @@
 import { terminologiaMedica, cargarDatosIniciales } from './data-loader.js';
 import { buscarTerminosFuzzy } from './fuzzy-matching.js';
-import { distance as levenshteinDistance } from 'https://cdn.jsdelivr.net/npm/fastest-levenshtein@1.0.12/esm/mod.js';
-
-
 
 const encabezados = {
     antecedentes: /\b(AP:|Antec(?:edentes)?(?: de)?:)/i,
@@ -67,6 +64,35 @@ function extraerBloquesPorEncabezado(texto) {
     return bloques;
 }
 
+function distanciaLevenshtein(a, b) {
+    const matrix = [];
+
+    const alen = a.length;
+    const blen = b.length;
+
+    if (alen === 0) return blen;
+    if (blen === 0) return alen;
+
+    for (let i = 0; i <= blen; i++) matrix[i] = [i];
+    for (let j = 0; j <= alen; j++) matrix[0][j] = j;
+
+    for (let i = 1; i <= blen; i++) {
+        for (let j = 1; j <= alen; j++) {
+            if (b.charAt(i - 1) === a.charAt(j - 1)) {
+                matrix[i][j] = matrix[i - 1][j - 1];
+            } else {
+                matrix[i][j] = Math.min(
+                    matrix[i - 1][j] + 1,
+                    matrix[i][j - 1] + 1,
+                    matrix[i - 1][j - 1] + 1
+                );
+            }
+        }
+    }
+
+    return matrix[blen][alen];
+}
+
 function buscarTerminos(texto, categoria) {
     const exactos = new Set();
     const flexibles = new Set();
@@ -102,7 +128,7 @@ function buscarTerminos(texto, categoria) {
                 const patrones = [base, ...sinonimos];
                 for (const palabra of oracion.split(/\s+/)) {
                     for (const termino of patrones) {
-                        const distancia = levenshteinDistance(palabra.toLowerCase(), termino.toLowerCase());
+                        const distancia = distanciaLevenshtein(palabra.toLowerCase(), termino.toLowerCase());
                         if (distancia <= 2 && palabra.length > 5 && !contieneNegacion(oracion, palabra)) {
                             respaldo.add(base);
                         }
@@ -146,7 +172,7 @@ function buscarMedicacionConDosis(texto) {
             for (const palabra of palabras) {
                 if (palabra.length < 5) continue;
                 for (const termino of patrones) {
-                    const distancia = levenshteinDistance(palabra.toLowerCase(), termino.toLowerCase());
+                    const distancia = distanciaLevenshtein(palabra.toLowerCase(), termino.toLowerCase());
                     if (distancia <= 2 && !contieneNegacion(texto, palabra)) {
                         resultados.set(base, base);  // sin dosis
                         break;
