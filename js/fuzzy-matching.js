@@ -1,7 +1,7 @@
 // fuzzy-matching.js
 // 🔍 Módulo para detección clínica flexible usando Fuse.js por oración
 
-import Fuse from 'https://cdn.jsdelivr.net/npm/fuse.js@6.6.2/dist/fuse.esm.js';
+import Fuse from './fuse.js';
 
 function normalizar(texto) {
   return texto
