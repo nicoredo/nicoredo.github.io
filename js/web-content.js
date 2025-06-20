@@ -1,4 +1,6 @@
 import { terminologiaMedica, cargarDatosIniciales } from './data-loader.js';
+import { buscarTerminosFuzzy } from './fuzzy-matching.js';
+
 
 const encabezados = {
     antecedentes: /\b(AP:|Antec(?:edentes)?(?: de)?:)/i,
@@ -95,12 +97,15 @@ function extraerBloquesPorEncabezado(texto) {
     return bloques;
 }
 
-function buscarTerminos(texto, categoria) {
-    const exactos = new Set();
-    const respaldo = new Set();
+function buscarTerminos(texto, categoria, modo = "estricto") {
     if (!texto || !terminologiaMedica[categoria]) return [];
 
-    // Dividimos en frases más pequeñas para detectar negaciones más efectivamente
+    if (modo === "fuzzy") {
+        return buscarTerminosFuzzy(texto, categoria, terminologiaMedica[categoria]);
+    }
+
+    // modo estricto (por defecto)
+    const exactos = new Set();
     const fragmentos = texto.split(/\n|\.|\||;|-/).flatMap(f =>
         f.split(/,|y|\/|\\/).map(p => p.trim())
     );
@@ -119,27 +124,8 @@ function buscarTerminos(texto, categoria) {
         }
     }
 
-    if (exactos.size === 0) {
-        for (const fragmento of fragmentos) {
-            const palabras = fragmento.split(/\s+/);
-            for (const [base, sinonimos] of Object.entries(terminologiaMedica[categoria])) {
-                const patrones = [base, ...sinonimos];
-                for (const palabra of palabras) {
-                    if (palabra.length < 4) continue;
-                    for (const termino of patrones) {
-                        const distancia = distanciaLevenshtein(palabra.toLowerCase(), termino.toLowerCase());
-                        if (distancia <= 2 && !contieneNegacion(fragmento, palabra)) {
-                            respaldo.add(base);
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    return Array.from(new Set([...exactos, ...respaldo]));
+    return Array.from(exactos);
 }
-
 
 function buscarMedicacionConDosis(texto) {
     const resultados = new Map();
@@ -207,7 +193,8 @@ export function extraerDatosHC(textoHC) {
     const bloques = extraerBloquesPorEncabezado(textoHC);
     return {
         edad: extraerEdad(textoHC),
-        antecedentes: buscarTerminos(bloques.antecedentes?.join(" ") || textoHC, "antecedentes"),
+        import Fuse from 'https://cdn.jsdelivr.net/npm/fuse.js@6.6.2/dist/fuse.esm.js';
+
         factoresRiesgo: buscarTerminos(bloques.riesgo?.join(" ") || textoHC, "riesgo"),
         medicacion: buscarMedicacionConDosis(bloques.medicacion?.join(" ") || textoHC),
         laboratorio: buscarLaboratorio(bloques.laboratorio?.join(" ") || textoHC)
