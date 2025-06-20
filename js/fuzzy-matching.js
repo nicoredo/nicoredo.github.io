@@ -45,7 +45,7 @@ export function buscarTerminosFuzzy(texto, categoria, terminologiaCategoria) {
   const fuse = new Fuse(listaTerminos, {
     keys: ['termino'],
     includeScore: true,
-    threshold: 0.2 // muy estricto
+    threshold: 0.1 // muy estricto
   });
 
   for (const oracion of oraciones) {
@@ -53,7 +53,7 @@ export function buscarTerminosFuzzy(texto, categoria, terminologiaCategoria) {
     const resultado = fuse.search(oracionNorm);
     for (const r of resultado) {
       const { termino, base } = r.item;
-      if (r.score < 0.2 && !contieneNegacion(oracion, termino) && !encontrados.has(base)) {
+      if (r.score < 0.1 && !contieneNegacion(oracion, termino) && !encontrados.has(base)) {
         encontrados.add(base);
       }
     }
