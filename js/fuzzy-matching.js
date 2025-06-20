@@ -1,7 +1,7 @@
 // fuzzy-matching.js
 // 🔍 Módulo para detección clínica flexible usando Fuse.js por oración
-
-import Fuse from './fuse.js';
+// fuzzy-matching.js
+// 🔍 Módulo para detección clínica flexible usando Fuse.js (cargado globalmente con <script>)
 
 function normalizar(texto) {
   return texto
@@ -34,7 +34,7 @@ function contieneNegacion(oracion, termino) {
 
 export function buscarTerminosFuzzy(texto, categoria, terminologiaCategoria) {
   const encontrados = new Set();
-  if (!texto || !terminologiaCategoria) return [];
+  if (!texto || !terminologiaCategoria || !window.Fuse) return [];
 
   const oraciones = texto.split(/(?<=[.!?\n\r])|(?=\s*-\s*)|[,;]/);
 
@@ -42,7 +42,7 @@ export function buscarTerminosFuzzy(texto, categoria, terminologiaCategoria) {
     [base, ...sinonimos].map(s => ({ termino: normalizar(s), base }))
   );
 
-  const fuse = new Fuse(listaTerminos, {
+  const fuse = new window.Fuse(listaTerminos, {
     keys: ['termino'],
     includeScore: true,
     threshold: 0.1 // muy estricto
@@ -61,3 +61,4 @@ export function buscarTerminosFuzzy(texto, categoria, terminologiaCategoria) {
 
   return Array.from(encontrados);
 }
+
