@@ -92,8 +92,12 @@ function buscarTerminos(texto, categoria) {
     const oraciones = texto.split(/(?<=[.!?\n\r])|(?=\s*-\s*)|[,;]/);
 
     for (const oracion of oraciones) {
+        const palabras = oracion.split(/\s+/).filter(p => p.length > 4);
+
         for (const [base, sinonimos] of Object.entries(terminologiaMedica[categoria])) {
             const patrones = [base, ...sinonimos];
+            let yaDetectado = false;
+
             for (const termino of patrones) {
                 const terminoFlexible = termino.replace(/ /g, "[\\s\\-]*");
                 const regex = new RegExp(`\\b${terminoFlexible}\\b`, "i");
@@ -103,25 +107,24 @@ function buscarTerminos(texto, categoria) {
                     const encontrado = match ? match[0].toLowerCase() : termino.toLowerCase();
                     if (!contieneNegacion(oracion, encontrado)) {
                         encontrados.add(base);
+                        yaDetectado = true;
+                        break;
                     }
                 }
             }
-        }
-    }
 
-    // Fallback leve por Levenshtein solo si no encontró nada exacto
-    if (encontrados.size === 0) {
-        for (const oracion of oraciones) {
-            const palabras = oracion.split(/\s+/).filter(p => p.length > 5);
-            for (const palabra of palabras) {
-                for (const [base, sinonimos] of Object.entries(terminologiaMedica[categoria])) {
-                    const todos = [base, ...sinonimos];
-                    for (const termino of todos) {
+            // Si no encontró por regex, intenta Levenshtein
+            if (!yaDetectado) {
+                for (const palabra of palabras) {
+                    for (const termino of patrones) {
                         const distancia = distanciaLevenshtein(palabra.toLowerCase(), termino.toLowerCase());
                         if (distancia === 1 && !contieneNegacion(oracion, palabra)) {
                             encontrados.add(base);
+                            yaDetectado = true;
+                            break;
                         }
                     }
+                    if (yaDetectado) break;
                 }
             }
         }
@@ -129,6 +132,7 @@ function buscarTerminos(texto, categoria) {
 
     return Array.from(encontrados);
 }
+
 
 function buscarMedicacionConDosis(texto) {
     const resultados = new Map();
