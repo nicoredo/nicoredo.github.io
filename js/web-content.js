@@ -192,9 +192,8 @@ function buscarLaboratorio(texto) {
 export function extraerDatosHC(textoHC) {
     const bloques = extraerBloquesPorEncabezado(textoHC);
     return {
-        edad: extraerEdad(textoHC),
-        import Fuse from 'https://cdn.jsdelivr.net/npm/fuse.js@6.6.2/dist/fuse.esm.js';
-
+   edad: extraerEdad(textoHC),
+        antecedentes: buscarTerminos(bloques.antecedentes?.join(" ") || textoHC, "antecedentes", "fuzzy"),
         factoresRiesgo: buscarTerminos(bloques.riesgo?.join(" ") || textoHC, "riesgo"),
         medicacion: buscarMedicacionConDosis(bloques.medicacion?.join(" ") || textoHC),
         laboratorio: buscarLaboratorio(bloques.laboratorio?.join(" ") || textoHC)
