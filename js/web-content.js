@@ -149,15 +149,15 @@ function buscarMedicacionConDosis(texto) {
                     }
                 }
 
-                if (!resultados.has(base)) {
-                    for (const palabra of oracion.split(/\s+/)) {
-                        const distancia = distanciaLevenshtein(palabra.toLowerCase(), termino.toLowerCase());
-                        if (distancia <= 2 && palabra.length > 5 && !contieneNegacion(oracion, palabra)) {
-                            resultados.set(base, base);
-                            break;
-                        }
-                    }
-                }
+  //              if (!resultados.has(base)) {
+   //                 for (const palabra of oracion.split(/\s+/)) {
+     //                   const distancia = distanciaLevenshtein(palabra.toLowerCase(), termino.toLowerCase());
+     //                   if (distancia <= 2 && palabra.length > 5 && !contieneNegacion(oracion, palabra)) {
+     //                       resultados.set(base, base);
+     //                       break;
+     //                   }
+     //               }
+    //          }
             }
         }
     }
