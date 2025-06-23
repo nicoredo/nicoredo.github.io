@@ -1,8 +1,8 @@
 {
   "antecedentes": {
-    "infarto agudo de miocardio": ["iam", "infarto cardiaco", "iamcest", "iamsest", "ataque al corazon"],
-    "angina estable": ["angor cronico estable", "angina cronica estable", "ace"],
-    "insuficiencia cardiaca": ["icc", "ic cronica"],
+    "infarto agudo de miocardio": ["iam", "infarto", "infarto cardiaco", "iamcest", "iamsest", "ataque al corazon"],
+    "angina estable": ["angor cronico estable", "angor cronico", "angina cronica", "angina cronica estable", "ace"],
+    "insuficiencia cardiaca": ["icc", "ic congestiva", "fevi deteriorada", "fevi deprimida", "fey severa", "fey deteriorada", "ic avanzada", "ic fevir", "ic fevi reducida", "ic fey conservada", "ic fevi conservada", "ic cronica"],
     "internacion por IC": ["ica", "eap", "fallo cardiaco", "internacion por icc", "balance negativo", "internacion por falla", "internada por icc", "internado por icc","internado por congestion", "internada por congestion"],
     "fibrilacion auricular": ["fa", "fib a", "fap", "faarv"],
     "aleteo auricular": ["aa", "aaf", "aa alta rta"],
@@ -422,13 +422,13 @@
     "RIN": ["indice internacional normalizado", "inr"],
     "glucemia": ["gluc","glucosa", "glu", "glicemia", "gluc basal", "glucemia basal", "glucemia en ayunas"],
     "acido urico": ["uricemia"],
-    "proteina C reactiva": ["pcr"],
+    "proteina C reactiva": ["proteina c", "pcr elevada"],
     "eritrosedimentacion": ["esd", "eritro"],
     "hematrocrito": ["hto"],
     "CPK-MB": ["creatina quinasa mb"],
     "microalbuminuria": ["albumina en orina"],
     "proteinuria": ["RAC"],
-    "filtrado glomerular": ["cl de creatinina", "clearence", "Cl calculado", "cl calculado", "Cl calc", "fg", "tfg", "eGFR"],
+    "filtrado glomerular": ["cl de creatinina", "clearence de creatinina", "clearence de creat", "clearence", "Cl calculado", "cl calculado", "Cl calc", "fg", "tfg", "eGFR"],
     "RAC": ["relacion albumina creatinina"],
     "potasio serico": ["k", "potasio", "potasemia"],
     "sodio serico": ["na+"],
@@ -442,7 +442,6 @@
     "ferritina": ["depositos de hierro"],
     "transferrina": ["capacidad de fijacion"],
     "fibrinogeno": ["factor i"],
-     "fevi preservada": ["fey preservada", "fevi conservada"],
     "FEVI": ["fey", "funcion del vi", "fraccion de eyeccion del ventrículo izquierdo", "eyeccion del ventrículo izquierdo", "FEY", "fevi"]
   }
 }
