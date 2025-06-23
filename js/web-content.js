@@ -8,9 +8,9 @@ const encabezados = {
 };
 
 function contieneNegacion(oracion, termino) {
-    const negaciones = ["no", "niega", "sin", "ausencia de", "desconoce", "sin evidencia de", "negativo para"];
-    const afirmaciones = ["sí", "si", "presenta", "refiere", "con", "dx de", "dx", "diagnosticado de"];
-    const reversores = ["pero", "aunque", "sin embargo", "no obstante", "excepto", "salvo", "aunque luego"];
+    const negaciones = ["no", "niega", "sin", "ausencia de", "desconoce", "sin evidencia de", "negativo para", "descarta", "descarto", "descartado"];
+    const afirmaciones = ["sí", "si", "presenta", "refiere", "con", "dx de", "dx", "diag", "dx de", "diagnosticado de"];
+    const reversores = ["pero", "aunque", "sin embargo", "no obstante", "excepto", "salvo", "niega", "aunque luego"];
 
     const oracionLower = oracion.toLowerCase();
     const terminoLower = termino.toLowerCase();
