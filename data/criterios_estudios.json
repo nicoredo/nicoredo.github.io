@@ -54,41 +54,33 @@
         "medicacion": ["hidroclorotiazida"]
       }
     },
-    "BAX-DUO (PREVENT HF): Baxdrostat/Dapa vs Dapaglifozina": {
-      "inclusion": {
-        "AND": [
-          { "condicion": "edad", "operador": ">=", "valor": 40 },
-          { "factores": "diabetes mellitus tipo 2" },
-          { "factores": "hipertension arterial" },
-          {
-            "OR": [
-              { "antecedentes": "infarto agudo del miocardio" },
-              { "antecedentes": "accidente cerebrovascular" },
-              { "antecedentes": "enfermedad arterial periferica" }
-            ]
-          },
-          {
-            "condicion": "presion_sistolica",
-            "operador": ">=",
-            "valor": 130
-          }
+  "BAX-DUO (PREVENT HF): Baxdrostat/Dapa vs Dapaglifozina": {
+  "inclusion": {
+    "AND": [
+      { "edad": ">=40" },
+      { "factores": "diabetes mellitus tipo 2" },
+      { "factores": "hipertension arterial" },
+      {
+        "OR": [
+          { "antecedentes": "infarto agudo del miocardio" },
+          { "antecedentes": "accidente cerebrovascular" },
+          { "antecedentes": "enfermedad arterial periferica" }
         ]
       },
-      "exclusion": {
-        "OR": [
-          {
-            "condicion": "hemoglobina glicosilada",
-            "operador": ">",
-            "valor": 10.5
-          },
-          { "medicacion": "espironolactona" },
-          { "medicacion": "eplerenona" },
-          { "medicacion": "finererona" },
-          { "medicacion": "amiloride" },
-          { "antecedentes": "insuficiencia cardiaca" }
-        ]
-      }
-    },
+      { "presion_sistolica": ">=130" }
+    ]
+  },
+  "exclusion": {
+    "OR": [
+      { "laboratorio": "hemoglobina glicosilada >10.5" },
+      { "medicacion": "espironolactona" },
+      { "medicacion": "eplerenona" },
+      { "medicacion": "finererona" },
+      { "medicacion": "amiloride" },
+      { "antecedentes": "insuficiencia cardiaca" }
+    ]
+  }
+},
     "AROAPOC3-3004 - SHASTA: Plozasirán": {
       "inclusion": {
         "factores": ["hipertrigliceridemia"],
