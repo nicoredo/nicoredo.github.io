@@ -55,16 +55,37 @@ function cumpleCriterio(datos, grupo, criterio) {
         'factoresRiesgo': 'riesgo'
     }[grupo] || grupo;
 
-    switch (grupoMapeado) {
-        case 'edad':
+    try {
+        if (typeof criterio === 'object' && criterio.operador && criterio.valor !== undefined) {
+            const valorPaciente = datos[grupoMapeado];
+            if (typeof valorPaciente === 'undefined') return false;
+            switch (criterio.operador) {
+                case '>': return valorPaciente > criterio.valor;
+                case '>=': return valorPaciente >= criterio.valor;
+                case '<': return valorPaciente < criterio.valor;
+                case '<=': return valorPaciente <= criterio.valor;
+                case '==': return valorPaciente == criterio.valor;
+                default: return false;
+            }
+        }
+
+        if (grupoMapeado === 'edad') {
             return evaluarRango(datos.edad, criterio);
-        case 'laboratorio':
+        }
+
+        if (grupoMapeado === 'laboratorio') {
             return evaluarLaboratorio(datos.laboratorio, criterio);
-        default:
-            if (!Array.isArray(datos[grupoMapeado])) return false;
-            return datos[grupoMapeado].some(val => new RegExp(criterio, 'i').test(val));
+        }
+
+        if (!Array.isArray(datos[grupoMapeado])) return false;
+        return datos[grupoMapeado].some(val => new RegExp(criterio, 'i').test(val));
+
+    } catch (error) {
+        console.error(`Error en cumpleCriterio(${grupo}=${criterio}):`, error);
+        return false;
     }
 }
+
 
 function cumpleBloqueCriterios(datos, bloque) {
     if (!bloque) return true;
