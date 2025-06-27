@@ -50,38 +50,28 @@ function evaluarLaboratorio(labData, criterio) {
 }
 
 function cumpleCriterio(datos, grupo, criterio) {
-    const grupoMapeado = {
-        'factores': 'riesgo',
-        'factoresRiesgo': 'riesgo'
-    }[grupo] || grupo;
-
     try {
-        if (typeof criterio === 'object' && criterio.operador && criterio.valor !== undefined) {
-            const valorPaciente = datos[grupoMapeado];
-            if (typeof valorPaciente === 'undefined') return false;
-            switch (criterio.operador) {
-                case '>': return valorPaciente > criterio.valor;
-                case '>=': return valorPaciente >= criterio.valor;
-                case '<': return valorPaciente < criterio.valor;
-                case '<=': return valorPaciente <= criterio.valor;
-                case '==': return valorPaciente == criterio.valor;
-                default: return false;
-            }
+        const grupoMapeado = {
+            'factores': 'riesgo',
+            'factoresRiesgo': 'riesgo'
+        }[grupo] || grupo;
+
+        if (!datos || typeof datos !== 'object') return false;
+
+        switch(grupoMapeado) {
+            case 'edad':
+                if (typeof datos.edad !== 'number') return false;
+                return evaluarRango(datos.edad, criterio);
+            case 'laboratorio':
+                if (!datos.laboratorio || typeof datos.laboratorio !== 'object') return false;
+                return evaluarLaboratorio(datos.laboratorio, criterio);
+            default:
+                if (!Array.isArray(datos[grupoMapeado])) return false;
+                const regex = new RegExp(criterio.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'i');
+                return datos[grupoMapeado].some(item => regex.test(item));
         }
-
-        if (grupoMapeado === 'edad') {
-            return evaluarRango(datos.edad, criterio);
-        }
-
-        if (grupoMapeado === 'laboratorio') {
-            return evaluarLaboratorio(datos.laboratorio, criterio);
-        }
-
-        if (!Array.isArray(datos[grupoMapeado])) return false;
-        return datos[grupoMapeado].some(val => new RegExp(criterio, 'i').test(val));
-
     } catch (error) {
-        console.error(`Error en cumpleCriterio(${grupo}=${criterio}):`, error);
+        console.error(`Error evaluando criterio: ${grupo}=${criterio}`, error);
         return false;
     }
 }
