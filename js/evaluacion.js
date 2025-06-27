@@ -68,6 +68,35 @@ function evaluarLaboratorio(labData, criterio) {
     }
 }
 
+function cumpleBloqueCriterios(datos, bloque) {
+    if (!bloque) return true;
+
+    if (bloque.AND) {
+        return bloque.AND.every(sub => cumpleBloqueCriterios(datos, sub));
+    }
+
+    if (bloque.OR) {
+        return bloque.OR.some(sub => cumpleBloqueCriterios(datos, sub));
+    }
+
+    if (bloque.condicion && bloque.operador && bloque.valor !== undefined) {
+        const valorPaciente = datos[bloque.condicion];
+        switch (bloque.operador) {
+            case '>': return valorPaciente > bloque.valor;
+            case '>=': return valorPaciente >= bloque.valor;
+            case '<': return valorPaciente < bloque.valor;
+            case '<=': return valorPaciente <= bloque.valor;
+            case '==': return valorPaciente == bloque.valor;
+            default: return false;
+        }
+    }
+
+    // Caso: { grupo: valor } — criterio simple
+    const grupo = Object.keys(bloque)[0];
+    const valor = bloque[grupo];
+    return cumpleCriterio(datos, grupo, valor);
+}
+
 function cumpleCriterio(datos, grupo, criterio) {
     try {
         // Mapeo de alias para compatibilidad
@@ -121,51 +150,21 @@ function evaluarEstudioPriorizado(datos, criterios) {
         exclusiones: []
     };
 
-    for (const [grupo, items] of Object.entries(criterios.exclusion || {})) {
-        for (const item of items) {
-            if (cumpleCriterio(datos, grupo, item)) {
-                resultado.exclusiones.push(`${grupo}: ${item}`);
-            }
-        }
-    }
-
-    if (resultado.exclusiones.length > 0) {
-        resultado.estado = "excluido";
-        return resultado;
-    }
-
-    if (criterios.inclusion.edad) {
-        const cumpleEdad = criterios.inclusion.edad.some(item => 
-            cumpleCriterio(datos, "edad", item)
-        );
-        if (!cumpleEdad) {
-            resultado.faltantes.push(`Edad no cumple: ${criterios.inclusion.edad.join(' o ')}`);
-            resultado.estado = "no_cumple";
+    // 1. Exclusion
+    if (criterios.exclusion) {
+        const excluye = cumpleBloqueCriterios(datos, criterios.exclusion);
+        if (excluye) {
+            resultado.estado = "excluido";
+            resultado.exclusiones.push("Cumple criterio de exclusión");
             return resultado;
         }
     }
 
-    const gruposEvaluar = ['antecedentes', 'factores', 'laboratorio'];
-    let totalCumplidos = 0;
-    let totalRequerido = 0;
-
-    gruposEvaluar.forEach(grupo => {
-        if (criterios.inclusion[grupo]) {
-            criterios.inclusion[grupo].forEach(item => {
-                totalRequerido++;
-                if (cumpleCriterio(datos, grupo, item)) {
-                    totalCumplidos++;
-                } else {
-                    resultado.faltantes.push(`${grupo}: ${item}`);
-                }
-            });
-        }
-    });
-
-    if (totalCumplidos === totalRequerido) {
-        resultado.estado = "cumple";
-    } else if (totalCumplidos >= 2 && totalCumplidos >= totalRequerido * 0.5) {
-        resultado.estado = "parcial";
+    // 2. Inclusion
+    if (criterios.inclusion) {
+        const cumple = cumpleBloqueCriterios(datos, criterios.inclusion);
+        resultado.estado = cumple ? "cumple" : "no_cumple";
+        if (!cumple) resultado.faltantes.push("No cumple criterios de inclusión");
     }
 
     return resultado;
