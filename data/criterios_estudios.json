@@ -2,8 +2,7 @@
   "estudios": {
     "LIBREXIA SCA - Milvexian": {
       "descripcion": ["Anticoagulacion directa post IAM"],
-      "exclusion": {
-      },
+      "exclusion": {},
       "inclusion": {
         "edad": [">65"],
         "antecedentes": ["infarto agudo de miocardio"],
@@ -14,23 +13,27 @@
     "GZQO - Retatrutida (GLP-1R y GCGR)": {
       "inclusion": {
         "factores": ["obesidad", "enfermedad renal cronica"],
-        "laboratorio": ["filtrado glomerular <45","RAC >30",
-          "filtrado glomerular <60", "RAC >100",
-          "filtrado glomerular <75", "RAC >300"]
+        "laboratorio": [
+          "filtrado glomerular <45",
+          "RAC >30",
+          "filtrado glomerular <60",
+          "RAC >100",
+          "filtrado glomerular <75",
+          "RAC >300"
+        ]
       },
       "exclusion": {
-        "edad":["<45"],
+        "edad": ["<45"],
         "laboratorio": ["hemoglobina glicosilada >10"]
-    }
-  },
-  "HERMES - Ziltivekimab": {
-    "inclusion": {
-      "antecedentes": ["insuficiencia cardiaca"],
-      "laboratorio": ["proteina c reactiva >2", "pro bnp>300"]
+      }
     },
-    "exclusion": {
- }
-},
+    "HERMES - Ziltivekimab": {
+      "inclusion": {
+        "antecedentes": ["insuficiencia cardiaca"],
+        "laboratorio": ["proteina c reactiva >2", "pro bnp>300"]
+      },
+      "exclusion": {}
+    },
     "BAX-DUO (ARTIC): Baxdrostat/Dapa vs Dapaglifozina": {
       "inclusion": {
         "factores": ["hipertension arterial"],
@@ -51,75 +54,69 @@
         "medicacion": ["hidroclorotiazida"]
       }
     },
-    
-  "BAX-DUO (PREVENT HF): Baxdrostat/Dapa vs Dapaglifozina": {
-    "inclusion": {
-      "AND": [
-        { "condicion": "edad", "operador": ">=", "valor": 40 },
-        { "factores": "diabetes mellitus tipo 2" },
-        { "factores": "hipertension arterial" },
-        {
-          "OR": [
-            { "antecedentes": "infarto agudo del miocardio" },
-            { "antecedentes": "accidente cerebrovascular" },
-            { "antecedentes": "enfermedad arterial periferica" }
-          ]
-        },
-        {
-          "condicion": "presion_sistolica",
-          "operador": ">=",
-          "valor": 130
-        }
-      ]
+    "BAX-DUO (PREVENT HF): Baxdrostat/Dapa vs Dapaglifozina": {
+      "inclusion": {
+        "AND": [
+          { "condicion": "edad", "operador": ">=", "valor": 40 },
+          { "factores": "diabetes mellitus tipo 2" },
+          { "factores": "hipertension arterial" },
+          {
+            "OR": [
+              { "antecedentes": "infarto agudo del miocardio" },
+              { "antecedentes": "accidente cerebrovascular" },
+              { "antecedentes": "enfermedad arterial periferica" }
+            ]
+          },
+          {
+            "condicion": "presion_sistolica",
+            "operador": ">=",
+            "valor": 130
+          }
+        ]
+      },
+      "exclusion": {
+        "OR": [
+          {
+            "condicion": "hemoglobina glicosilada",
+            "operador": ">",
+            "valor": 10.5
+          },
+          { "medicacion": "espironolactona" },
+          { "medicacion": "eplerenona" },
+          { "medicacion": "finererona" },
+          { "medicacion": "amiloride" },
+          { "antecedentes": "insuficiencia cardiaca" }
+        ]
+      }
     },
-    "exclusion": {
-      "OR": [
-        {
-          "condicion": "hemoglobina glicosilada",
-          "operador": ">",
-          "valor": 10.5
-        },
-        { "medicacion": "espironolactona" },
-        { "medicacion": "eplerenona" },
-        { "medicacion": "finererona" },
-        { "medicacion": "amiloride" },
-        { "antecedentes": "insuficiencia cardiaca" }
-      ]
-    }
-  }
-},
-
-     "AROAPOC3-3004 - SHASTA: Plozasirán": {
-    "inclusion": {
-      "factores": ["hipertrigliceridemia"],
-      "laboratorio": [
-        "trigliceridos >500",
-        "colesterol LDL < 130"
-      ]
-     },
-    "exclusion": {
-      "edad": ["<18"]
-     }
-   },
-     "J3L-MC-EZEF: Lepodisiran": {
-  "inclusion": {
-  "laboratorio": [
-   "trigliceridos >175"
-  ]
+    "AROAPOC3-3004 - SHASTA: Plozasirán": {
+      "inclusion": {
+        "factores": ["hipertrigliceridemia"],
+        "laboratorio": [
+          "trigliceridos >500",
+          "colesterol LDL < 130"
+        ]
+      },
+      "exclusion": {
+        "edad": ["<18"]
+      }
     },
-    "exclusion": {
-    "edad": ["<55"]
+    "J3L-MC-EZEF: Lepodisiran": {
+      "inclusion": {
+        "laboratorio": ["trigliceridos >175"]
+      },
+      "exclusion": {
+        "edad": ["<55"]
+      }
+    },
+    "BalanceD-HF: Balcinrenona/Dapa vs Dapa": {
+      "inclusion": {
+        "antecedentes": ["insuficiencia cardiaca"],
+        "laboratorio": ["trigliceridos >175"]
+      },
+      "exclusion": {
+        "edad": ["<55"]
+      }
     }
-  },
-  "BalanceD-HF: Balcinrenona/Dapa vs Dapa": {
-"inclusion": {
-  "antecedentes": ["insuficiencia cardiaca"],
-"laboratorio": [
-"trigliceridos >175"]
- },
- "exclusion": {
- "edad": ["<55"]
- }
- }
   }
 }
