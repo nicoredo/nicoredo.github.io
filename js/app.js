@@ -3,6 +3,13 @@ import { evaluarPaciente, mostrarResultadosDetallados } from './evaluacion.js';
 import { cargarDatosIniciales, terminologiaMedica } from './data-loader.js';
 import { parseLaboratorio } from './evaluacion.js';
 
+const terminosMedicos = {
+    antecedentes: new Set(),
+    riesgo: new Set(),
+    medicacion: new Set(),
+    laboratorio: new Set()
+};
+
 document.addEventListener('DOMContentLoaded', function() {
     // Elementos UI
     const btnEvaluarPaciente = document.getElementById('evaluar-paciente');
@@ -63,27 +70,22 @@ document.addEventListener('DOMContentLoaded', function() {
         console.log("Terminología cargada:", terminologiaMedica);
         configurarBotonesEdicion();
         setupEventListeners();
+        await cargarTerminologia();
+    }
 
-        document.getElementById('btn-limpiar-extraccion').addEventListener('click', () => {
-            edadValor.textContent = '-';
-            antecedentesValor.textContent = '-';
-            riesgoValor.textContent = '-';
-            medValor.textContent = '-';
-            labValor.textContent = '-';
-            document.getElementById('lista-estudios').innerHTML = '';
-            estadoApp.datosPaciente = null;
-        });
+    async function cargarTerminologia() {
+        try {
+            const response = await fetch('data/terminologia_medica.json');
+            const data = await response.json();
 
-        document.getElementById('btn-limpiar-todo').addEventListener('click', () => {
-            document.getElementById('texto-hc').value = '';
-            edadValor.textContent = '-';
-            antecedentesValor.textContent = '-';
-            riesgoValor.textContent = '-';
-            medValor.textContent = '-';
-            labValor.textContent = '-';
-            document.getElementById('lista-estudios').innerHTML = '';
-            estadoApp.datosPaciente = null;
-        });
+            Object.entries(data).forEach(([categoria, terminos]) => {
+                Object.keys(terminos).forEach(termino => {
+                    terminosMedicos[categoria].add(termino.toLowerCase());
+                });
+            });
+        } catch (error) {
+            console.error("Error cargando terminología:", error);
+        }
     }
 
     function setupEventListeners() {
