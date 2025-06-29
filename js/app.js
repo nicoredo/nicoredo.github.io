@@ -202,7 +202,7 @@ document.addEventListener('DOMContentLoaded', function() {
         
           generarPDFDerivacion(filiatorios, estadoApp.datosPaciente, document.getElementById('texto-hc').value);
         });
-    }
+    
         
    
     
@@ -507,7 +507,7 @@ document.addEventListener('DOMContentLoaded', function() {
         medicacion: new Set(),
         laboratorio: new Set()
     };
-});
+
 
 window.addEventListener('DOMContentLoaded', () => {
   const entrada = document.getElementById('entrada-paciente');
