@@ -74,52 +74,7 @@ const labValor = document.getElementById('lab-valor');
         }
     });
 
-        // Botón para limpiar resultados de estudios
-    document.getElementById('btn-limpiar-estudios')?.addEventListener('click', () => {
-        document.getElementById('lista-estudios').innerHTML = '';
-        document.getElementById('btn-generar-derivacion').disabled = true;
-        document.getElementById('btn-generar-derivacion').style.opacity = '0.5';
-        document.getElementById('btn-generar-derivacion').style.cursor = 'not-allowed';
-        document.getElementById('chat-ia').style.display = 'none';
-    });
-
-    // Botón para abrir info de estudios en nueva pestaña
-    document.getElementById('btn-info-estudios')?.addEventListener('click', () => {
-        window.open('https://medex.ar/estudios', '_blank');
-    });
-
-    // Mostrar/ocultar el minichat IA
-    document.getElementById('btn-chat-ia')?.addEventListener('click', () => {
-        const chatBox = document.getElementById('chat-ia');
-        chatBox.style.display = chatBox.style.display === 'none' ? 'block' : 'none';
-    });
-
-    // Enviar pregunta al endpoint /chat_ia
-    document.getElementById('btn-enviar-pregunta')?.addEventListener('click', async () => {
-        const pregunta = document.getElementById('pregunta-ia').value.trim();
-        const respuestaDiv = document.getElementById('respuesta-ia');
-        if (!pregunta) return;
-
-        respuestaDiv.innerHTML = '<em>Consultando IA...</em>';
-
-        try {
-            const response = await fetch('https://medex-backend.onrender.com/chat_ia', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    pregunta,
-                    datos: estadoApp.datosPaciente
-                })
-            });
-
-            const data = await response.json();
-            respuestaDiv.innerHTML = data.respuesta || 'Respuesta vacía de la IA.';
-        } catch (err) {
-            console.error('Error al enviar pregunta IA:', err);
-            respuestaDiv.innerHTML = '<span style="color:red;">Error al contactar la IA</span>';
-        }
-    });
-
+    
 
     
 
@@ -143,7 +98,7 @@ const labValor = document.getElementById('lab-valor');
 
         console.log("Enviando a IA:", datosParaEvaluar);
 
-        fetch('https://medex-backend.onrender.com/evaluar_ia', {
+        fetch('http://127.0.0.1:8000/evaluar_ia', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ datos: datosParaEvaluar })
