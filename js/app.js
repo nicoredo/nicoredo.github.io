@@ -10,6 +10,11 @@ const terminosMedicos = {
     laboratorio: new Set()
 };
 
+const estadoApp = {
+    datosPaciente: null,
+    terminologiaCargada: false
+};
+
 document.addEventListener('DOMContentLoaded', function() {
     // Elementos UI
     const btnEvaluarPaciente = document.getElementById('evaluar-paciente');
@@ -53,11 +58,6 @@ document.addEventListener('DOMContentLoaded', function() {
         activarSeccion(estudios);
     });
 
-    const estadoApp = {
-        datosPaciente: null,
-        terminologiaCargada: false
-    };
-
     init();
 
     async function init() {
@@ -68,25 +68,30 @@ document.addEventListener('DOMContentLoaded', function() {
         }
 
         console.log("Terminología cargada:", terminologiaMedica);
-        setupEventListeners();
         await cargarTerminologia();
         inicializarAutocompletado();
+        configurarBotonesEdicion();
+        setupEventListeners();
     }
 
-    async function cargarTerminologia() {
-        try {
-            const response = await fetch('data/terminologia_medica.json');
-            const data = await response.json();
+    function setupEventListeners() {
+        const btnEvaluarPaciente = document.getElementById('evaluar-paciente');
+        btnEvaluarPaciente.addEventListener('click', async () => {
+            if (!textoHC.value.trim()) {
+                alert('Por favor ingrese el texto de la historia clínica');
+                return;
+            }
 
-            Object.entries(data).forEach(([categoria, terminos]) => {
-                Object.keys(terminos).forEach(termino => {
-                    terminosMedicos[categoria].add(termino.toLowerCase());
-                });
-            });
-        } catch (error) {
-            console.error("Error cargando terminología:", error);
-        }
+            try {
+                estadoApp.datosPaciente = await extraerDatosHC(textoHC.value);
+                mostrarDatos(estadoApp.datosPaciente);
+            } catch (error) {
+                console.error("Error al extraer datos:", error);
+                alert("Error al procesar la historia clínica");
+            }
+        });
     }
+
 
     // REUTILIZA LA FUNCIÓN ORIGINAL DE CONFIGURAR BOTONES QUE ESTABA PRESENTE
     function configurarBotonesEdicion() {
