@@ -99,7 +99,10 @@ document.addEventListener('DOMContentLoaded', function() {
             try {
                 const response = await fetch('http://medex.ar/chat_ia', {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-Medex-Origin': 'web-app'
+                    },
                     body: JSON.stringify({
                         pregunta,
                         datos: estadoApp.datosPaciente
@@ -137,7 +140,10 @@ document.addEventListener('DOMContentLoaded', function() {
             try {
                 const response = await fetch('http://medex.ar/evaluar_ia', {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-Medex-Origin': 'web-app'
+                    },
                     body: JSON.stringify({ datos: datosParaEvaluar })
                 });
 
