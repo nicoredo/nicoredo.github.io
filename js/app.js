@@ -16,7 +16,6 @@ const estadoApp = {
 };
 
 document.addEventListener('DOMContentLoaded', function() {
-    // Elementos UI
     const btnEvaluarPaciente = document.getElementById('evaluar-paciente');
     const btnEvaluarEstudios = document.getElementById('evaluar-estudios');
     const textoHC = document.getElementById('texto-hc');
@@ -75,7 +74,6 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function setupEventListeners() {
-        const btnEvaluarPaciente = document.getElementById('evaluar-paciente');
         btnEvaluarPaciente.addEventListener('click', async () => {
             if (!textoHC.value.trim()) {
                 alert('Por favor ingrese el texto de la historia clínica');
@@ -90,104 +88,51 @@ document.addEventListener('DOMContentLoaded', function() {
                 alert("Error al procesar la historia clínica");
             }
         });
-    }
 
+        btnEvaluarEstudios.addEventListener('click', async () => {
+            if (!estadoApp.datosPaciente) {
+                alert('Primero debe evaluar al paciente');
+                return;
+            }
 
-    // REUTILIZA LA FUNCIÓN ORIGINAL DE CONFIGURAR BOTONES QUE ESTABA PRESENTE
-    function configurarBotonesEdicion() {
-        const campos = [
-            { id: 'edad', esTexto: false, autocomplete: false },
-            { id: 'antecedentes', esTexto: true, autocomplete: true },
-            { id: 'riesgo', esTexto: true, autocomplete: true },
-            { id: 'med', esTexto: true, autocomplete: true },
-            { id: 'lab', esTexto: true, autocomplete: true }
-        ];
+            const datosParaEvaluar = {
+                edad: parseInt(edadValor.textContent) || 0,
+                antecedentes: antecedentesValor.textContent !== '-' ? antecedentesValor.textContent.split(', ') : [],
+                riesgo: riesgoValor.textContent !== '-' ? riesgoValor.textContent.split(', ') : [],
+                medicacion: medValor.textContent !== '-' ? medValor.textContent.split(', ') : [],
+                laboratorio: parseLaboratorio(labValor.textContent !== '-' ? labValor.textContent : "")
+            };
 
-        campos.forEach(({ id, esTexto, autocomplete }) => {
-            const btnEditar = document.getElementById(`btn-editar-${id}`);
-            const btnConfirmar = document.getElementById(`btn-confirmar-${id}`);
-            const valorSpan = document.getElementById(`${id}-valor`);
-            const input = document.getElementById(`${id}-input`);
-            const wrapper = autocomplete ? document.getElementById(`${id}-autocomplete`) : null;
+            try {
+                const response = await fetch('http://medex.ar/evaluar_ia', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-Medex-Origin': 'web-app'
+                    },
+                    body: JSON.stringify({ datos: datosParaEvaluar })
+                });
 
-            if (!btnEditar || !btnConfirmar || !valorSpan || !input) return;
+                const data = await response.json();
 
-            btnEditar.addEventListener('click', () => {
-                valorSpan.style.display = 'none';
-                if (autocomplete && wrapper) wrapper.style.display = 'block';
-                input.style.display = 'inline-block';
-                input.value = valorSpan.textContent !== '-' ? valorSpan.textContent : '';
-                btnEditar.style.display = 'none';
-                btnConfirmar.style.display = 'inline-block';
-                input.focus();
-            });
+                const contenedor = document.getElementById('lista-estudios');
+                contenedor.innerHTML = `
+                    <h2 style="font-size:16px; color:#005c99;">🤖 Evaluación con IA</h2>
+                    <div style="background:#eef6fa; padding:10px; border-radius:8px; font-size:14px;">
+                        ${data.resumen_html || 'Sin respuesta interpretada'}
+                    </div>
+                `;
 
-            btnConfirmar.addEventListener('click', () => {
-                const nuevoValor = input.value.trim();
-                valorSpan.textContent = nuevoValor || '-';
-                valorSpan.style.display = 'inline';
-                if (autocomplete && wrapper) wrapper.style.display = 'none';
-                input.style.display = 'none';
-                btnConfirmar.style.display = 'none';
-                btnEditar.style.display = 'inline-block';
-                const datosPaciente = estadoApp.datosPaciente;
-                const valores = nuevoValor ? nuevoValor.split(',').map(s => s.trim()).filter(s => s) : [];
-                if (id === 'edad') datosPaciente.edad = parseFloat(nuevoValor) || 0;
-                else datosPaciente[id === 'med' ? 'medicacion' : id === 'lab' ? 'laboratorio' : id === 'riesgo' ? 'factoresRiesgo' : id] = valores;
-            });
-        });
-    }
-
-    function inicializarAutocompletado() {
-        const campos = [
-            { id: 'antecedentes', tipo: 'antecedentes' },
-            { id: 'riesgo', tipo: 'riesgo' },
-            { id: 'med', tipo: 'medicacion' },
-            { id: 'lab', tipo: 'laboratorio' }
-        ];
-
-        campos.forEach(({ id, tipo }) => {
-            const input = document.getElementById(`${id}-input`);
-            const suggestionsContainer = document.getElementById(`${id}-suggestions`);
-
-            if (!input || !suggestionsContainer) return;
-
-            input.addEventListener('input', (e) => {
-                const currentText = e.target.value;
-                const lastTerm = currentText.split(',').pop().trim().toLowerCase();
-                mostrarSugerencias(lastTerm, tipo, suggestionsContainer, input);
-            });
-
-            document.addEventListener('click', (e) => {
-                if (!input.contains(e.target) && !suggestionsContainer.contains(e.target)) {
-                    suggestionsContainer.innerHTML = '';
+                if (data.resumen_html.includes("✅") || data.resumen_html.includes("⚠️")) {
+                    const botonDerivacion = document.getElementById('btn-generar-derivacion');
+                    botonDerivacion.disabled = false;
+                    botonDerivacion.style.opacity = '1';
+                    botonDerivacion.style.cursor = 'pointer';
                 }
-            });
-        });
-    }
-
-    function mostrarSugerencias(searchTerm, tipo, container, input) {
-        container.innerHTML = '';
-        if (!searchTerm || searchTerm.length < 1) return;
-
-        const sugerencias = Array.from(terminosMedicos[tipo]);
-        const resultados = sugerencias.filter(term => term.includes(searchTerm)).slice(0, 8);
-
-        resultados.forEach((term) => {
-            const item = document.createElement('div');
-            item.className = 'suggestion-item';
-            item.textContent = tipo === 'laboratorio' ? `${term}: ` : term;
-
-            item.addEventListener('click', () => {
-                const currentText = input.value;
-                const terms = currentText.split(',').map(t => t.trim());
-                terms[terms.length - 1] = tipo === 'laboratorio' ? `${term}: ` : term;
-                input.value = terms.join(', ') + (tipo !== 'laboratorio' ? ', ' : '');
-                container.innerHTML = '';
-                input.focus();
-            });
-
-            container.appendChild(item);
+            } catch (err) {
+                console.error("Error al consultar la IA:", err);
+                alert("Hubo un problema al contactar la IA");
+            }
         });
     }
 
@@ -213,7 +158,66 @@ document.addEventListener('DOMContentLoaded', function() {
             medicacion: datosCompletos.medicacion,
             laboratorio: datosCompletos.laboratorio
         };
+    }
 
-        configurarBotonesEdicion();
+    async function cargarTerminologia() {
+        try {
+            const response = await fetch('data/terminologia_medica.json');
+            const data = await response.json();
+            Object.entries(data).forEach(([categoria, terminos]) => {
+                Object.keys(terminos).forEach(termino => {
+                    terminosMedicos[categoria].add(termino.toLowerCase());
+                });
+            });
+        } catch (error) {
+            console.error("Error cargando terminología:", error);
+        }
+    }
+
+    function inicializarAutocompletado() {
+        const campos = [
+            { id: 'antecedentes', tipo: 'antecedentes' },
+            { id: 'riesgo', tipo: 'riesgo' },
+            { id: 'med', tipo: 'medicacion' },
+            { id: 'lab', tipo: 'laboratorio' }
+        ];
+
+        campos.forEach(({ id, tipo }) => {
+            const input = document.getElementById(`${id}-input`);
+            const suggestionsContainer = document.getElementById(`${id}-suggestions`);
+            if (!input || !suggestionsContainer) return;
+            input.addEventListener('input', (e) => {
+                const currentText = e.target.value;
+                const lastTerm = currentText.split(',').pop().trim().toLowerCase();
+                mostrarSugerencias(lastTerm, tipo, suggestionsContainer, input);
+            });
+            document.addEventListener('click', (e) => {
+                if (!input.contains(e.target) && !suggestionsContainer.contains(e.target)) {
+                    suggestionsContainer.innerHTML = '';
+                }
+            });
+        });
+    }
+
+    function mostrarSugerencias(searchTerm, tipo, container, input) {
+        container.innerHTML = '';
+        if (!searchTerm || searchTerm.length < 1) return;
+        const sugerencias = Array.from(terminosMedicos[tipo]);
+        const resultados = sugerencias.filter(term => term.includes(searchTerm)).slice(0, 8);
+        resultados.forEach((term) => {
+            const item = document.createElement('div');
+            item.className = 'suggestion-item';
+            item.textContent = tipo === 'laboratorio' ? `${term}: ` : term;
+            item.addEventListener('click', () => {
+                const currentText = input.value;
+                const terms = currentText.split(',').map(t => t.trim());
+                terms[terms.length - 1] = tipo === 'laboratorio' ? `${term}: ` : term;
+                input.value = terms.join(', ') + (tipo !== 'laboratorio' ? ', ' : '');
+                container.innerHTML = '';
+                input.focus();
+            });
+            container.appendChild(item);
+        });
     }
 });
+
