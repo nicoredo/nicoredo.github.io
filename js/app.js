@@ -10,10 +10,9 @@ document.addEventListener('DOMContentLoaded', function() {
     const textoHC = document.getElementById('texto-hc');
     const edadValor = document.getElementById('edad-valor');
     const antecedentesValor = document.getElementById('antecedentes-valor');
-const riesgoValor = document.getElementById('riesgo-valor');
-const medValor = document.getElementById('med-valor');
-const labValor = document.getElementById('lab-valor');
-
+    const riesgoValor = document.getElementById('riesgo-valor');
+    const medValor = document.getElementById('med-valor');
+    const labValor = document.getElementById('lab-valor');
 
     // Estado global
     const estadoApp = {
@@ -30,7 +29,7 @@ const labValor = document.getElementById('lab-valor');
             alert("Error al cargar datos iniciales");
             return;
         }
-    
+
         console.log("Terminología cargada:", terminologiaMedica);  // para verificar
         configurarBotonesEdicion();
         setupEventListeners();
@@ -44,7 +43,7 @@ const labValor = document.getElementById('lab-valor');
             document.getElementById('lista-estudios').innerHTML = '';
             estadoApp.datosPaciente = null;
         });
-        
+
         document.getElementById('btn-limpiar-todo').addEventListener('click', () => {
             document.getElementById('texto-hc').value = '';
             edadValor.textContent = '-';
@@ -55,121 +54,117 @@ const labValor = document.getElementById('lab-valor');
             document.getElementById('lista-estudios').innerHTML = '';
             estadoApp.datosPaciente = null;
         });
-        
     }
 
     function setupEventListeners() {
-    btnEvaluarPaciente.addEventListener('click', async () => {
-        if (!textoHC.value.trim()) {
-            alert('Por favor ingrese el texto de la historia clínica');
-            return;
-        }
-
-        try {
-            estadoApp.datosPaciente = await extraerDatosHC(textoHC.value);
-            mostrarDatos(estadoApp.datosPaciente);
-        } catch (error) {
-            console.error("Error al extraer datos:", error);
-            alert("Error al procesar la historia clínica");
-        }
-    });
-
-        // Botón para limpiar resultados de estudios
-    document.getElementById('btn-limpiar-estudios')?.addEventListener('click', () => {
-        document.getElementById('lista-estudios').innerHTML = '';
-        document.getElementById('btn-generar-derivacion').disabled = true;
-        document.getElementById('btn-generar-derivacion').style.opacity = '0.5';
-        document.getElementById('btn-generar-derivacion').style.cursor = 'not-allowed';
-        document.getElementById('chat-ia').style.display = 'none';
-    });
-
-    // Botón para abrir info de estudios en nueva pestaña
-    document.getElementById('btn-info-estudios')?.addEventListener('click', () => {
-        window.open('https://medex.ar/estudios', '_blank');
-    });
-
-    // Mostrar/ocultar el minichat IA
-    document.getElementById('btn-chat-ia')?.addEventListener('click', () => {
-        const chatBox = document.getElementById('chat-ia');
-        chatBox.style.display = chatBox.style.display === 'none' ? 'block' : 'none';
-    });
-
-    // Enviar pregunta al endpoint /chat_ia
-    document.getElementById('btn-enviar-pregunta')?.addEventListener('click', async () => {
-        const pregunta = document.getElementById('pregunta-ia').value.trim();
-        const respuestaDiv = document.getElementById('respuesta-ia');
-        if (!pregunta) return;
-
-        respuestaDiv.innerHTML = '<em>Consultando IA...</em>';
-
-        try {
-            const response = await fetch('https://medex-backend.onrender.com/chat_ia', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    pregunta,
-                    datos: estadoApp.datosPaciente
-                })
-            });
-
-            const data = await response.json();
-            respuestaDiv.innerHTML = data.respuesta || 'Respuesta vacía de la IA.';
-        } catch (err) {
-            console.error('Error al enviar pregunta IA:', err);
-            respuestaDiv.innerHTML = '<span style="color:red;">Error al contactar la IA</span>';
-        }
-    });
-
-
-    
-
-    btnEvaluarEstudios.addEventListener('click', () => {
-        if (!estadoApp.datosPaciente) {
-            alert('Primero debe evaluar al paciente');
-            return;
-        }
-
-        const datosParaEvaluar = {
-            edad: parseInt(edadValor.textContent) || 0,
-            antecedentes: antecedentesValor.textContent !== '-' ? 
-                antecedentesValor.textContent.split(', ') : [],
-            riesgo: riesgoValor.textContent !== '-' ? 
-                riesgoValor.textContent.split(', ') : [],
-            medicacion: medValor.textContent !== '-' ? 
-                medValor.textContent.split(', ') : [],
-            laboratorio: parseLaboratorio(labValor.textContent !== '-' ? 
-                labValor.textContent : "")
-        };
-
-        console.log("Enviando a IA:", datosParaEvaluar);
-
-        fetch('https://medex-backend.onrender.com/evaluar_ia', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ datos: datosParaEvaluar })
-        })
-        .then(res => res.json())
-        .then(data => {
-            const contenedor = document.getElementById('lista-estudios');
-            contenedor.innerHTML = `
-                <h2 style="font-size:16px; color:#005c99;">🤖 Evaluación con IA</h2>
-                <div style="background:#eef6fa; padding:10px; border-radius:8px; font-size:14px;">
-                    ${data.resumen_html || 'Sin respuesta interpretada'}
-                </div>
-            `;
-
-            if (data.resumen_html.includes("✅") || data.resumen_html.includes("⚠️")) {
-                const botonDerivacion = document.getElementById('btn-generar-derivacion');
-                botonDerivacion.disabled = false;
-                botonDerivacion.style.opacity = '1';
-                botonDerivacion.style.cursor = 'pointer';
+        btnEvaluarPaciente.addEventListener('click', async () => {
+            if (!textoHC.value.trim()) {
+                alert('Por favor ingrese el texto de la historia clínica');
+                return;
             }
-        })
-        .catch(err => {
-            console.error("Error al consultar la IA:", err);
-            alert("Hubo un problema al contactar la IA");
+
+            try {
+                estadoApp.datosPaciente = await extraerDatosHC(textoHC.value);
+                mostrarDatos(estadoApp.datosPaciente);
+            } catch (error) {
+                console.error("Error al extraer datos:", error);
+                alert("Error al procesar la historia clínica");
+            }
         });
-    });
+
+        document.getElementById('btn-limpiar-estudios')?.addEventListener('click', () => {
+            document.getElementById('lista-estudios').innerHTML = '';
+            document.getElementById('btn-generar-derivacion').disabled = true;
+            document.getElementById('btn-generar-derivacion').style.opacity = '0.5';
+            document.getElementById('btn-generar-derivacion').style.cursor = 'not-allowed';
+            document.getElementById('chat-ia').style.display = 'none';
+        });
+
+        document.getElementById('btn-info-estudios')?.addEventListener('click', () => {
+            window.open('https://medex.ar/estudios', '_blank');
+        });
+
+        document.getElementById('btn-chat-ia')?.addEventListener('click', () => {
+            const chatBox = document.getElementById('chat-ia');
+            chatBox.style.display = chatBox.style.display === 'none' ? 'block' : 'none';
+        });
+
+        document.getElementById('btn-enviar-pregunta')?.addEventListener('click', async () => {
+            const pregunta = document.getElementById('pregunta-ia').value.trim();
+            const respuestaDiv = document.getElementById('respuesta-ia');
+            if (!pregunta) return;
+
+            respuestaDiv.innerHTML = '<em>Consultando IA...</em>';
+
+            try {
+                const response = await fetch('http://medex.ar/chat_ia', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        pregunta,
+                        datos: estadoApp.datosPaciente
+                    })
+                });
+
+                const data = await response.json();
+                respuestaDiv.innerHTML = data.respuesta || 'Respuesta vacía de la IA.';
+            } catch (err) {
+                console.error('Error al enviar pregunta IA:', err);
+                respuestaDiv.innerHTML = '<span style="color:red;">Error al contactar la IA</span>';
+            }
+        });
+
+        btnEvaluarEstudios.addEventListener('click', async () => {
+            if (!estadoApp.datosPaciente) {
+                alert('Primero debe evaluar al paciente');
+                return;
+            }
+
+            const datosParaEvaluar = {
+                edad: parseInt(edadValor.textContent) || 0,
+                antecedentes: antecedentesValor.textContent !== '-' ? 
+                    antecedentesValor.textContent.split(', ') : [],
+                riesgo: riesgoValor.textContent !== '-' ? 
+                    riesgoValor.textContent.split(', ') : [],
+                medicacion: medValor.textContent !== '-' ? 
+                    medValor.textContent.split(', ') : [],
+                laboratorio: parseLaboratorio(labValor.textContent !== '-' ? 
+                    labValor.textContent : "")
+            };
+
+            console.log("Enviando a IA:", datosParaEvaluar);
+
+            try {
+                const response = await fetch('http://medex.ar/evaluar_ia', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ datos: datosParaEvaluar })
+                });
+
+                const data = await response.json();
+
+                const contenedor = document.getElementById('lista-estudios');
+                contenedor.innerHTML = `
+                    <h2 style="font-size:16px; color:#005c99;">🤖 Evaluación con IA</h2>
+                    <div style="background:#eef6fa; padding:10px; border-radius:8px; font-size:14px;">
+                        ${data.resumen_html || 'Sin respuesta interpretada'}
+                    </div>
+                `;
+
+                if (data.resumen_html.includes("✅") || data.resumen_html.includes("⚠️")) {
+                    const botonDerivacion = document.getElementById('btn-generar-derivacion');
+                    botonDerivacion.disabled = false;
+                    botonDerivacion.style.opacity = '1';
+                    botonDerivacion.style.cursor = 'pointer';
+                }
+            } catch (err) {
+                console.error("Error al consultar la IA:", err);
+                alert("Hubo un problema al contactar la IA");
+            }
+        });
+    }
+});
+
 
     
     
