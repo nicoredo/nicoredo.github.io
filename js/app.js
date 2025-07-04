@@ -98,7 +98,7 @@ const labValor = document.getElementById('lab-valor');
 
         console.log("Enviando a IA:", datosParaEvaluar);
 
-        fetch('http://127.0.0.1:8001/evaluar_ia', {
+        fetch('https://medex-backend.onrender.com/evaluar_ia', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ datos: datosParaEvaluar })
