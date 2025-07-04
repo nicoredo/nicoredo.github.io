@@ -89,7 +89,7 @@
       background-color: #0066aa;
     }
 
-    /* Estilos heredados de tu popup (adaptados) */
+    
     .bloque {
       background: #e0f0ff;
       padding: 10px;
@@ -258,7 +258,7 @@
       width: 48%;
       padding: 10px;
       margin-top: 10px;
-      background-color: #ec3d3d;
+      background-color: #e4604f;
       color: #ffffff;
       border: none;
       border-radius: 8px;
@@ -309,5 +309,18 @@
       border-radius: 6px;
       border: 1px solid #ccc;
     }
-    
-    
+
+    .seccion {
+  transition: all 0.4s ease;
+}
+
+.seccion-activa {
+  box-shadow: 0 0 20px rgba(0, 123, 255, 0.4);
+  transform: scale(1.02);
+  z-index: 10;
+}
+
+.seccion-inactiva {
+  opacity: 0.5;
+  filter: grayscale(20%);
+}
