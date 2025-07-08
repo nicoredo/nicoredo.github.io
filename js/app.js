@@ -73,7 +73,47 @@ const labValor = document.getElementById('lab-valor');
             alert("Error al procesar la historia clínica");
         }
     });
+//////
+        const btnEvaluarIADirecta = document.getElementById('evaluar-ia-directa');
 
+btnEvaluarIADirecta.addEventListener('click', async () => {
+  const textoLibre = textoHC.value.trim();
+  if (!textoLibre) {
+    alert('Pegue el texto de la historia clínica para evaluación IA');
+    return;
+  }
+
+  try {
+    const response = await fetch("http://localhost:8001/evaluar_ia", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ datos: { texto_hc: textoLibre } })
+    });
+
+    const data = await response.json();
+    const html = data.resumen_html || "<p>No se obtuvo respuesta</p>";
+
+    const contenedor = document.getElementById("lista-estudios");
+    contenedor.innerHTML = `<div class="bloque">${html}</div>`;
+
+    // Activar la sección 3 visualmente
+    document.getElementById("estudios").classList.add("seccion-activa");
+    document.getElementById("entrada-paciente").classList.add("seccion-inactiva");
+    document.getElementById("datos-paciente").classList.add("seccion-inactiva");
+
+    // Activar botón de derivación si hay al menos una línea con ✅ o ⚠️
+    const habilitar = /✅|⚠️/.test(html);
+    const botonDerivacion = document.getElementById('btn-generar-derivacion');
+    botonDerivacion.disabled = !habilitar;
+    botonDerivacion.style.opacity = habilitar ? '1' : '0.5';
+    botonDerivacion.style.cursor = habilitar ? 'pointer' : 'not-allowed';
+
+  } catch (error) {
+    console.error("❌ Error en evaluación IA directa:", error);
+    alert("Ocurrió un error al consultar la IA.");
+  }
+});
+//////
     
 
     
