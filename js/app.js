@@ -84,7 +84,7 @@ btnEvaluarIADirecta.addEventListener('click', async () => {
   }
 
   try {
-    const response = await fetch("http://localhost:8001/evaluar_ia", {
+    const response = await fetch("https://medex-backend.onrender.com/evaluar_ia", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ datos: { texto_hc: textoLibre } })
