@@ -225,4 +225,46 @@ h2 {
   .tarjeta {
     flex: 1 1 100%;
   }
+.overlay {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background-color: rgba(255, 255, 255, 0.85);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: fadeIn 0.3s ease-in-out both;
+}
+
+.contenedor-carga {
+  text-align: center;
+  font-size: 16px;
+  color: #007acc;
+}
+
+.barra-cargando {
+  width: 300px;
+  height: 10px;
+  background: #e0f0ff;
+  border-radius: 10px;
+  overflow: hidden;
+  margin-bottom: 15px;
+}
+
+.progreso {
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, #007acc 25%, #33b5e5 50%, #007acc 75%);
+  background-size: 200% 100%;
+  animation: desplazamiento 1.5s infinite;
+}
+
+@keyframes desplazamiento {
+  from { background-position: 200% 0; }
+  to { background-position: -200% 0; }
+}
+
+.oculto {
+  display: none !important;
 }
