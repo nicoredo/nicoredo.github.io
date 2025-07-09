@@ -78,5 +78,37 @@
       }
     });
   </script>
+
+  <script>
+  const frases = [
+    "Evaluando historia clínica...",
+    "Consultando IA médica...",
+    "Comparando con criterios de estudios...",
+    "Procesando resultados...",
+    "Generando evaluación final..."
+  ];
+
+  let fraseIndex = 0;
+  let fraseInterval;
+
+  function mostrarCargaIA() {
+    const overlay = document.getElementById("overlay-cargando");
+    const frase = document.getElementById("frase-carga");
+    overlay.classList.remove("oculto");
+    frase.textContent = frases[0];
+    fraseIndex = 1;
+
+    fraseInterval = setInterval(() => {
+      frase.textContent = frases[fraseIndex % frases.length];
+      fraseIndex++;
+    }, 2000);
+  }
+
+  function ocultarCargaIA() {
+    document.getElementById("overlay-cargando").classList.add("oculto");
+    clearInterval(fraseInterval);
+  }
+</script>
+
 </body>
 </html>
