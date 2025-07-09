@@ -44,40 +44,43 @@
   </div>
 
   <script>
-    document.getElementById('evaluar-ia-directa').addEventListener('click', async () => {
-      const textoLibre = document.getElementById('texto-hc').value.trim();
-      if (!textoLibre) {
-        alert('Pegue el texto de la historia clínica para evaluación IA');
-        return;
-      }
+  document.getElementById('evaluar-ia-directa').addEventListener('click', async () => {
+    const textoLibre = document.getElementById('texto-hc').value.trim();
+    if (!textoLibre) {
+      alert('Pegue el texto de la historia clínica para evaluación IA');
+      return;
+    }
+
+    mostrarCargaIA(); // <-- 🎯 INICIO animación de carga
+
+    try {
+      const response = await fetch("https://medex-backend.onrender.com/evaluar_ia", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ datos: { texto_hc: textoLibre } })
+      });
+
+      const data = await response.json();
+      ocultarCargaIA(); // <-- 🧘‍♂️ FIN animación
 
       const contenedor = document.getElementById("resultado-ia");
-      contenedor.innerHTML = '<p><em>Evaluando...</em></p>';
+      const html = data.resumen_html || "<p>No se obtuvo respuesta</p>";
 
-      try {
-        const response = await fetch("https://medex-backend.onrender.com/evaluar_ia", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ datos: { texto_hc: textoLibre } })
-        });
+      const enriquecido = html
+        .replaceAll("✅", "<span class='tag cumple'>✅</span>")
+        .replaceAll("⚠️", "<span class='tag parcial'>⚠️</span>")
+        .replaceAll("❌", "<span class='tag excluido'>❌</span>");
 
-        const data = await response.json();
-        const html = data.resumen_html || "<p>No se obtuvo respuesta</p>";
+      contenedor.innerHTML = `<div class=\"bloque\">${enriquecido}</div>`;
+    } catch (error) {
+      ocultarCargaIA(); // <-- 🛑 Siempre cerramos si hay error
+      const contenedor = document.getElementById("resultado-ia");
+      contenedor.innerHTML = '<p class=\"excluido\">Error al consultar la IA</p>';
+      console.error("Error evaluando IA:", error);
+    }
+  });
+</script>
 
-        // Enriquecimiento visual
-        const enriquecido = html
-          .replaceAll("✅", "<span class='tag cumple'>✅</span>")
-          .replaceAll("⚠️", "<span class='tag parcial'>⚠️</span>")
-          .replaceAll("❌", "<span class='tag excluido'>❌</span>");
-
-        contenedor.innerHTML = `<div class="bloque">${enriquecido}</div>`;
-
-      } catch (error) {
-        console.error("Error evaluando IA directa:", error);
-        contenedor.innerHTML = '<p class="excluido">Error al consultar la IA</p>';
-      }
-    });
-  </script>
 
   <script>
   const frases = [
