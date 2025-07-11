@@ -1,7 +1,7 @@
 const descripcionesEstudios = {};
 
 // Cargar descripciones de estudios desde JSON externo
-fetch("https://medex-backend.onrender.com/criterios_estudios_textual.json")
+fetch("https://medex-backend.onrender.com/criterios.json")
   .then(res => res.json())
   .then(data => {
     data.estudios.forEach(est => {
