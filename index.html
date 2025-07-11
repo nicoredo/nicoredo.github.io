@@ -1,116 +1,69 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>MedEx - Evaluador de Pacientes</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>MedEx | Evaluación Inteligente</title>
+  <link rel="stylesheet" href="styles.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;900&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 </head>
 <body>
-  <div class="wrapper">
-    <!-- Sección superior: Historia clínica -->
-    <section id="seccion-texto" class="fade-in slide-up">
-      <h1>🩺 Evaluación Inteligente de Pacientes</h1>
-      <textarea id="texto-hc" placeholder="Pegue aquí la historia clínica completa..."></textarea>
-      <button id="evaluar-ia-directa" class="btn-principal">🧠 Evaluar con IA</button>
+  <div class="container-principal">
+    
+    <!-- 🩺 Sección 1: Historia Clínica -->
+    <section class="hc-superior fade-in slide-up" id="seccion-1">
+      <h1> Evaluación de Pacientes</h1>
+      <textarea id="texto-hc" placeholder="Pegue aquí resumen de historia clínica..."></textarea>
+      <button id="evaluar-ia-directa" class="btn-principal anim-pulse">🧠 Evaluar con IA</button>
     </section>
-</div>
-<div id="overlay-cargando" class="overlay oculto">
-  <div class="contenedor-carga">
-    <div class="barra-cargando">
-      <div class="progreso"></div>
-    </div>
-    <p id="frase-carga">Evaluando historia clínica...</p>
-  </div>
 
-    <!-- Sección inferior: Interpretación IA + Acciones -->
-    <div class="seccion-inferior">
-      <section id="interpretacion-ia" class="tarjeta sombra slide-left">
-        <h2>📊 Interpretación de la IA</h2>
-        <div id="resultado-ia" class="resultado-html">
-          <p><em>Esperando evaluación...</em></p>
-        </div>
-      </section>
+    <!-- 📊 Sección 2: Resultados IA -->
+    <section class="bloque-col resultados-ia" id="seccion-2">
+      <h2>📊 Resultados IA</h2>
+      <div id="resultado-ia" class="resultado-html">
+        <p><em>Esperando evaluación...</em></p>
+      </div>
+    </section>
 
-      <section id="acciones-finales" class="tarjeta sombra slide-right">
-        <h2>🔧 Acciones</h2>
+    <!-- 📝 Sección 3: Comentarios + Botones -->
+    <section class="bloque-col comentarios-medico" id="seccion-3">
+      <h2>📝 Comentarios del Médico</h2>
+      <textarea id="comentarios-medico" placeholder="Escriba aquí observaciones adicionales..."></textarea>
+      <div class="botonera">
         <button id="btn-derivar" class="btn-accion">📄 Generar Derivación</button>
         <button id="btn-ver-resumen" class="btn-accion">🗲 Ver Resumen</button>
         <button id="btn-limpiar" class="btn-accion btn-secundario">🗑️ Limpiar Todo</button>
-      </section>
+      </div>
+    </section>
+  </div>
+
+  <!-- Modal derivación -->
+  <div id="modal-derivacion" class="modal oculto">
+    <div class="modal-box">
+      <h3>📌 Datos para la Derivación</h3>
+      <input type="text" id="nombre-paciente" placeholder="Apellido y Nombre"/>
+      <input type="text" id="dni-paciente" placeholder="DNI"/>
+      <input type="text" id="contacto-paciente" placeholder="Teléfono o contacto"/>
+      <input type="text" id="medico-derivador" placeholder="Médico derivador"/>
+      <div class="modal-acciones">
+        <button id="confirmar-derivacion" class="btn-pdf">✅ Confirmar PDF</button>
+        <button id="cancelar-derivacion" class="btn-clear">❌ Cancelar</button>
+      </div>
     </div>
   </div>
 
-  <script>
-  document.getElementById('evaluar-ia-directa').addEventListener('click', async () => {
-    const textoLibre = document.getElementById('texto-hc').value.trim();
-    if (!textoLibre) {
-      alert('Pegue el texto de la historia clínica para evaluación IA');
-      return;
-    }
+  <!-- Overlay de carga -->
+  <div id="overlay-cargando" class="overlay oculto">
+    <div class="contenedor-carga">
+      <div class="barra-cargando">
+        <div class="progreso"></div>
+      </div>
+      <p id="frase-carga">Evaluando con IA...</p>
+    </div>
+  </div>
 
-    mostrarCargaIA(); // <-- 🎯 INICIO animación de carga
-
-    try {
-      const response = await fetch("https://medex-backend.onrender.com/evaluar_ia", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ datos: { texto_hc: textoLibre } })
-      });
-
-      const data = await response.json();
-      ocultarCargaIA(); // <-- 🧘‍♂️ FIN animación
-
-      const contenedor = document.getElementById("resultado-ia");
-      const html = data.resumen_html || "<p>No se obtuvo respuesta</p>";
-
-      const enriquecido = html
-        .replaceAll("✅", "<span class='tag cumple'>✅</span>")
-        .replaceAll("⚠️", "<span class='tag parcial'>⚠️</span>")
-        .replaceAll("❌", "<span class='tag excluido'>❌</span>");
-
-      contenedor.innerHTML = `<div class=\"bloque\">${enriquecido}</div>`;
-    } catch (error) {
-      ocultarCargaIA(); // <-- 🛑 Siempre cerramos si hay error
-      const contenedor = document.getElementById("resultado-ia");
-      contenedor.innerHTML = '<p class=\"excluido\">Error al consultar la IA</p>';
-      console.error("Error evaluando IA:", error);
-    }
-  });
-</script>
-
-
-  <script>
-  const frases = [
-    "Evaluando historia clínica...",
-    "Consultando IA médica...",
-    "Comparando con criterios de estudios...",
-    "Procesando resultados...",
-    "Generando evaluación final..."
-  ];
-
-  let fraseIndex = 0;
-  let fraseInterval;
-
-  function mostrarCargaIA() {
-    const overlay = document.getElementById("overlay-cargando");
-    const frase = document.getElementById("frase-carga");
-    overlay.classList.remove("oculto");
-    frase.textContent = frases[0];
-    fraseIndex = 1;
-
-    fraseInterval = setInterval(() => {
-      frase.textContent = frases[fraseIndex % frases.length];
-      fraseIndex++;
-    }, 2000);
-  }
-
-  function ocultarCargaIA() {
-    document.getElementById("overlay-cargando").classList.add("oculto");
-    clearInterval(fraseInterval);
-  }
-</script>
-
+  <script src="./js/app.js"></script>
 </body>
 </html>
