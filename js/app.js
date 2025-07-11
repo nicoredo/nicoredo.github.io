@@ -1,19 +1,26 @@
 const descripcionesEstudios = {};
 
-// Cargar descripciones de estudios desde JSON externo
 fetch("https://medex-backend.onrender.com/criterios")
   .then(res => {
-    if (!res.ok) throw new Error("No se pudo cargar criterios");
+    if (!res.ok) throw new Error("No se pudo cargar los criterios desde el backend");
     return res.json();
   })
   .then(data => {
+    if (!data.estudios || !Array.isArray(data.estudios)) {
+      console.error("⚠️ JSON inesperado:", data);
+      return;
+    }
+
     data.estudios.forEach(est => {
       const clave = est.nombre.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toUpperCase();
       descripcionesEstudios[clave] = est.descripcion;
     });
-  })
-  .catch(err => console.error("❌ Error cargando descripciones:", err));
 
+    console.log("✅ Descripciones cargadas:", descripcionesEstudios);
+  })
+  .catch(err => {
+    console.error("❌ Error cargando descripciones:", err);
+  });
 
 document.addEventListener('DOMContentLoaded', function () {
   const textoHC = document.getElementById('texto-hc');
