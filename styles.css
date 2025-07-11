@@ -1,173 +1,192 @@
-/* Base general */
-body {
-  font-family: 'Inter', sans-serif;
-  background-color: #f4f9fd;
-  color: #333;
+/* RESET BÁSICO */
+* {
   margin: 0;
   padding: 0;
+  box-sizing: border-box;
 }
 
-.wrapper {
+body {
+  font-family: 'Inter', sans-serif;
+  background-color: #ffffff;
+  color: #444;
+  line-height: 1.5;
+}
+
+/* CONTENEDOR PRINCIPAL */
+.container-principal {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
-  padding: 20px;
-  box-sizing: border-box;
-  gap: 20px;
 }
 
-/* Títulos */
-h1 {
+/* BLOQUE SUPERIOR: HISTORIA CLÍNICA */
+.hc-superior {
+  background: rgb(255, 255, 255);
+  padding: 40px 30px;
+  border-bottom-left-radius: 24px;
+  border-bottom-right-radius: 24px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.05);
+}
+
+.hc-superior h1 {
   text-align: center;
-  font-size: 26px;
+  font-size: 30px;
+  font-weight: 700;
   color: #007acc;
-  margin-bottom: 10px;
+  margin-bottom: 25px;
+  position: relative;
 }
 
-h2 {
-  font-size: 18px;
-  color: #005c99;
-  border-bottom: 1px solid #e0e0e0;
-  padding-bottom: 5px;
-  margin-bottom: 15px;
+.hc-superior h1::before {
+  content: "🧬";
+  display: inline-block;
+  margin-right: 10px;
+  animation: girar 6s linear infinite;
 }
 
-/* Área de texto */
-#seccion-texto {
-  background: white;
-  padding: 20px;
-  border-radius: 12px;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+@keyframes girar {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
 }
 
-#texto-hc {
+.hc-superior textarea {
   width: 100%;
-  height: 180px;
-  font-size: 14px;
-  padding: 12px;
-  border-radius: 10px;
+  min-height: 240px;
+  font-size: 16px;
+  padding: 16px;
+  border-radius: 12px;
   border: 1px solid #cce0f5;
   resize: vertical;
-  margin-top: 10px;
-  box-sizing: border-box;
-  font-family: 'Inter', sans-serif;
+  background-color: #fcfdff;
+  margin-bottom: 20px;
+  line-height: 1.6;
 }
 
-#texto-hc:focus {
-  outline: none;
-  border-color: #007acc;
-  box-shadow: 0 0 0 2px rgba(0, 122, 204, 0.2);
+
+/* Separación suave entre secciones */
+.bloque-col {
+  margin-top: 48px;
+  padding: 32px;
+  background: linear-gradient(to bottom right, #ffffff, #f9fbff);
+  border-radius: 20px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.04);
+  transition: box-shadow 0.2s ease, transform 0.2s ease;
 }
 
-/* Botón IA */
+/* Espacio extra solo si hay más de una sección */
+.bloque-col + .bloque-col {
+  margin-top: 32px;
+}
+
+/* Títulos destacados */
+.bloque-col h2 {
+  font-size: 20px;
+  font-weight: 700;
+  color: #007acc;
+  border-bottom: 1px solid #e1eaf4;
+  padding-bottom: 6px;
+  margin-bottom: 18px;
+}
+
+/* Sombra sutil al hacer hover (opcional) */
+.bloque-col:hover {
+  box-shadow: 0 10px 26px rgba(0, 0, 0, 0.06);
+  transform: translateY(-2px);
+}
+
+/* BOTÓN PRINCIPAL */
 .btn-principal {
-  display: block;
-  margin: 20px auto 0 auto;
-  padding: 12px 24px;
-  font-size: 16px;
   background-color: #007acc;
   color: white;
   border: none;
+  padding: 12px 24px;
+  font-size: 16px;
   border-radius: 10px;
-  font-weight: 600;
   cursor: pointer;
-  transition: background-color 0.3s;
+  font-weight: 600;
+  transition: background-color 0.3s, transform 0.2s;
+  display: block;
+  margin: 0 auto;
 }
 
 .btn-principal:hover {
-  background-color: #005f9e;
+  background-color: #005c99;
+  transform: scale(1.04);
 }
 
-/* Sección inferior */
-.seccion-inferior {
+/* SECCIÓN INFERIOR EN DOS COLUMNAS */
+.inferior-doble {
   display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  gap: 20px;
+  gap: 24px;
+  padding: 30px;
   flex-wrap: wrap;
 }
 
-.tarjeta {
-  background: white;
-  border-radius: 14px;
-  padding: 20px;
+/* COLUMNAS */
+.bloque-col {
   flex: 1 1 48%;
-  min-height: 300px;
-  box-sizing: border-box;
+  background: linear-gradient(to bottom right, #ffffff, #f2f8fc);
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: 0 6px 16px rgba(0,0,0,0.06);
+  transition: transform 0.2s, box-shadow 0.2s;
 }
 
-.sombra {
-  box-shadow: 0 6px 16px rgba(0,0,0,0.08);
+.bloque-col:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
 }
 
-/* Resultado IA */
+/* TÍTULOS DE SECCIÓN */
+.bloque-col h2 {
+  font-size: 18px;
+  color: #005c99;
+  margin-bottom: 15px;
+  border-bottom: 1px solid #e0e0e0;
+  padding-bottom: 5px;
+}
+
+/* RESULTADO IA */
 .resultado-html {
-  font-size: 14px;
-  line-height: 1.6;
-  max-height: 220px;
-  overflow-y: auto;
+  font-size: 16px;
+  line-height: 1.7;
   white-space: pre-wrap;
 }
 
-.resultado-html p {
-  margin: 8px 0;
-}
-
-/* Tags visuales */
-.tag {
-  display: inline-block;
-  font-weight: bold;
-  padding: 3px 8px;
-  border-radius: 6px;
-  font-size: 13px;
-  margin-right: 5px;
-  animation: popIn 0.3s ease-in-out;
-}
-
-.tag.cumple {
-  background-color: #e6f4ea;
-  color: #2e7d32;
-}
-
-.tag.parcial {
-  background-color: #fff3e0;
-  color: #ff9800;
-}
-
-.tag.excluido {
-  background-color: #fdecea;
-  color: #c62828;
-}
-
-@keyframes popIn {
-  from {
-    opacity: 0;
-    transform: scale(0.8);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
-}
-
-/* Botones de acción */
-.btn-accion {
-  display: block;
+/* COMENTARIOS DEL MÉDICO */
+#comentarios-medico {
   width: 100%;
+  min-height: 120px;
+  padding: 12px;
+  border-radius: 10px;
+  border: 1px solid #ccd;
+  font-size: 14px;
+  resize: vertical;
+  margin-bottom: 20px;
+  background-color: #fefefe;
+}
+
+/* BOTONERA */
+.botonera {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.btn-accion {
   padding: 10px;
-  margin-bottom: 10px;
-  font-size: 15px;
-  font-weight: 500;
   background-color: #008c6e;
   color: white;
   border: none;
   border-radius: 8px;
+  font-size: 15px;
   cursor: pointer;
-  transition: background-color 0.2s;
+  transition: background-color 0.3s, transform 0.2s;
 }
 
 .btn-accion:hover {
   background-color: #006d55;
+  transform: scale(1.03);
 }
 
 .btn-secundario {
@@ -179,22 +198,36 @@ h2 {
   background-color: #bbb;
 }
 
-/* Animaciones */
-.fade-in {
-  animation: fadeIn 0.6s ease-in-out both;
+/* BADGES VISUALES */
+.badge {
+  display: inline-block;
+  font-weight: bold;
+  padding: 4px 10px;
+  border-radius: 8px;
+  font-size: 13px;
+  margin-right: 5px;
+  transition: transform 0.2s;
 }
 
-.slide-up {
-  animation: slideUp 0.6s ease-out;
+.badge:hover {
+  transform: scale(1.05);
 }
 
-.slide-left {
-  animation: slideLeft 0.6s ease-out;
+.badge.cumple { background-color: #e6f4ea; color: #2e7d32; }
+.badge.parcial { background-color: #fff3e0; color: #ff9800; }
+.badge.excluido { background-color: #fdecea; color: #c62828; }
+
+.resumen-contador {
+  margin-bottom: 10px;
+  display: flex;
+  gap: 10px;
 }
 
-.slide-right {
-  animation: slideRight 0.6s ease-out;
-}
+/* ANIMACIONES DE ENTRADA */
+.fade-in { animation: fadeIn 0.6s ease-in-out both; }
+.slide-up { animation: slideUp 0.6s ease-out; }
+.slide-left { animation: slideLeft 0.6s ease-out; }
+.slide-right { animation: slideRight 0.6s ease-out; }
 
 @keyframes fadeIn {
   from { opacity: 0; }
@@ -202,29 +235,90 @@ h2 {
 }
 
 @keyframes slideUp {
-  from { opacity: 0; transform: translateY(40px); }
+  from { opacity: 0; transform: translateY(30px); }
   to { opacity: 1; transform: translateY(0); }
 }
 
 @keyframes slideLeft {
-  from { opacity: 0; transform: translateX(-40px); }
+  from { opacity: 0; transform: translateX(-30px); }
   to { opacity: 1; transform: translateX(0); }
 }
 
 @keyframes slideRight {
-  from { opacity: 0; transform: translateX(40px); }
+  from { opacity: 0; transform: translateX(30px); }
   to { opacity: 1; transform: translateX(0); }
 }
 
-/* Responsive */
+/* RESPONSIVE */
 @media (max-width: 768px) {
-  .seccion-inferior {
+  .inferior-doble {
     flex-direction: column;
   }
 
-  .tarjeta {
+  .bloque-col {
     flex: 1 1 100%;
   }
+}
+.estudio-bloque {
+  padding: 8px 12px;
+  margin-bottom: 10px;
+  font-size: 14px;
+  border-radius: 10px;
+}
+
+.estudio-bloque.cumple {
+  border-left-color: #2e7d32;
+  background-color: #f0fbf5;
+}
+
+.estudio-bloque.parcial {
+  border-left-color: #ff9800;
+  background-color: #fff8eb;
+}
+
+.estudio-bloque.excluido {
+  border-left-color: #c62828;
+  background-color: #fcebea;
+}
+
+.estudio-header h3 {
+  font-size: 13px;
+}
+
+.estudio-header h3 {
+  font-size: 14px;
+  color: #005c99;
+  margin: 0;
+}
+
+.estado-tag {
+  font-size: 14px;
+  font-weight: bold;
+  padding: 4px 8px;
+  border-radius: 6px;
+}
+
+.estudio-bloque.cumple .estado-tag {
+  background: #d4edda;
+  color: #2e7d32;
+}
+.estudio-bloque.parcial .estado-tag {
+  background: #fff3cd;
+  color: #ff9800;
+}
+.estudio-bloque.excluido .estado-tag {
+  background: #f8d7da;
+  color: #c62828;
+}
+
+.descripcion {
+  font-size: 13px;
+}
+
+.detalle-ia {
+  font-size: 13px;
+}
+
 .overlay {
   position: fixed;
   top: 0; left: 0;
@@ -234,7 +328,6 @@ h2 {
   display: flex;
   align-items: center;
   justify-content: center;
-  animation: fadeIn 0.3s ease-in-out both;
 }
 
 .contenedor-carga {
@@ -269,48 +362,80 @@ h2 {
   display: none !important;
 }
 
+.ver-mas {
+  display: inline-block;
+  margin-top: 6px;
+  font-size: 12px;
+  color: #007acc;
+  text-decoration: underline;
+}
+.ver-mas:hover {
+  color: #005a9e;
+}
 
-  .overlay {
+
+.deslizar-aparicion {
+  animation: slideFadeIn 0.7s ease-in-out both;
+}
+
+@keyframes slideFadeIn {
+  0% {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.modal {
   position: fixed;
   top: 0; left: 0;
   width: 100%; height: 100%;
-  background-color: rgba(255, 255, 255, 0.85);
-  z-index: 9999;
+  background: rgba(0, 0, 0, 0.3);
   display: flex;
   align-items: center;
   justify-content: center;
-  animation: fadeIn 0.3s ease-in-out both;
+  z-index: 9999;
 }
 
-.contenedor-carga {
-  text-align: center;
-  font-size: 16px;
+.modal-box {
+  background: white;
+  padding: 30px;
+  border-radius: 16px;
+  width: 90%;
+  max-width: 600px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  animation: fadeIn 0.3s ease-out;
+}
+
+.modal-box h3 {
+  font-size: 20px;
+  margin-bottom: 20px;
   color: #007acc;
 }
 
-.barra-cargando {
-  width: 300px;
-  height: 10px;
-  background: #e0f0ff;
-  border-radius: 10px;
-  overflow: hidden;
-  margin-bottom: 15px;
-}
-
-.progreso {
+.modal-box input {
   width: 100%;
-  height: 100%;
-  background: linear-gradient(90deg, #007acc 25%, #33b5e5 50%, #007acc 75%);
-  background-size: 200% 100%;
-  animation: desplazamiento 1.5s infinite;
+  padding: 10px;
+  font-size: 15px;
+  margin-bottom: 12px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
 }
 
-@keyframes desplazamiento {
-  from { background-position: 200% 0; }
-  to { background-position: -200% 0; }
+.modal-acciones {
+  display: flex;
+  justify-content: flex-end;
+  gap: 14px;
 }
 
-.oculto {
-  display: none !important;
+.modal-acciones .btn-pdf {
+  background-color: #28a745;
+}
+.modal-acciones .btn-clear {
+  background-color: #dc3545;
+  color: white;
 }
 
