@@ -5,7 +5,8 @@ fetch("https://medex-backend.onrender.com/criterios_estudios_textual.json")
   .then(res => res.json())
   .then(data => {
     data.estudios.forEach(est => {
-      descripcionesEstudios[est.nombre.toUpperCase()] = est.descripcion;
+      const clave = est.nombre.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toUpperCase();
+      descripcionesEstudios[clave] = est.descripcion;
     });
   });
 
@@ -19,7 +20,6 @@ document.addEventListener('DOMContentLoaded', function () {
   const cancelarBtn = document.getElementById('cancelar-derivacion');
   const confirmarBtn = document.getElementById('confirmar-derivacion');
   const limpiarBtn = document.getElementById('btn-limpiar');
-  
 
   btnEvaluar.addEventListener('click', async () => {
     const textoLibre = textoHC.value.trim();
@@ -41,11 +41,11 @@ document.addEventListener('DOMContentLoaded', function () {
       const estudios = data.estudios || [];
 
       mostrarEstudiosJSON(estudios);
-      // Desplazamiento automático a resultados
-setTimeout(() => {
-  document.getElementById("seccion-2").scrollIntoView({ behavior: 'smooth' });
-}, 300);
 
+      // Desplazamiento automático a resultados
+      setTimeout(() => {
+        document.getElementById("seccion-2").scrollIntoView({ behavior: 'smooth' });
+      }, 300);
 
       const habilitar = estudios.some(e => e.estado === "✅" || e.estado === "⚠️");
       botonDerivacion.disabled = !habilitar;
@@ -68,58 +68,53 @@ setTimeout(() => {
     modal.classList.add('oculto');
   });
 
- confirmarBtn.addEventListener('click', () => {
-  const nombre = document.getElementById('nombre-paciente').value;
-  const dni = document.getElementById('dni-paciente').value;
-  const contacto = document.getElementById('contacto-paciente').value;
-  const medico = document.getElementById('medico-derivador').value;
-  const texto = document.getElementById('texto-hc').value;
-  const comentarios = document.getElementById('comentarios-medico').value;
+  confirmarBtn.addEventListener('click', () => {
+    const nombre = document.getElementById('nombre-paciente').value;
+    const dni = document.getElementById('dni-paciente').value;
+    const contacto = document.getElementById('contacto-paciente').value;
+    const medico = document.getElementById('medico-derivador').value;
+    const texto = document.getElementById('texto-hc').value;
+    const comentarios = document.getElementById('comentarios-medico').value;
 
-  const doc = new window.jspdf.jsPDF();
-  doc.setFont("helvetica", "normal");
-  doc.setFontSize(12);
-  let y = 20;
+    const doc = new window.jspdf.jsPDF();
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(12);
+    let y = 20;
 
-  doc.text("Derivacion MedEx", 20, y); y += 10;
-  doc.text("Paciente: " + nombre, 20, y); y += 7;
-  doc.text("DNI: " + dni, 20, y); y += 7;
-  doc.text("Contacto: " + contacto, 20, y); y += 7;
-  doc.text("Derivado por: " + medico, 20, y); y += 15;
+    doc.text("Derivacion MedEx", 20, y); y += 10;
+    doc.text("Paciente: " + nombre, 20, y); y += 7;
+    doc.text("DNI: " + dni, 20, y); y += 7;
+    doc.text("Contacto: " + contacto, 20, y); y += 7;
+    doc.text("Derivado por: " + medico, 20, y); y += 15;
 
-  doc.text("Historia Clinica:", 20, y); y += 7;
-  const historia = doc.splitTextToSize(texto, 170);
-  doc.text(historia, 20, y); y += historia.length * 7 + 10;
+    doc.text("Historia Clinica:", 20, y); y += 7;
+    const historia = doc.splitTextToSize(texto, 170);
+    doc.text(historia, 20, y); y += historia.length * 7 + 10;
 
-  doc.text("Evaluacion IA:", 20, y); y += 10;
+    doc.text("Evaluacion IA:", 20, y); y += 10;
 
-  const bloques = document.querySelectorAll('.estudio-bloque');
-  bloques.forEach(bloque => {
-    const nombreEstudio = bloque.querySelector('h3')?.innerText || "";
-    const estado = bloque.querySelector('.estado-tag')?.innerText || "";
-    const descripcion = bloque.querySelector('.descripcion')?.innerText || "";
-    const detalle = bloque.querySelector('.detalle-ia')?.innerText || "";
+    const bloques = document.querySelectorAll('.estudio-bloque');
+    bloques.forEach(bloque => {
+      const nombreEstudio = bloque.querySelector('h3')?.innerText || "";
+      const estado = bloque.querySelector('.estado-tag')?.innerText || "";
+      const descripcion = bloque.querySelector('.descripcion')?.innerText || "";
+      const detalle = bloque.querySelector('.detalle-ia')?.innerText || "";
 
-    doc.text(`${nombreEstudio} - ${estado}`, 20, y); y += 7;
-    const descLineas = doc.splitTextToSize(descripcion, 170);
-    doc.text(descLineas, 20, y); y += descLineas.length * 7;
+      doc.text(`${nombreEstudio} - ${estado}`, 20, y); y += 7;
+      const descLineas = doc.splitTextToSize(descripcion, 170);
+      doc.text(descLineas, 20, y); y += descLineas.length * 7;
 
-    const detLineas = doc.splitTextToSize(detalle, 170);
-    doc.text(detLineas, 20, y); y += detLineas.length * 7 + 5;
+      const detLineas = doc.splitTextToSize(detalle, 170);
+      doc.text(detLineas, 20, y); y += detLineas.length * 7 + 5;
+    });
+
+    doc.text("Observaciones del medico:", 20, y); y += 7;
+    const obs = doc.splitTextToSize(comentarios, 170);
+    doc.text(obs, 20, y);
+
+    doc.save("derivacion_medex.pdf");
+    modal.classList.add('oculto');
   });
-
-  doc.text("Observaciones del medico:", 20, y); y += 7;
-  const obs = doc.splitTextToSize(comentarios, 170);
-  doc.text(obs, 20, y);
-
-  doc.save("derivacion_medex.pdf");
-  modal.classList.add('oculto');
-});
-
-
-
-
-
 
   limpiarBtn.addEventListener('click', () => {
     textoHC.value = "";
@@ -127,8 +122,6 @@ setTimeout(() => {
     contenedor.innerHTML = "<p><em>Esperando evaluación...</em></p>";
   });
 });
-
-
 
 function mostrarEstudiosJSON(estudios) {
   const contenedor = document.getElementById("resultado-ia");
@@ -141,7 +134,8 @@ function mostrarEstudiosJSON(estudios) {
 
   estudios.forEach(est => {
     const estadoClase = est.estado === "✅" ? "cumple" : est.estado === "⚠️" ? "parcial" : "excluido";
-    const descripcion = descripcionesEstudios[est.nombre.toUpperCase()] || "Sin descripción.";
+    const clave = est.nombre.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toUpperCase();
+    const descripcion = descripcionesEstudios[clave] || "Sin descripción.";
     const link = `https://medex.ar/estudios/${encodeURIComponent(est.nombre.toLowerCase().replace(/\s+/g, '-'))}`;
 
     const bloque = document.createElement("div");
@@ -161,4 +155,3 @@ function mostrarEstudiosJSON(estudios) {
   contenedor.classList.remove("oculto");
   contenedor.classList.add("deslizar-aparicion");
 }
-
