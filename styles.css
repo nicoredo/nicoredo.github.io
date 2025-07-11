@@ -14,7 +14,7 @@ body {
 
 /* CONTENEDOR PRINCIPAL */
 .container-principal {
-   max-width: 1200px;
+   max-width: 1300px;
   margin: 0 auto;
   padding: 40px 20px;
   display: flex;
@@ -41,7 +41,7 @@ body {
 }
 
 .hc-superior h1::before {
-  content: "🧬";
+  content: "🔍";
   display: inline-block;
   margin-right: 10px;
   animation: girar 6s linear infinite;
