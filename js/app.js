@@ -83,6 +83,13 @@ pdfInput.addEventListener("change", async (e) => {
   }
 });
 
+const btnLimpiarTexto = document.getElementById("btn-limpiar-texto");
+
+btnLimpiarTexto.addEventListener("click", () => {
+  const textarea = document.getElementById("texto-hc");
+  textarea.value = "";
+  estadoSubida.textContent = "";
+});
 
   btnEvaluar.addEventListener('click', async () => {
     const textoLibre = textoHC.value.trim();
