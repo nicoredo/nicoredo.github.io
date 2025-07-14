@@ -486,3 +486,10 @@ body {
   background-color: #e2e2e2;
 }
 
+#estado-voz {
+  display: block;
+  text-align: center;
+  margin-top: 8px;
+  font-size: 13px;
+  color: #007acc;
+}
