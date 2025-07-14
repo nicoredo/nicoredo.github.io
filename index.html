@@ -16,6 +16,14 @@
     <section class="hc-superior fade-in slide-up" id="seccion-1">
       <h1> Evaluación de Pacientes</h1>
       <textarea id="texto-hc" placeholder="Pegue aquí resumen de historia clínica..."></textarea>
+      <div class="opciones-carga">
+  <label for="word-upload" class="btn-principal btn-subir">
+    📄 Subir Word
+    <input type="file" id="word-upload" accept=".docx" style="display: none" />
+  </label>
+  <span id="estado-subida" class="texto-subida"></span>
+</div>
+
       <button id="evaluar-ia-directa" class="btn-principal anim-pulse">🧠 Evaluar con IA</button>
     </section>
 
