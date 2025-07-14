@@ -138,53 +138,80 @@ btnLimpiarTexto.addEventListener("click", () => {
     modal.classList.add('oculto');
   });
 
-  confirmarBtn.addEventListener('click', () => {
-    const nombre = document.getElementById('nombre-paciente').value;
-    const dni = document.getElementById('dni-paciente').value;
-    const contacto = document.getElementById('contacto-paciente').value;
-    const medico = document.getElementById('medico-derivador').value;
-    const texto = document.getElementById('texto-hc').value;
-    const comentarios = document.getElementById('comentarios-medico').value;
+confirmarBtn.addEventListener('click', () => {
+  const nombre = document.getElementById('nombre-paciente').value;
+  const dni = document.getElementById('dni-paciente').value;
+  const contacto = document.getElementById('contacto-paciente').value;
+  const medico = document.getElementById('medico-derivador').value;
+  const texto = document.getElementById('texto-hc').value;
+  const comentarios = document.getElementById('comentarios-medico').value;
 
-    const doc = new window.jspdf.jsPDF();
-    doc.setFont("helvetica", "normal");
-    doc.setFontSize(12);
-    let y = 20;
+  const doc = new window.jspdf.jsPDF();
+  doc.setFont("helvetica", "normal");
+  doc.setFontSize(12);
+  let y = 20;
 
-    doc.text("Derivacion MedEx", 20, y); y += 10;
-    doc.text("Paciente: " + nombre, 20, y); y += 7;
-    doc.text("DNI: " + dni, 20, y); y += 7;
-    doc.text("Contacto: " + contacto, 20, y); y += 7;
-    doc.text("Derivado por: " + medico, 20, y); y += 15;
-
-    doc.text("Historia Clinica:", 20, y); y += 7;
-    const historia = doc.splitTextToSize(texto, 170);
-    doc.text(historia, 20, y); y += historia.length * 7 + 10;
-
-    doc.text("Evaluacion IA:", 20, y); y += 10;
-
-    const bloques = document.querySelectorAll('.estudio-bloque');
-    bloques.forEach(bloque => {
-      const nombreEstudio = bloque.querySelector('h3')?.innerText || "";
-      const estado = bloque.querySelector('.estado-tag')?.innerText || "";
-      const descripcion = bloque.querySelector('.descripcion')?.innerText || "";
-      const detalle = bloque.querySelector('.detalle-ia')?.innerText || "";
-
-      doc.text(`${nombreEstudio} - ${estado}`, 20, y); y += 7;
-      const descLineas = doc.splitTextToSize(descripcion, 170);
-      doc.text(descLineas, 20, y); y += descLineas.length * 7;
-
-      const detLineas = doc.splitTextToSize(detalle, 170);
-      doc.text(detLineas, 20, y); y += detLineas.length * 7 + 5;
+  function agregarTextoConSalto(textoArray) {
+    textoArray.forEach(linea => {
+      if (y > 270) {
+        doc.addPage();
+        y = 20;
+      }
+      doc.text(linea, 20, y);
+      y += 7;
     });
+  }
 
-    doc.text("Observaciones del medico:", 20, y); y += 7;
-    const obs = doc.splitTextToSize(comentarios, 170);
-    doc.text(obs, 20, y);
+  agregarTextoConSalto([
+    "Derivacion MedEx",
+    "Paciente: " + nombre,
+    "DNI: " + dni,
+    "Contacto: " + contacto,
+    "Derivado por: " + medico,
+    "",
+    "Historia Clínica:"
+  ]);
 
-    doc.save("derivacion_medex.pdf");
-    modal.classList.add('oculto');
+  const historia = doc.splitTextToSize(texto, 170);
+  agregarTextoConSalto(historia);
+
+  y += 10;
+  if (y > 270) {
+    doc.addPage();
+    y = 20;
+  }
+  doc.text("Evaluación IA:", 20, y);
+  y += 10;
+
+  const bloques = document.querySelectorAll('.estudio-bloque');
+  bloques.forEach(bloque => {
+    const nombreEstudio = bloque.querySelector('h3')?.innerText || "";
+    const estado = bloque.querySelector('.estado-tag')?.innerText || "";
+    const descripcion = doc.splitTextToSize(
+      bloque.querySelector('.descripcion')?.innerText || "", 170);
+    const detalle = doc.splitTextToSize(
+      bloque.querySelector('.detalle-ia')?.innerText || "", 170);
+
+    agregarTextoConSalto([`${nombreEstudio} - ${estado}`]);
+    agregarTextoConSalto(descripcion);
+    agregarTextoConSalto(detalle);
+    y += 5;
   });
+
+  if (y > 270) {
+    doc.addPage();
+    y = 20;
+  }
+  doc.text("Observaciones del médico:", 20, y);
+  y += 7;
+
+  const obs = doc.splitTextToSize(comentarios, 170);
+  agregarTextoConSalto(obs);
+
+  doc.save("derivacion_medex.pdf");
+  modal.classList.add('oculto');
+});
+
 
   limpiarBtn.addEventListener('click', () => {
     textoHC.value = "";
