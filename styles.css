@@ -442,3 +442,28 @@ body {
   color: white;
 }
 
+.opciones-carga {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 10px;
+  gap: 10px;
+  align-items: center;
+}
+
+.btn-subir {
+  background-color: #f0f8ff;
+  color: #007acc;
+  font-weight: 600;
+  border: 2px dashed #aad4f5;
+  transition: background-color 0.3s;
+}
+
+.btn-subir:hover {
+  background-color: #d2eaff;
+}
+
+.texto-subida {
+  font-size: 14px;
+  color: #555;
+}
+
