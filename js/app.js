@@ -58,6 +58,32 @@ wordInput.addEventListener("change", async (e) => {
   }
 });
 
+  const pdfInput = document.getElementById("pdf-upload");
+
+pdfInput.addEventListener("change", async (e) => {
+  const archivo = e.target.files[0];
+  if (!archivo) return;
+
+  estadoSubida.textContent = "⏳ Procesando PDF...";
+  const formData = new FormData();
+  formData.append("file", archivo);
+
+  try {
+    const res = await fetch("https://medex-backend.onrender.com/subir_pdf", {
+      method: "POST",
+      body: formData,
+    });
+
+    const data = await res.json();
+    document.getElementById("texto-hc").value = data.texto || "";
+    estadoSubida.textContent = "✅ PDF procesado correctamente";
+  } catch (error) {
+    console.error("❌ Error al subir PDF:", error);
+    estadoSubida.textContent = "❌ Error al procesar el archivo";
+  }
+});
+
+
   btnEvaluar.addEventListener('click', async () => {
     const textoLibre = textoHC.value.trim();
     if (!textoLibre) {
