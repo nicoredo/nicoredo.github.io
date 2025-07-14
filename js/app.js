@@ -32,105 +32,101 @@ document.addEventListener('DOMContentLoaded', function () {
   const cancelarBtn = document.getElementById('cancelar-derivacion');
   const confirmarBtn = document.getElementById('confirmar-derivacion');
   const limpiarBtn = document.getElementById('btn-limpiar');
-const wordInput = document.getElementById("word-upload");
-const estadoSubida = document.getElementById("estado-subida");
-
-wordInput.addEventListener("change", async (e) => {
-  const archivo = e.target.files[0];
-  if (!archivo) return;
-
-  estadoSubida.textContent = "⏳ Procesando Word...";
-  const formData = new FormData();
-  formData.append("file", archivo);
-
-  try {
-    const res = await fetch("https://medex-backend.onrender.com/subir_word", {
-      method: "POST",
-      body: formData,
-    });
-
-    const data = await res.json();
-    document.getElementById("texto-hc").value = data.texto || "";
-    estadoSubida.textContent = "✅ Word procesado correctamente";
-  } catch (error) {
-    console.error("❌ Error al subir Word:", error);
-    estadoSubida.textContent = "❌ Error al procesar el archivo";
-  }
-});
-
-  const btnVoz = document.getElementById("btn-voz");
-const estadoVoz = document.getElementById("estado-voz");
-
-if ('webkitSpeechRecognition' in window) {
-  const recognition = new webkitSpeechRecognition();
-  recognition.lang = "es-AR";
-  recognition.continuous = false;
-  recognition.interimResults = false;
-
-  recognition.onstart = () => {
-    estadoVoz.textContent = "🎙️ Escuchando...";
-    btnVoz.disabled = true;
-  };
-
-  recognition.onresult = (event) => {
-    const transcript = event.results[0][0].transcript;
-    document.getElementById("texto-hc").value += (transcript + " ");
-    estadoVoz.textContent = "✅ Texto agregado por voz";
-    btnVoz.disabled = false;
-  };
-
-  recognition.onerror = (event) => {
-    estadoVoz.textContent = "❌ Error al dictar: " + event.error;
-    btnVoz.disabled = false;
-  };
-
-  recognition.onend = () => {
-    if (!btnVoz.disabled) return;
-    btnVoz.disabled = false;
-    estadoVoz.textContent = "🎤 Fin del dictado";
-  };
-
-  btnVoz.addEventListener("click", () => {
-    recognition.start();
-  });
-} else {
-  btnVoz.disabled = true;
-  estadoVoz.textContent = "🎤 Dictado no soportado en este navegador";
-}
-  });
-
+  const wordInput = document.getElementById("word-upload");
   const pdfInput = document.getElementById("pdf-upload");
+  const estadoSubida = document.getElementById("estado-subida");
+  const btnLimpiarTexto = document.getElementById("btn-limpiar-texto");
+  const btnVoz = document.getElementById("btn-voz");
+  const estadoVoz = document.getElementById("estado-voz");
 
-pdfInput.addEventListener("change", async (e) => {
-  const archivo = e.target.files[0];
-  if (!archivo) return;
+  // Dictado por voz
+  if ('webkitSpeechRecognition' in window) {
+    const recognition = new webkitSpeechRecognition();
+    recognition.lang = "es-AR";
+    recognition.continuous = false;
+    recognition.interimResults = false;
 
-  estadoSubida.textContent = "⏳ Procesando PDF...";
-  const formData = new FormData();
-  formData.append("file", archivo);
+    recognition.onstart = () => {
+      estadoVoz.textContent = "🎙️ Escuchando...";
+      btnVoz.disabled = true;
+    };
 
-  try {
-    const res = await fetch("https://medex-backend.onrender.com/subir_pdf", {
-      method: "POST",
-      body: formData,
+    recognition.onresult = (event) => {
+      const transcript = event.results[0][0].transcript;
+      textoHC.value += transcript + " ";
+      estadoVoz.textContent = "✅ Texto agregado por voz";
+      btnVoz.disabled = false;
+    };
+
+    recognition.onerror = (event) => {
+      estadoVoz.textContent = "❌ Error al dictar: " + event.error;
+      btnVoz.disabled = false;
+    };
+
+    recognition.onend = () => {
+      if (!btnVoz.disabled) return;
+      btnVoz.disabled = false;
+      estadoVoz.textContent = "🎤 Fin del dictado";
+    };
+
+    btnVoz.addEventListener("click", () => {
+      recognition.start();
     });
-
-    const data = await res.json();
-    document.getElementById("texto-hc").value = data.texto || "";
-    estadoSubida.textContent = "✅ PDF procesado correctamente";
-  } catch (error) {
-    console.error("❌ Error al subir PDF:", error);
-    estadoSubida.textContent = "❌ Error al procesar el archivo";
+  } else {
+    btnVoz.disabled = true;
+    estadoVoz.textContent = "🎤 Dictado no soportado en este navegador";
   }
-});
 
-const btnLimpiarTexto = document.getElementById("btn-limpiar-texto");
+  wordInput.addEventListener("change", async (e) => {
+    const archivo = e.target.files[0];
+    if (!archivo) return;
 
-btnLimpiarTexto.addEventListener("click", () => {
-  const textarea = document.getElementById("texto-hc");
-  textarea.value = "";
-  estadoSubida.textContent = "";
-});
+    estadoSubida.textContent = "⏳ Procesando Word...";
+    const formData = new FormData();
+    formData.append("file", archivo);
+
+    try {
+      const res = await fetch("https://medex-backend.onrender.com/subir_word", {
+        method: "POST",
+        body: formData,
+      });
+
+      const data = await res.json();
+      textoHC.value = data.texto || "";
+      estadoSubida.textContent = "✅ Word procesado correctamente";
+    } catch (error) {
+      console.error("❌ Error al subir Word:", error);
+      estadoSubida.textContent = "❌ Error al procesar el archivo";
+    }
+  });
+
+  pdfInput.addEventListener("change", async (e) => {
+    const archivo = e.target.files[0];
+    if (!archivo) return;
+
+    estadoSubida.textContent = "⏳ Procesando PDF...";
+    const formData = new FormData();
+    formData.append("file", archivo);
+
+    try {
+      const res = await fetch("https://medex-backend.onrender.com/subir_pdf", {
+        method: "POST",
+        body: formData,
+      });
+
+      const data = await res.json();
+      textoHC.value = data.texto || "";
+      estadoSubida.textContent = "✅ PDF procesado correctamente";
+    } catch (error) {
+      console.error("❌ Error al subir PDF:", error);
+      estadoSubida.textContent = "❌ Error al procesar el archivo";
+    }
+  });
+
+  btnLimpiarTexto.addEventListener("click", () => {
+    textoHC.value = "";
+    estadoSubida.textContent = "";
+  });
 
   btnEvaluar.addEventListener('click', async () => {
     const textoLibre = textoHC.value.trim();
@@ -153,7 +149,6 @@ btnLimpiarTexto.addEventListener("click", () => {
 
       mostrarEstudiosJSON(estudios);
 
-      // Desplazamiento automático a resultados
       setTimeout(() => {
         document.getElementById("seccion-2").scrollIntoView({ behavior: 'smooth' });
       }, 300);
@@ -179,80 +174,77 @@ btnLimpiarTexto.addEventListener("click", () => {
     modal.classList.add('oculto');
   });
 
-confirmarBtn.addEventListener('click', () => {
-  const nombre = document.getElementById('nombre-paciente').value;
-  const dni = document.getElementById('dni-paciente').value;
-  const contacto = document.getElementById('contacto-paciente').value;
-  const medico = document.getElementById('medico-derivador').value;
-  const texto = document.getElementById('texto-hc').value;
-  const comentarios = document.getElementById('comentarios-medico').value;
+  confirmarBtn.addEventListener('click', () => {
+    const nombre = document.getElementById('nombre-paciente').value;
+    const dni = document.getElementById('dni-paciente').value;
+    const contacto = document.getElementById('contacto-paciente').value;
+    const medico = document.getElementById('medico-derivador').value;
+    const texto = textoHC.value;
+    const comentarios = document.getElementById('comentarios-medico').value;
 
-  const doc = new window.jspdf.jsPDF();
-  doc.setFont("helvetica", "normal");
-  doc.setFontSize(12);
-  let y = 20;
+    const doc = new window.jspdf.jsPDF();
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(12);
+    let y = 20;
 
-  function agregarTextoConSalto(textoArray) {
-    textoArray.forEach(linea => {
-      if (y > 270) {
-        doc.addPage();
-        y = 20;
-      }
-      doc.text(linea, 20, y);
-      y += 7;
+    function agregarTextoConSalto(textoArray) {
+      textoArray.forEach(linea => {
+        if (y > 270) {
+          doc.addPage();
+          y = 20;
+        }
+        doc.text(linea, 20, y);
+        y += 7;
+      });
+    }
+
+    agregarTextoConSalto([
+      "Derivacion MedEx",
+      "Paciente: " + nombre,
+      "DNI: " + dni,
+      "Contacto: " + contacto,
+      "Derivado por: " + medico,
+      "",
+      "Historia Clínica:"
+    ]);
+
+    const historia = doc.splitTextToSize(texto, 170);
+    agregarTextoConSalto(historia);
+
+    y += 10;
+    if (y > 270) {
+      doc.addPage();
+      y = 20;
+    }
+    doc.text("Evaluación IA:", 20, y);
+    y += 10;
+
+    const bloques = document.querySelectorAll('.estudio-bloque');
+    bloques.forEach(bloque => {
+      const nombreEstudio = bloque.querySelector('h3')?.innerText || "";
+      const estado = bloque.querySelector('.estado-tag')?.innerText || "";
+      const descripcion = doc.splitTextToSize(bloque.querySelector('.descripcion')?.innerText || "", 170);
+      const detalle = doc.splitTextToSize(bloque.querySelector('.detalle-ia')?.innerText || "", 170);
+
+      agregarTextoConSalto([`${nombreEstudio} - ${estado}`]);
+      agregarTextoConSalto(descripcion);
+      agregarTextoConSalto(detalle);
+      y += 5;
     });
-  }
 
-  agregarTextoConSalto([
-    "Derivacion MedEx",
-    "Paciente: " + nombre,
-    "DNI: " + dni,
-    "Contacto: " + contacto,
-    "Derivado por: " + medico,
-    "",
-    "Historia Clínica:"
-  ]);
+    if (y > 270) {
+      doc.addPage();
+      y = 20;
+    }
+    doc.text("Observaciones del médico:", 20, y);
+    y += 7;
 
-  const historia = doc.splitTextToSize(texto, 170);
-  agregarTextoConSalto(historia);
+    const obs = doc.splitTextToSize(comentarios, 170);
+    agregarTextoConSalto(obs);
 
-  y += 10;
-  if (y > 270) {
-    doc.addPage();
-    y = 20;
-  }
-  doc.text("Evaluación IA:", 20, y);
-  y += 10;
-
-  const bloques = document.querySelectorAll('.estudio-bloque');
-  bloques.forEach(bloque => {
-    const nombreEstudio = bloque.querySelector('h3')?.innerText || "";
-    const estado = bloque.querySelector('.estado-tag')?.innerText || "";
-    const descripcion = doc.splitTextToSize(
-      bloque.querySelector('.descripcion')?.innerText || "", 170);
-    const detalle = doc.splitTextToSize(
-      bloque.querySelector('.detalle-ia')?.innerText || "", 170);
-
-    agregarTextoConSalto([`${nombreEstudio} - ${estado}`]);
-    agregarTextoConSalto(descripcion);
-    agregarTextoConSalto(detalle);
-    y += 5;
+    doc.save("derivacion_medex.pdf");
+    modal.classList.add('oculto');
   });
-
-  if (y > 270) {
-    doc.addPage();
-    y = 20;
-  }
-  doc.text("Observaciones del médico:", 20, y);
-  y += 7;
-
-  const obs = doc.splitTextToSize(comentarios, 170);
-  agregarTextoConSalto(obs);
-
-  doc.save("derivacion_medex.pdf");
-  modal.classList.add('oculto');
-});
-
 
   limpiarBtn.addEventListener('click', () => {
     textoHC.value = "";
