@@ -32,6 +32,31 @@ document.addEventListener('DOMContentLoaded', function () {
   const cancelarBtn = document.getElementById('cancelar-derivacion');
   const confirmarBtn = document.getElementById('confirmar-derivacion');
   const limpiarBtn = document.getElementById('btn-limpiar');
+const wordInput = document.getElementById("word-upload");
+const estadoSubida = document.getElementById("estado-subida");
+
+wordInput.addEventListener("change", async (e) => {
+  const archivo = e.target.files[0];
+  if (!archivo) return;
+
+  estadoSubida.textContent = "⏳ Procesando Word...";
+  const formData = new FormData();
+  formData.append("file", archivo);
+
+  try {
+    const res = await fetch("https://medex-backend.onrender.com/subir_word", {
+      method: "POST",
+      body: formData,
+    });
+
+    const data = await res.json();
+    document.getElementById("texto-hc").value = data.texto || "";
+    estadoSubida.textContent = "✅ Word procesado correctamente";
+  } catch (error) {
+    console.error("❌ Error al subir Word:", error);
+    estadoSubida.textContent = "❌ Error al procesar el archivo";
+  }
+});
 
   btnEvaluar.addEventListener('click', async () => {
     const textoLibre = textoHC.value.trim();
