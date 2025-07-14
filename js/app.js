@@ -58,6 +58,47 @@ wordInput.addEventListener("change", async (e) => {
   }
 });
 
+  const btnVoz = document.getElementById("btn-voz");
+const estadoVoz = document.getElementById("estado-voz");
+
+if ('webkitSpeechRecognition' in window) {
+  const recognition = new webkitSpeechRecognition();
+  recognition.lang = "es-AR";
+  recognition.continuous = false;
+  recognition.interimResults = false;
+
+  recognition.onstart = () => {
+    estadoVoz.textContent = "🎙️ Escuchando...";
+    btnVoz.disabled = true;
+  };
+
+  recognition.onresult = (event) => {
+    const transcript = event.results[0][0].transcript;
+    document.getElementById("texto-hc").value += (transcript + " ");
+    estadoVoz.textContent = "✅ Texto agregado por voz";
+    btnVoz.disabled = false;
+  };
+
+  recognition.onerror = (event) => {
+    estadoVoz.textContent = "❌ Error al dictar: " + event.error;
+    btnVoz.disabled = false;
+  };
+
+  recognition.onend = () => {
+    if (!btnVoz.disabled) return;
+    btnVoz.disabled = false;
+    estadoVoz.textContent = "🎤 Fin del dictado";
+  };
+
+  btnVoz.addEventListener("click", () => {
+    recognition.start();
+  });
+} else {
+  btnVoz.disabled = true;
+  estadoVoz.textContent = "🎤 Dictado no soportado en este navegador";
+}
+  });
+
   const pdfInput = document.getElementById("pdf-upload");
 
 pdfInput.addEventListener("change", async (e) => {
