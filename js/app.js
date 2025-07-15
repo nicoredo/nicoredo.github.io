@@ -58,10 +58,14 @@ document.addEventListener('DOMContentLoaded', function () {
       btnVoz.disabled = false;
     };
 
-    recognition.onerror = (event) => {
-      estadoVoz.textContent = "❌ Error al dictar: " + event.error;
-      btnVoz.disabled = false;
-    };
+ recognition.onerror = (event) => {
+  if (event.error === "not-allowed") {
+    estadoVoz.textContent = "❌ Acceso al micrófono bloqueado. Permitilo desde el navegador.";
+  } else {
+    estadoVoz.textContent = "❌ Error al dictar: " + event.error;
+  }
+};
+
 
     recognition.onend = () => {
       if (!btnVoz.disabled) return;
