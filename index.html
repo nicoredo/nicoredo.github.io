@@ -17,8 +17,12 @@
       <h1> Evaluación de Pacientes</h1>
       <textarea id="texto-hc" placeholder="Pegue aquí resumen de historia clínica..."></textarea>
       <div class="opciones-carga">
-        <button id="btn-voz" class="btn-mini">🎙️ Dictar con Voz</button>
+       <label for="btn-voz" class="btn-principal btn-subir">
+  🎙️ Dictar con Voz
+  <button id="btn-voz" style="display: none;"></button>
+</label>
 <span id="estado-voz" class="texto-subida"></span>
+
 
   <label for="word-upload" class="btn-principal btn-subir">
     📄 Subir Word
