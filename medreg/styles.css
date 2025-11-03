@@ -34,7 +34,14 @@ a{color:var(--accent)}
 .cta{display:flex;gap:12px;margin:16px 0 8px}
 .badges{display:flex;flex-wrap:wrap;gap:8px;padding:0;margin:8px 0;list-style:none}
 .badges li{padding:6px 10px;border-radius:999px;border:1px solid rgba(186,245,255,.25);color:var(--accent-2);font-size:12px}
-.hero-media .screenshot{width:100%;border-radius:18px;border:1px solid rgba(186,245,255,.2);background:linear-gradient(180deg,#112040,#081427)}
+.hero-media .screenshot{
+  width: 100%;
+  height: auto;      /* ← mantiene proporción original */
+  border-radius: 18px;
+  border: 1px solid rgba(186,245,255,.2);
+  display: block;
+}
+
 
 .features h3,.video h3,.demo h3,.how h3{font-size:28px;margin:24px 0 12px}
 .features .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
