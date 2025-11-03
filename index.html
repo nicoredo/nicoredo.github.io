@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MedEx - Evaluador de Pacientes para Estudios Clínicos</title>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+</head>
+<body>
+  <!-- Sección 1: Entrada del paciente -->
+  <div id="entrada-paciente" class="seccion">
+    <h1>MedEx</h1>
+    <h2>Historia Clínica</h2>
+    <textarea id="texto-hc" placeholder="Pegue aquí el texto completo de la historia clínica..."></textarea>
+    <button id="evaluar-paciente" class="btn-principal">🔍 Evaluar Paciente</button>
+  </div>
+
+  <!-- Sección 2: Datos del paciente -->
+  <div id="datos-paciente" class="seccion">
+    <h1>Datos del Paciente</h1>
+    <div id="output">Resumen datos relevantes extraidos</div>
+    
+    <!-- Edad -->
+    <div id="bloque-edad" class="bloque">
+      <label>📅 Edad:</label>
+      <span id="edad-valor">-</span>
+      <input type="number" id="edad-input" style="display:none;" min="0" max="120" />
+      <div class="botones">
+        <button id="btn-editar-edad">✏️ Modificar</button>
+        <button id="btn-confirmar-edad" style="display:none;">✅ Confirmar</button>
+      </div>
+    </div>
+
+    <!-- Antecedentes -->
+    <div class="bloque">
+      <label>📍 Antecedentes:</label>
+      <span id="antecedentes-valor">-</span>
+      <div class="autocomplete-container" id="antecedentes-autocomplete">
+        <input type="text" id="antecedentes-input" class="autocomplete-input" placeholder="Escriba antecedentes...">
+        <div id="antecedentes-suggestions" class="autocomplete-suggestions"></div>
+      </div>
+      <div class="botones">
+        <button id="btn-editar-antecedentes">✏️ Modificar</button>
+        <button id="btn-confirmar-antecedentes" style="display:none;">✅ Confirmar</button>
+      </div>
+    </div>
+
+    <!-- Riesgo -->
+    <div id="bloque-riesgo" class="bloque">
+      <label>⚠️ Factores de riesgo:</label>
+      <span id="riesgo-valor">-</span>
+      <div class="autocomplete-container" id="riesgo-autocomplete">
+        <input type="text" id="riesgo-input" class="autocomplete-input" placeholder="Escriba factores...">
+        <div id="riesgo-suggestions" class="autocomplete-suggestions"></div>
+      </div>
+      <div class="botones">
+        <button id="btn-editar-riesgo">✏️ Modificar</button>
+        <button id="btn-confirmar-riesgo" style="display:none;">✅ Confirmar</button>
+      </div>
+    </div>
+
+    <!-- Medicación -->
+    <div id="bloque-med" class="bloque">
+      <label>💊 Medicación:</label>
+      <span id="med-valor">-</span>
+      <div class="autocomplete-container" id="med-autocomplete">
+        <input type="text" id="med-input" class="autocomplete-input" placeholder="Escriba medicación...">
+        <div id="med-suggestions" class="autocomplete-suggestions"></div>
+      </div>
+      <div class="botones">
+        <button id="btn-editar-med">✏️ Modificar</button>
+        <button id="btn-confirmar-med" style="display:none;">✅ Confirmar</button>
+      </div>
+    </div>
+
+    <!-- Laboratorio -->
+    <div id="bloque-lab" class="bloque">
+      <label>🧪 Estudios complementarios:</label>
+      <span id="lab-valor">-</span>
+      <div class="autocomplete-container" id="lab-autocomplete">
+        <input type="text" id="lab-input" class="autocomplete-input" placeholder="Escriba complementarios...">
+        <div id="lab-suggestions" class="autocomplete-suggestions"></div>
+      </div>
+      <div class="botones">
+        <button id="btn-editar-lab">✏️ Modificar</button>
+        <button id="btn-confirmar-lab" style="display:none;">✅ Confirmar</button>
+      </div>
+    </div>
+
+    <button id="evaluar-estudios" class="btn-principal">🧠 Evaluar Estudios</button>
+    <div id="resultado-evaluacion"></div>
+    <div class="botones-extra">
+      <button id="btn-limpiar-extraccion" class="btn-secundario">🧽 Limpiar datos extraídos</button>
+      <button id="btn-limpiar-todo" class="btn-secundario">🗑️ Limpiar todo</button>
+    </div>
+    
+  </div>
+
+  <!-- Sección 3: Estudios -->
+  <div id="estudios" class="seccion">
+    <h1>Estudios Clínicos</h1>
+    <h2>Resultados de Evaluación</h2>
+    <div id="lista-estudios"></div>
+    <button id="btn-generar-derivacion" class="btn-principal" disabled style="opacity: 0.5; cursor: not-allowed;">
+      📤 Generar Derivación
+    </button>
+
+  </div>
+
+   <script type="module" src="js/app.js"></script>
+
+<!-- Popup modal derivación -->
+<div id="modal-derivacion" class="modal">
+  <div class="modal-content">
+    <h2>Generar informe de derivación</h2>
+    <label>Derivador:</label>
+    <input type="text" id="titulo-derivacion" placeholder="Nombre/Apellido/Matricula">
+
+    <label>Apellido:</label>
+    <input type="text" id="apellido" placeholder="Apellido del paciente">
+
+    <label>Nombre:</label>
+    <input type="text" id="nombre" placeholder="Nombre del paciente">
+
+    <label>DNI:</label>
+    <input type="text" id="dni" placeholder="Documento">
+
+    <label>Teléfono:</label>
+    <input type="text" id="telefono" placeholder="Ej: 11 5555 5555">
+
+    <div class="modal-botones">
+      <button id="btn-cancelar-modal" class="btn-secundario">Cancelar</button>
+      <button id="btn-confirmar-modal" class="btn-principal">Generar PDF</button>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
