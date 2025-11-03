@@ -14,9 +14,11 @@ a{color:var(--accent)}
 .header{display:flex;align-items:center;justify-content:space-between;padding-top:28px}
 .brand{display:flex;gap:12px;align-items:center}
 .brand .logo{
-  height: 56px;
-  width: auto;        /* ← mantiene la proporción */
-  border-radius: 10px; /* opcional, si te gusta redondeado */
+  height: auto;
+  width: auto;
+  max-height: 56px;   /* no supera este alto */
+  max-width: 180px;   /* (opcional) ancho máximo */
+  /* object-fit: contain;  ← no hace falta si usás auto, pero no molesta */
 }
 .brand-text h1{margin:0;font-size:24px;letter-spacing:.4px}
 .subtitle{margin:0;color:var(--muted);font-size:14px}
