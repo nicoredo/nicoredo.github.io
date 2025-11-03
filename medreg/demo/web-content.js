@@ -1,41 +1,41 @@
-// --- Carga de terminología (evita "terminologiaMedica is not defined")
-let terminologiaMedica = {};
-let termMeta = {}; // { cat: { clave: { sub: '...' } } }
+// Namespace único para evitar colisiones globales
+window.MEDREG = window.MEDREG || {};
+
 async function cargarTerminologia() {
-  if (Object.keys(terminologiaMedica).length) return terminologiaMedica;
+  const url = (chrome?.runtime?.getURL)
+    ? chrome.runtime.getURL('terminologia_medica.json')
+    : './terminologia_medica.json'; // fallback web
+
   try {
-    const resp = await fetch(chrome.runtime.getURL('terminologia_medica.json'));
-    const lista = await resp.json();
-    terminologiaMedica = {};
-    termMeta = {};
-    for (const item of lista) {
-      const cat = item.categoria;
-      if (!terminologiaMedica[cat]) terminologiaMedica[cat] = {};
-      if (!termMeta[cat]) termMeta[cat] = {};
-      terminologiaMedica[cat][item.clave] = item.sinonimos || [];
-    termMeta[cat][item.clave] = { sub: item.subcategoria || null, sub2: item.sub2 || null };
-    }
+    const resp = await fetch(url);
+    if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+    window.MEDREG.terminologiaMedica = await resp.json();
   } catch (e) {
     console.error('[MedReg] No se pudo cargar terminologia_medica.json', e);
+    window.MEDREG.terminologiaMedica = {};
   }
-  return terminologiaMedica;
 }
-cargarTerminologia();
 
-// --- Reglas de cruce / inferencia
-let reglasCruce = [];
-async function cargarReglasCruce() {
-  if (reglasCruce.length) return reglasCruce;
+async function cargarReglas() {
+  const url = (chrome?.runtime?.getURL)
+    ? chrome.runtime.getURL('reglas_cruce.json')
+    : './reglas_cruce.json';
+
   try {
-    const resp = await fetch(chrome.runtime.getURL('reglas_cruce.json'));
-    reglasCruce = await resp.json();
+    const resp = await fetch(url);
+    if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+    window.MEDREG.reglasCruce = await resp.json();
   } catch (e) {
-    console.warn('[MedReg] No se pudieron cargar reglas_cruce.json', e);
-    reglasCruce = [];
+    console.error('[MedReg] No se pudo cargar reglas_cruce.json', e);
+    window.MEDREG.reglasCruce = {};
   }
-  return reglasCruce;
 }
 
+// Si este archivo se carga directo en la página, dispará los loads
+(async () => {
+  await Promise.all([cargarTerminologia(), cargarReglas()]);
+  console.info('[MedReg] Diccionario y reglas listos (web demo).');
+})();
 
 // ======= Lógica de parseo (idéntica/compatible con tu versión) =======
 
