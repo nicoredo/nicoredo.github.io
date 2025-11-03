@@ -73,6 +73,21 @@
   const c = w.chrome;
 
   if (!c.runtime) c.runtime = { lastError: null, onMessage: createEvent(), sendMessage: () => {} };
+
+  // ➜ NUEVO: getURL para modo web
+if (!c.runtime.getURL) {
+  c.runtime.getURL = (path) => {
+    try {
+      if (/^https?:/i.test(path)) return path; // ya es absoluta
+      if (path.startsWith('/')) return path;   // ruta absoluta del sitio
+      // Resuelve relativo al script (demo/)
+      const base = document.currentScript?.src
+        ? new URL('.', document.currentScript.src)
+        : new URL('.', location.href);
+      return new URL(path, base).toString();
+    } catch { return path; }
+  };
+}
   if (!c.scripting) c.scripting = { executeScript: async () => {} };
   if (!c.tabs) c.tabs = {
     async query(){ return [{ id: 1, url: location.href, active: true }]; },
