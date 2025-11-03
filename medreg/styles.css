@@ -13,7 +13,11 @@ a{color:var(--accent)}
 .container{max-width:1100px;margin:0 auto;padding:24px}
 .header{display:flex;align-items:center;justify-content:space-between;padding-top:28px}
 .brand{display:flex;gap:12px;align-items:center}
-.brand .logo{width:44px;height:44px;border-radius:10px;box-shadow:0 0 0 3px rgba(88,229,255,.2)}
+.brand .logo{
+  height: 56px;
+  width: auto;        /* ← mantiene la proporción */
+  border-radius: 10px; /* opcional, si te gusta redondeado */
+}
 .brand-text h1{margin:0;font-size:24px;letter-spacing:.4px}
 .subtitle{margin:0;color:var(--muted);font-size:14px}
 .actions{display:flex;gap:8px}
@@ -55,4 +59,3 @@ a{color:var(--accent)}
 }
 
 
-.brand .logo { width: 56px; height: 56px; }
