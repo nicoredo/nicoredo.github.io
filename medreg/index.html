@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>MedReg — Sidebar para registrar casos desde la HCE</title>
+  <link rel="stylesheet" href="./styles.css" />
+  <meta name="description" content="MedReg es un sidebar para médicos: extrae datos de HCE en HTML, cruza con criterios de estudios y acelera el registro de casos.">
+</head>
+<body>
+  <header class="container header">
+    <div class="brand">
+      <img src="./assets/icon128.png" alt="MedReg" class="logo" />
+      <div class="brand-text">
+        <h1>MedReg</h1>
+        <p class="subtitle">Asistente de registro para HCE</p>
+      </div>
+    </div>
+    <nav class="actions">
+      <a class="btn ghost" href="#features">Características</a>
+      <a class="btn ghost" href="#demo">Demo</a>
+      <a class="btn" href="#contacto">Contacto</a>
+    </nav>
+  </header>
+
+  <section class="hero container">
+    <div class="hero-text">
+      <h2>Convertí la historia clínica en registro, <span class="accent">en minutos</span>.</h2>
+      <p>El sidebar de MedReg lee la HCE en HTML, detecta antecedentes, medicación, laboratorio y factores de riesgo con tu propia terminología, aplica reglas de inferencia y cruza con criterios de estudios. Todo editable por el médico.</p>
+      <div class="cta">
+        <a class="btn primary" href="./demo/medreg_local_demo.html">Probar demo web</a>
+        <a class="btn ghost" href="#video">Ver video</a>
+      </div>
+      <ul class="badges">
+        <li>Funciona con cualquier HCE (HTML)</li>
+        <li>Local-first • Sin subir datos</li>
+        <li>Atajos y exportación CSV/PDF</li>
+      </ul>
+    </div>
+    <div class="hero-media">
+      <img src="./assets/screenshot-placeholder.png" alt="Vista del sidebar MedReg" class="screenshot" />
+    </div>
+  </section>
+
+  <section id="features" class="features container">
+    <h3>Lo que hace único a MedReg</h3>
+    <div class="grid">
+      <article class="card">
+        <h4>Extracción clínica</h4>
+        <p>Detección robusta de <strong>Antecedentes</strong>, <strong>Riesgo</strong>, <strong>Medicaciones</strong> (con dosis) y <strong>Laboratorio</strong>, con negaciones y sinónimos.</p>
+      </article>
+      <article class="card">
+        <h4>Biblioteca médica propia</h4>
+        <p>Tu archivo <code>terminologia_medica.json</code> + <code>reglas_cruce.json</code> amplían cobertura y permiten inferencias (p.ej., <em>losartán → HTA</em>).</p>
+      </article>
+      <article class="card">
+        <h4>Análisis con IA</h4>
+        <p>Compara los datos del paciente con <strong>criterios de estudios</strong> y devuelve observaciones claras para confirmar en un clic.</p>
+      </article>
+      <article class="card">
+        <h4>Agente Deep</h4>
+        <p>Explora subsecciones de la HCE (Evoluciones, Alta/Egreso, Documentación) para encontrar y extraer lo que pedís.</p>
+      </article>
+      <article class="card">
+        <h4>UX para médicos</h4>
+        <p>Sidebar persistente, resaltado en la página, edición rápida, atajos, exportación a CSV/PDF y derivación.</p>
+      </article>
+      <article class="card">
+        <h4>Privacidad</h4>
+        <p>Lectura local del DOM. El envío a IA se realiza sólo cuando lo ordenás y con datos mínimos.</p>
+      </article>
+    </div>
+  </section>
+
+  <section id="video" class="video container">
+    <h3>Video demo</h3>
+    <div class="video-embed">
+      <!-- Reemplazá VIDEO_ID por el tuyo -->
+      <iframe src="https://www.youtube.com/embed/VIDEO_ID" title="Demostración MedReg" frameborder="0" allowfullscreen></iframe>
+    </div>
+  </section>
+
+  <section id="demo" class="demo container">
+    <h3>Probá la demo web</h3>
+    <p>Esta demo muestra el flujo principal (extracción, edición y análisis). Para el uso completo, instalá la extensión de Chrome.</p>
+    <div class="cta">
+      <a class="btn primary" href="./demo/medreg_local_demo.html">Abrir demo</a>
+      <a class="btn ghost" href="https://github.com/nicoredo/nicoredo.github.io/tree/main/medreg" target="_blank" rel="noopener">Ver código</a>
+    </div>
+  </section>
+
+  <section class="how container">
+    <h3>Cómo funciona</h3>
+    <ol>
+      <li>Abrí la HCE del paciente (HTML).</li>
+      <li>MedReg extrae y normaliza datos clave.</li>
+      <li>Aplicá reglas e <strong>IA</strong> para cruzar con criterios.</li>
+      <li>Confirmá como médico y exportá el informe.</li>
+    </ol>
+  </section>
+
+  <footer id="contacto" class="footer container">
+    <div>
+      <strong>¿Querés probarlo en tu institución?</strong>
+      <p>Escribime a <a href="mailto:nicolas@medex.ar">nicolas@medex.ar</a></p>
+    </div>
+    <small>© {year} MedReg · Hecho en Argentina</small>
+  </footer>
+  <script>
+    document.addEventListener('DOMContentLoaded',()=>{
+      const y = new Date().getFullYear();
+      document.querySelectorAll('.footer small').forEach(n=>n.innerHTML=n.innerHTML.replace('{year}', y));
+    });
+  </script>
+</body>
+</html>
