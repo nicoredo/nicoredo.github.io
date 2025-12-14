@@ -1,142 +1,86 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>MedEx - Evaluador de Pacientes para Estudios Clínicos</title>
-  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>MedEx | Evaluación Inteligente</title>
+  <link rel="stylesheet" href="styles.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;900&display=swap" rel="stylesheet">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 </head>
 <body>
-  <!-- Sección 1: Entrada del paciente -->
-  <div id="entrada-paciente" class="seccion">
-    <h1>MedEx</h1>
-    <h2>Historia Clínica</h2>
-    <textarea id="texto-hc" placeholder="Pegue aquí el texto completo de la historia clínica..."></textarea>
-    <button id="evaluar-paciente" class="btn-principal">🔍 Evaluar Paciente</button>
-  </div>
-
-  <!-- Sección 2: Datos del paciente -->
-  <div id="datos-paciente" class="seccion">
-    <h1>Datos del Paciente</h1>
-    <div id="output">Resumen datos relevantes extraidos</div>
+  <div class="container-principal">
     
-    <!-- Edad -->
-    <div id="bloque-edad" class="bloque">
-      <label>📅 Edad:</label>
-      <span id="edad-valor">-</span>
-      <input type="number" id="edad-input" style="display:none;" min="0" max="120" />
-      <div class="botones">
-        <button id="btn-editar-edad">✏️ Modificar</button>
-        <button id="btn-confirmar-edad" style="display:none;">✅ Confirmar</button>
-      </div>
-    </div>
+    <!-- 🩺 Sección 1: Historia Clínica -->
+    <section class="hc-superior fade-in slide-up" id="seccion-1">
+      <h1> Evaluación de Pacientes</h1>
+      <textarea id="texto-hc" placeholder="Pegue aquí resumen de historia clínica..."></textarea>
+      <div class="opciones-carga">
+  <label for="word-upload" class="btn-principal btn-subir">
+    📄 Subir Word
+    <input type="file" id="word-upload" accept=".docx" style="display: none" />
+  </label>
+  <span id="estado-subida" class="texto-subida"></span>
 
-    <!-- Antecedentes -->
-    <div class="bloque">
-      <label>📍 Antecedentes:</label>
-      <span id="antecedentes-valor">-</span>
-      <div class="autocomplete-container" id="antecedentes-autocomplete">
-        <input type="text" id="antecedentes-input" class="autocomplete-input" placeholder="Escriba antecedentes...">
-        <div id="antecedentes-suggestions" class="autocomplete-suggestions"></div>
-      </div>
-      <div class="botones">
-        <button id="btn-editar-antecedentes">✏️ Modificar</button>
-        <button id="btn-confirmar-antecedentes" style="display:none;">✅ Confirmar</button>
-      </div>
-    </div>
+      <label for="pdf-upload" class="btn-principal btn-subir"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="#c62828" viewBox="0 0 16 16" style="margin-right: 6px;">
+  <path d="M4 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V5.5L10.5 0H4zm4.5 1.5v4a.5.5 0 0 0 .5.5h4v8a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h4.5z"/>
+  <text x="4" y="13" font-size="6" fill="#c62828" font-family="Arial">PDF</text>
+</svg>
+Subir PDF
+  <input type="file" id="pdf-upload" accept=".pdf" style="display: none" />
+</label>
+        </div>
 
-    <!-- Riesgo -->
-    <div id="bloque-riesgo" class="bloque">
-      <label>⚠️ Factores de riesgo:</label>
-      <span id="riesgo-valor">-</span>
-      <div class="autocomplete-container" id="riesgo-autocomplete">
-        <input type="text" id="riesgo-input" class="autocomplete-input" placeholder="Escriba factores...">
-        <div id="riesgo-suggestions" class="autocomplete-suggestions"></div>
-      </div>
-      <div class="botones">
-        <button id="btn-editar-riesgo">✏️ Modificar</button>
-        <button id="btn-confirmar-riesgo" style="display:none;">✅ Confirmar</button>
-      </div>
-    </div>
+<button id="btn-limpiar-texto" class="btn-secundario btn-mini">🧹 Limpiar Historia</button>
 
-    <!-- Medicación -->
-    <div id="bloque-med" class="bloque">
-      <label>💊 Medicación:</label>
-      <span id="med-valor">-</span>
-      <div class="autocomplete-container" id="med-autocomplete">
-        <input type="text" id="med-input" class="autocomplete-input" placeholder="Escriba medicación...">
-        <div id="med-suggestions" class="autocomplete-suggestions"></div>
-      </div>
-      <div class="botones">
-        <button id="btn-editar-med">✏️ Modificar</button>
-        <button id="btn-confirmar-med" style="display:none;">✅ Confirmar</button>
-      </div>
-    </div>
+      <button id="evaluar-ia-directa" class="btn-principal anim-pulse">🧠 Evaluar con IA</button>
+    </section>
 
-    <!-- Laboratorio -->
-    <div id="bloque-lab" class="bloque">
-      <label>🧪 Estudios complementarios:</label>
-      <span id="lab-valor">-</span>
-      <div class="autocomplete-container" id="lab-autocomplete">
-        <input type="text" id="lab-input" class="autocomplete-input" placeholder="Escriba complementarios...">
-        <div id="lab-suggestions" class="autocomplete-suggestions"></div>
+    <!-- 📊 Sección 2: Resultados IA -->
+    <section class="bloque-col resultados-ia" id="seccion-2">
+      <h2>📊 Resultados IA</h2>
+      <div id="resultado-ia" class="resultado-html">
+        <p><em>Esperando evaluación...</em></p>
       </div>
-      <div class="botones">
-        <button id="btn-editar-lab">✏️ Modificar</button>
-        <button id="btn-confirmar-lab" style="display:none;">✅ Confirmar</button>
-      </div>
-    </div>
+    </section>
 
-    <button id="evaluar-estudios" class="btn-principal">🧠 Evaluar Estudios</button>
-    <div id="resultado-evaluacion"></div>
-    <div class="botones-extra">
-      <button id="btn-limpiar-extraccion" class="btn-secundario">🧽 Limpiar datos extraídos</button>
-      <button id="btn-limpiar-todo" class="btn-secundario">🗑️ Limpiar todo</button>
-    </div>
-    
+    <!-- 📝 Sección 3: Comentarios + Botones -->
+    <section class="bloque-col comentarios-medico" id="seccion-3">
+      <h2>📝 Comentarios del Médico</h2>
+      <textarea id="comentarios-medico" placeholder="Escriba aquí observaciones adicionales..."></textarea>
+      <div class="botonera">
+        <button id="btn-derivar" class="btn-accion">📄 Generar Derivación</button>
+        <button id="btn-limpiar" class="btn-accion btn-secundario">🗑️ Limpiar Todo</button>
+      </div>
+    </section>
   </div>
 
-  <!-- Sección 3: Estudios -->
-  <div id="estudios" class="seccion">
-    <h1>Estudios Clínicos</h1>
-    <h2>Resultados de Evaluación</h2>
-    <div id="lista-estudios"></div>
-    <button id="btn-generar-derivacion" class="btn-principal" disabled style="opacity: 0.5; cursor: not-allowed;">
-      📤 Generar Derivación
-    </button>
-
-  </div>
-
-   <script type="module" src="js/app.js"></script>
-
-<!-- Popup modal derivación -->
-<div id="modal-derivacion" class="modal">
-  <div class="modal-content">
-    <h2>Generar informe de derivación</h2>
-    <label>Derivador:</label>
-    <input type="text" id="titulo-derivacion" placeholder="Nombre/Apellido/Matricula">
-
-    <label>Apellido:</label>
-    <input type="text" id="apellido" placeholder="Apellido del paciente">
-
-    <label>Nombre:</label>
-    <input type="text" id="nombre" placeholder="Nombre del paciente">
-
-    <label>DNI:</label>
-    <input type="text" id="dni" placeholder="Documento">
-
-    <label>Teléfono:</label>
-    <input type="text" id="telefono" placeholder="Ej: 11 5555 5555">
-
-    <div class="modal-botones">
-      <button id="btn-cancelar-modal" class="btn-secundario">Cancelar</button>
-      <button id="btn-confirmar-modal" class="btn-principal">Generar PDF</button>
+  <!-- Modal derivación -->
+  <div id="modal-derivacion" class="modal oculto">
+    <div class="modal-box">
+      <h3>📌 Datos para la Derivación</h3>
+      <input type="text" id="nombre-paciente" placeholder="Apellido y Nombre"/>
+      <input type="text" id="dni-paciente" placeholder="DNI"/>
+      <input type="text" id="contacto-paciente" placeholder="Teléfono o contacto"/>
+      <input type="text" id="medico-derivador" placeholder="Médico derivador"/>
+      <div class="modal-acciones">
+        <button id="confirmar-derivacion" class="btn-pdf">✅ Confirmar PDF</button>
+        <button id="cancelar-derivacion" class="btn-clear">❌ Cancelar</button>
+      </div>
     </div>
   </div>
-</div>
 
+  <!-- Overlay de carga -->
+  <div id="overlay-cargando" class="overlay oculto">
+    <div class="contenedor-carga">
+      <div class="barra-cargando">
+        <div class="progreso"></div>
+      </div>
+      <p id="frase-carga">Evaluando con IA...</p>
+    </div>
+  </div>
+
+  <script src="./js/app.js"></script>
 </body>
 </html>
