@@ -3,147 +3,455 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pausa | Medex - Recuperá tu enfoque</title>
+    <title data-i18n="page-title">Pausa | Medex - Recuperá tu enfoque</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Inter', 'sans-serif'], },
+                    colors: {
+                        'tech-dark': '#0f172a',
+                        'tech-gray': '#1e293b',
+                        'tech-blue': '#2563eb', // Azul eléctrico
+                    }
+                }
+            }
+        }
+    </script>
     <style>
-        body { font-family: 'Inter', sans-serif; }
-        .bg-gradient { background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); }
+        [data-i18n] { transition: opacity 0.3s ease-in-out; }
+        .fade-out { opacity: 0; }
     </style>
 </head>
-<body class="bg-gray-50 text-gray-800 antialiased">
+<body class="bg-slate-50 text-slate-800 antialiased font-sans pt-20">
 
-    <nav class="w-full bg-white shadow-sm fixed top-0 z-50">
-        <div class="max-w-6xl mx-auto px-4 py-4 flex justify-between items-center">
-            <div class="font-bold text-2xl tracking-tighter text-blue-600">Medex<span class="text-gray-800">.ar</span></div>
-            <div class="space-x-6 text-sm font-semibold text-gray-600 hidden md:block">
-                <a href="#objetivo" class="hover:text-blue-600">Objetivo</a>
-                <a href="#instalacion" class="hover:text-blue-600">Instalación</a>
-                <a href="#privacidad" class="hover:text-blue-600">Privacidad</a>
+    <nav class="w-full bg-white/95 backdrop-blur-sm shadow-sm fixed top-0 z-50 border-b border-slate-100 transition-all duration-300">
+        <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center relative">
+            <div class="font-extrabold text-2xl tracking-tighter text-tech-blue">Medex<span class="text-slate-900">.ar</span></div>
+            
+            <div class="flex items-center space-x-6">
+                <div class="space-x-4 text-sm font-medium text-slate-600 hidden md:flex">
+                    <a href="#objetivo" class="hover:text-tech-blue transition" data-i18n="nav-objective">Objetivo</a>
+                    <a href="#instalacion" class="hover:text-tech-blue transition" data-i18n="nav-installation">Instalación</a>
+                    <a href="#privacidad" class="hover:text-tech-blue transition" data-i18n="nav-privacy">Privacidad</a>
+                </div>
+
+                <div class="relative group">
+                    <button id="lang-btn" class="flex items-center space-x-1.5 text-sm font-medium text-slate-700 bg-slate-100 hover:bg-slate-200 px-3 py-1.5 rounded-full transition">
+                        <svg class="w-4 h-4 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5h12M9 3v2m1.048 9.5A10.022 10.022 0 014 13m3.048-3.5a10.02 10.02 0 012.23 6.643M11 7l3.704-3.704a2 2 0 012.828 0l2.828 2.828a2 2 0 010 2.828L11 20H7v-4l4-4z"></path></svg>
+                        <span id="current-lang">ES</span>
+                        <svg class="w-3 h-3 text-slate-400 group-hover:rotate-180 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                    </button>
+                    <div class="absolute right-0 mt-2 w-32 bg-white rounded-xl shadow-xl border border-slate-100 opacity-0 group-hover:opacity-100 invisible group-hover:visible transition-all duration-300 z-50">
+                        <div class="py-2 text-sm text-slate-700">
+                            <button onclick="changeLanguage('es')" class="block w-full text-left px-4 py-2 hover:bg-slate-50 hover:text-tech-blue">Español</button>
+                            <button onclick="changeLanguage('en')" class="block w-full text-left px-4 py-2 hover:bg-slate-50 hover:text-tech-blue">English</button>
+                            <button onclick="changeLanguage('pt')" class="block w-full text-left px-4 py-2 hover:bg-slate-50 hover:text-tech-blue">Português</button>
+                            <button onclick="changeLanguage('fr')" class="block w-full text-left px-4 py-2 hover:bg-slate-50 hover:text-tech-blue">Français</button>
+                            <button onclick="changeLanguage('zh')" class="block w-full text-left px-4 py-2 hover:bg-slate-50 hover:text-tech-blue">中文</button>
+                            <button onclick="changeLanguage('ru')" class="block w-full text-left px-4 py-2 hover:bg-slate-50 hover:text-tech-blue">Русский</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <a href="#" class="bg-tech-blue text-white px-5 py-2 rounded-full text-sm font-semibold hover:bg-blue-700 hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300" data-i18n="btn-download">Descargar Pausa</a>
             </div>
-            <a href="#" class="bg-blue-600 text-white px-5 py-2 rounded-full font-semibold hover:bg-blue-700 transition">Descargar Pausa</a>
         </div>
     </nav>
 
-    <header class="bg-gradient text-white pt-32 pb-20 px-4 text-center border-b-4 border-blue-500">
-        <div class="max-w-4xl mx-auto">
-            <h1 class="text-5xl md:text-7xl font-extrabold mb-6 tracking-tight">Recuperá tu tiempo.<br><span class="text-blue-400">Silenciá el ruido.</span></h1>
-            <p class="text-xl md:text-2xl text-gray-300 mb-10 max-w-2xl mx-auto">Pausa es la herramienta definitiva para bloquear distracciones, reducir el estrés digital y recuperar tu capacidad de atención sostenida.</p>
+    <header class="relative bg-tech-dark text-white pt-24 pb-20 px-6 text-center border-b-8 border-tech-blue overflow-hidden">
+        
+        <div class="absolute inset-0 opacity-10 bg-center bg-cover bg-no-repeat" style="background-image: url('ruta/a/tu/app_demo.gif');">
+            </div>
+
+        <div class="max-w-5xl mx-auto relative z-10">
+            <h1 class="text-5xl md:text-7xl font-extrabold mb-6 tracking-tight leading-tight fade-in">
+                <span data-i18n="hero-title-1">Recuperá tu tiempo.</span><br>
+                <span class="text-blue-400" data-i18n="hero-title-2">Silenciá el ruido.</span>
+            </h1>
+            <p class="text-lg md:text-2xl text-slate-300 mb-12 max-w-2xl mx-auto font-light" data-i18n="hero-subtitle">Pausa es la herramienta definitiva para bloquear distracciones, reducir el estrés digital y recuperar tu capacidad de atención sostenida.</p>
             
-            <div class="inline-block bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl px-8 py-4 mb-8">
-                <p class="text-2xl font-bold">Un solo pago. Para siempre.</p>
-                <p class="text-sm text-gray-300 mt-1">Sin suscripciones mensuales, sin anuncios, sin recargos ocultos.</p>
+            <div class="inline-block bg-white/5 backdrop-blur-lg border border-white/10 rounded-2xl px-10 py-6 mb-10 shadow-2xl">
+                <p class="text-3xl font-extrabold" data-i18n="payment-model">Un solo pago. Para siempre.</p>
+                <p class="text-sm text-slate-400 mt-1.5" data-i18n="payment-subtitle">Sin suscripciones mensuales, sin anuncios, sin recargos ocultos.</p>
             </div>
         </div>
     </header>
 
-    <section id="objetivo" class="py-20 px-4 max-w-6xl mx-auto">
-        <div class="grid md:grid-cols-2 gap-12 items-center">
-            <div>
-                <h2 class="text-3xl font-bold mb-6 text-gray-900">¿Por qué usar Pausa?</h2>
-                <p class="text-lg text-gray-600 mb-6 leading-relaxed">
-                    Hacer contacto visual constante con las notificaciones fragmenta tu atención y eleva los niveles de estrés. Diseñamos <strong>Pausa</strong> con un objetivo clínico y práctico: obligarte a desconectar cuando la fuerza de voluntad no alcanza.
-                </p>
-                <ul class="space-y-4">
-                    <li class="flex items-start">
-                        <svg class="w-6 h-6 text-blue-500 mr-3 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
-                        <span class="text-gray-700"><strong>Trabajo Profundo:</strong> Ideal para concentrarte en tareas complejas sin interrupciones de redes sociales.</span>
-                    </li>
-                    <li class="flex items-start">
-                        <svg class="w-6 h-6 text-blue-500 mr-3 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
-                        <span class="text-gray-700"><strong>Estudio Eficiente:</strong> Activá el bloqueo por 60 minutos y asegurá tu retención de lectura.</span>
-                    </li>
-                    <li class="flex items-start">
-                        <svg class="w-6 h-6 text-blue-500 mr-3 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
-                        <span class="text-gray-700"><strong>Salud y Descanso:</strong> Desconectá realmente durante cenas familiares o antes de dormir.</span>
-                    </li>
-                </ul>
+    <section id="objetivo" class="py-24 px-6 max-w-7xl mx-auto">
+        <div class="text-center mb-16">
+            <h2 class="text-4xl font-extrabold mb-4 text-slate-950 tracking-tight" data-i18n="objective-title">¿Por qué usar Pausa?</h2>
+            <p class="text-lg text-slate-600 max-w-2xl mx-auto" data-i18n="objective-desc">Hacer contacto visual constante con las notificaciones fragmenta tu atención y eleva los niveles de estrés. Diseñamos <strong class="text-tech-blue">Pausa</strong> con un objetivo clínico y práctico: obligarte a desconectar.</p>
+        </div>
+
+        <div class="relative group max-w-5xl mx-auto aspect-[16/9] bg-slate-100 rounded-3xl overflow-hidden shadow-xl border border-slate-100">
+            
+            <div id="carousel-slides" class="relative w-full h-full flex transition-transform duration-500 ease-in-out">
+                <div class="w-full h-full flex-shrink-0 relative">
+                    <img src="https://images.unsplash.com/photo-1499951360447-b19be8fe80f5?q=80&w=1600" alt="Trabajo Profundo" class="w-full h-full object-cover">
+                    <div class="absolute inset-0 bg-gradient-to-t from-tech-dark/90 via-tech-dark/20 to-transparent p-10 flex flex-col justify-end text-white">
+                        <h3 class="text-2xl font-bold mb-2" data-i18n="carousel-1-title">Trabajo Profundo</h3>
+                        <p class="text-slate-200 text-sm max-w-lg" data-i18n="carousel-1-desc">Ideal para concentrarte en tareas complejas sin interrupciones de redes sociales.</p>
+                    </div>
+                </div>
+                <div class="w-full h-full flex-shrink-0 relative">
+                    <img src="https://images.unsplash.com/photo-1434030216411-0b793f4b4173?q=80&w=1600" alt="Estudio Eficiente" class="w-full h-full object-cover">
+                    <div class="absolute inset-0 bg-gradient-to-t from-tech-dark/90 via-tech-dark/20 to-transparent p-10 flex flex-col justify-end text-white">
+                        <h3 class="text-2xl font-bold mb-2" data-i18n="carousel-2-title">Estudio Eficiente</h3>
+                        <p class="text-slate-200 text-sm max-w-lg" data-i18n="carousel-2-desc">Activá el bloqueo por 60 minutos y asegurá tu retención de lectura.</p>
+                    </div>
+                </div>
+                <div class="w-full h-full flex-shrink-0 relative">
+                    <img src="https://images.unsplash.com/photo-1516534775068-ba3e7458af70?q=80&w=1600" alt="Salud Digital" class="w-full h-full object-cover">
+                    <div class="absolute inset-0 bg-gradient-to-t from-tech-dark/90 via-tech-dark/20 to-transparent p-10 flex flex-col justify-end text-white">
+                        <h3 class="text-2xl font-bold mb-2" data-i18n="carousel-3-title">Salud y Presencia</h3>
+                        <p class="text-slate-200 text-sm max-w-lg" data-i18n="carousel-3-desc">Desconectá realmente durante cenas familiares o antes de dormir.</p>
+                    </div>
+                </div>
             </div>
-            <div class="bg-gray-200 rounded-2xl p-2 aspect-video flex items-center justify-center relative overflow-hidden shadow-xl">
-                <p class="text-gray-500 font-semibold absolute z-10">Espacio para Video de YouTube / TikTok</p>
+
+            <button onclick="prevSlide()" class="absolute left-4 top-1/2 -translate-y-1/2 bg-white/20 backdrop-blur-sm p-3 rounded-full text-white opacity-0 group-hover:opacity-100 transition hover:bg-white/40">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+            </button>
+            <button onclick="nextSlide()" class="absolute right-4 top-1/2 -translate-y-1/2 bg-white/20 backdrop-blur-sm p-3 rounded-full text-white opacity-0 group-hover:opacity-100 transition hover:bg-white/40">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+            </button>
+            <div id="carousel-dots" class="absolute bottom-4 left-1/2 -translate-x-1/2 flex space-x-2.5">
                 </div>
         </div>
     </section>
 
-    <section id="instalacion" class="py-20 bg-white border-y border-gray-200 px-4">
-        <div class="max-w-6xl mx-auto">
+    <section id="instalacion" class="py-24 bg-white border-y border-slate-100 px-6">
+        <div class="max-w-7xl mx-auto">
             <div class="text-center mb-16">
-                <h2 class="text-3xl font-bold mb-4 text-gray-900">Configuración en 3 Pasos Simples</h2>
-                <p class="text-gray-600 max-w-2xl mx-auto text-lg">Para que el bloqueo sea efectivo, Pausa necesita permisos críticos del sistema. Te guiamos para activarlos de una sola vez.</p>
+                <h2 class="text-4xl font-extrabold mb-4 text-slate-950 tracking-tight" data-i18n="steps-title">Configuración en 3 Pasos Simples</h2>
+                <p class="text-lg text-slate-600 max-w-2xl mx-auto" data-i18n="steps-desc">Para que el bloqueo sea efectivo, Pausa necesita permisos críticos del sistema. Te guiamos para activarlos de una sola vez.</p>
             </div>
             
-            <div class="grid md:grid-cols-3 gap-8">
-                <div class="bg-gray-50 p-8 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition">
-                    <div class="w-12 h-12 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center text-xl font-bold mb-6">1</div>
-                    <h3 class="text-xl font-bold mb-3">Mostrar sobre otras apps</h3>
-                    <p class="text-gray-600">Permite que la pantalla de bloqueo de Pausa se superponga sobre tus aplicaciones cuando intentes abrirlas durante un período de enfoque.</p>
-                </div>
-                <div class="bg-gray-50 p-8 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition">
-                    <div class="w-12 h-12 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center text-xl font-bold mb-6">2</div>
-                    <h3 class="text-xl font-bold mb-3">Gestionar notificaciones</h3>
-                    <p class="text-gray-600">Fundamental para silenciar alertas e impedir que las notificaciones entrantes rompan tu concentración.</p>
-                </div>
-                <div class="bg-gray-50 p-8 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition">
-                    <div class="w-12 h-12 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center text-xl font-bold mb-6">3</div>
-                    <h3 class="text-xl font-bold mb-3">Leer estado del teléfono</h3>
-                    <p class="text-gray-600">Nos aseguramos de que si recibís una llamada entrante (emergencias), el bloqueo se pause temporalmente para que puedas atender.</p>
+            <div class="grid md:grid-cols-[1fr,1.3fr] gap-12 items-center">
+                <div class="aspect-video bg-slate-900 rounded-2xl shadow-xl overflow-hidden relative">
+                    <iframe class="w-full h-full" src="https://www.youtube.com/embed/TU_ID_DE_VIDEO_PASOS?rel=0&showinfo=0" title="Guía de Instalación Pausa" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                    </div>
+
+                <div class="space-y-8">
+                    <div class="flex items-start bg-slate-50 p-6 rounded-xl border border-slate-100 hover:border-slate-200 transition hover:shadow-md">
+                        <div class="w-12 h-12 bg-blue-100 text-tech-blue rounded-full flex items-center justify-center text-xl font-bold mb-6 mr-5 shrink-0">1</div>
+                        <div>
+                            <h3 class="text-xl font-bold mb-1.5 text-slate-950" data-i18n="perm-1-title">Mostrar sobre otras apps</h3>
+                            <p class="text-slate-600 text-sm" data-i18n="perm-1-desc">Permite que la pantalla de bloqueo de Pausa se superponga sobre tus aplicaciones cuando intentes abrirlas.</p>
+                        </div>
+                    </div>
+                    <div class="flex items-start bg-slate-50 p-6 rounded-xl border border-slate-100 hover:border-slate-200 transition hover:shadow-md">
+                        <div class="w-12 h-12 bg-blue-100 text-tech-blue rounded-full flex items-center justify-center text-xl font-bold mb-6 mr-5 shrink-0">2</div>
+                        <div>
+                            <h3 class="text-xl font-bold mb-1.5 text-slate-950" data-i18n="perm-2-title">Gestionar notificaciones</h3>
+                            <p class="text-slate-600 text-sm" data-i18n="perm-2-desc">Fundamental para silenciar alertas e impedir que las notificaciones entrantes rompan tu concentración.</p>
+                        </div>
+                    </div>
+                    <div class="flex items-start bg-slate-50 p-6 rounded-xl border border-slate-100 hover:border-slate-200 transition hover:shadow-md">
+                        <div class="w-12 h-12 bg-blue-100 text-tech-blue rounded-full flex items-center justify-center text-xl font-bold mb-6 mr-5 shrink-0">3</div>
+                        <div>
+                            <h3 class="text-xl font-bold mb-1.5 text-slate-950" data-i18n="perm-3-title">Leer estado del teléfono</h3>
+                            <p class="text-slate-600 text-sm" data-i18n="perm-3-desc">Nos aseguramos de que si recibís una llamada entrante (emergencias), el bloqueo se pause temporalmente.</p>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </section>
 
-    <section id="privacidad" class="py-20 px-4 bg-gray-50">
-        <div class="max-w-4xl mx-auto bg-white p-8 md:p-12 rounded-3xl shadow-sm border border-gray-200">
-            <h2 class="text-3xl font-bold mb-2 text-gray-900 border-b pb-4">Política de Privacidad de Pausa</h2>
-            <p class="text-sm text-gray-500 mb-8 font-semibold">Última actualización: 21/03/2026</p>
+    <section id="privacidad" class="py-24 px-6 bg-slate-50">
+        <div class="max-w-5xl mx-auto bg-white p-10 md:p-16 rounded-3xl shadow-sm border border-slate-200">
+            <h2 class="text-3xl font-extrabold mb-2 text-slate-950 tracking-tight" data-i18n="policy-title">Política de Privacidad de Pausa</h2>
+            <p class="text-sm text-slate-500 mb-10 font-semibold" data-i18n="policy-date">Última actualización: 21/03/2026</p>
             
-            <div class="space-y-6 text-gray-700 leading-relaxed text-sm md:text-base">
-                <div>
-                    <h3 class="font-bold text-gray-900 text-lg mb-2">1. Introducción</h3>
-                    <p>Medex, ha desarrollado la aplicación móvil Pausa como una herramienta comercial. Esta página tiene como objetivo informar a los usuarios sobre nuestras políticas relativas a la recopilación, uso y divulgación de Información Personal en caso de que alguien decida utilizar nuestro servicio.</p>
+            <div id="policy-content" class="space-y-8 text-slate-700 leading-relaxed text-sm md:text-base">
                 </div>
-                
-                <div>
-                    <h3 class="font-bold text-gray-900 text-lg mb-2">2. Recopilación y Uso de la Información</h3>
-                    <p>Para que Pausa funcione correctamente y cumpla su objetivo de reducir las distracciones, la aplicación requiere ciertos permisos en su dispositivo (como mostrarse sobre otras aplicaciones, gestionar notificaciones para silenciarlas y leer el estado del teléfono para desactivar el bloqueo ante una llamada entrante).</p>
-                    <p class="mt-2 font-medium text-gray-900 bg-blue-50 p-4 rounded-lg">Queremos ser claros: Pausa no recopila, almacena, ni transmite ninguna información personal identificable de sus usuarios a servidores externos. Todos los permisos solicitados se utilizan de manera local y exclusiva para el funcionamiento técnico de la aplicación en su dispositivo.</p>
-                </div>
-
-                <div>
-                    <h3 class="font-bold text-gray-900 text-lg mb-2">3. Privacidad de los Menores de Edad</h3>
-                    <p>Pausa es una aplicación diseñada para ser útil y segura para usuarios de todas las edades, incluyendo niños y adolescentes. Debido a que nuestra aplicación no recopila, solicita ni almacena datos personales de ningún tipo, cumplimos estrictamente con las normativas de protección infantil en línea (como COPPA). No rastreamos la ubicación, no recopilamos nombres, correos electrónicos ni información del dispositivo que pueda identificar a un menor.</p>
-                </div>
-
-                <div>
-                    <h3 class="font-bold text-gray-900 text-lg mb-2">4. Terceros y Análisis</h3>
-                    <p>La aplicación no utiliza servicios de terceros que puedan recopilar información utilizada para identificarlo. No vendemos, intercambiamos ni transferimos de ninguna manera información a terceros.</p>
-                </div>
-
-                <div>
-                    <h3 class="font-bold text-gray-900 text-lg mb-2">5. Seguridad</h3>
-                    <p>Valoramos su confianza al utilizar Pausa. Dado que no recopilamos datos personales, no existen bases de datos externas vulnerables a filtraciones por nuestra parte. La seguridad de la información contenida en su dispositivo depende de las medidas de seguridad del propio sistema operativo.</p>
-                </div>
-
-                <div>
-                    <h3 class="font-bold text-gray-900 text-lg mb-2">6. Cambios en esta Política de Privacidad</h3>
-                    <p>Es posible que actualicemos nuestra Política de Privacidad de vez en cuando. Por lo tanto, le recomendamos que revise esta página periódicamente para ver si hay cambios. Le notificaremos sobre cualquier cambio publicando la nueva Política de Privacidad en esta página.</p>
-                </div>
-
-                <div>
-                    <h3 class="font-bold text-gray-900 text-lg mb-2">7. Contacto</h3>
-                    <p>Si tiene alguna pregunta o sugerencia sobre nuestra Política de Privacidad, no dude en contactarnos a: <a href="mailto:medexapps@gmail.com" class="text-blue-600 font-semibold hover:underline">medexapps@gmail.com</a></p>
-                </div>
-            </div>
         </div>
     </section>
 
-    <footer class="bg-gray-900 text-gray-400 py-12 text-center text-sm">
-        <div class="max-w-6xl mx-auto px-4">
-            <div class="font-bold text-xl tracking-tighter text-white mb-4">Medex<span class="text-blue-500">.ar</span></div>
-            <p class="mb-4">Desarrollando herramientas para la salud digital.</p>
-            <p>&copy; 2026 Medex. Todos los derechos reservados.</p>
+    <footer class="bg-tech-dark text-slate-400 py-16 px-6 text-center text-sm">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="font-extrabold text-2xl tracking-tighter text-white mb-5 transition-transform hover:scale-105">Medex<span class="text-tech-blue">.ar</span></div>
+            <p class="mb-5 font-light" data-i18n="footer-desc">Desarrollando herramientas para la salud digital.</p>
+            <p class="text-xs text-slate-600" data-i18n="footer-rights">&copy; 2026 Medex. Todos los derechos reservados.</p>
         </div>
     </footer>
+
+    <script>
+        // --- GESTIÓN DE IDIOMAS Y TRADUCCIONES ---
+        const translations = {
+            es: {
+                "page-title": "Pausa | Medex - Recuperá tu enfoque",
+                "nav-objective": "Objetivo", "nav-installation": "Instalación", "nav-privacy": "Privacidad",
+                "btn-download": "Descargar Pausa",
+                "hero-title-1": "Recuperá tu tiempo.", "hero-title-2": "Silenciá el ruido.",
+                "hero-subtitle": "Pausa es la herramienta definitiva para bloquear distracciones, reducir el estrés digital y recuperar tu capacidad de atención sostenida.",
+                "payment-model": "Un solo pago. Para siempre.", "payment-subtitle": "Sin suscripciones mensuales, sin anuncios, sin recargos ocultos.",
+                "objective-title": "¿Por qué usar Pausa?",
+                "objective-desc": "Hacer contacto visual constante con las notificaciones fragmenta tu atención y eleva los niveles de estrés. Diseñamos Medex Pausa con un objetivo clínico y práctico: obligarte a desconectar.",
+                "carousel-1-title": "Trabajo Profundo", "carousel-1-desc": "Ideal para concentrarte en tareas complejas sin interrupciones de redes sociales.",
+                "carousel-2-title": "Estudio Eficiente", "carousel-2-desc": "Activá el bloqueo por 60 minutos y asegurá tu retención de lectura.",
+                "carousel-3-title": "Salud y Presencia", "carousel-3-desc": "Desconectá realmente durante cenas familiares o antes de dormir.",
+                "steps-title": "Configuración en 3 Pasos Simples",
+                "steps-desc": "Para que el bloqueo sea efectivo, Pausa necesita permisos críticos del sistema. Te guiamos para activarlos de una sola vez.",
+                "perm-1-title": "Mostrar sobre otras apps", "perm-1-desc": "Permite que la pantalla de bloqueo de Pausa se superponga sobre tus aplicaciones cuando intentes abrirlas.",
+                "perm-2-title": "Gestionar notificaciones", "perm-2-desc": "Fundamental para silenciar alertas e impedir que las notificaciones entrantes rompan tu concentración.",
+                "perm-3-title": "Leer estado del teléfono", "perm-3-desc": "Nos aseguramos de que si recibís una llamada entrante (emergencias), el bloqueo se pause temporalmente.",
+                "policy-title": "Política de Privacidad de Pausa", "policy-date": "Última actualización: 21/03/2026",
+                "footer-desc": "Desarrollando herramientas para la salud digital.", "footer-rights": "&copy; 2026 Medex. Todos los derechos reservados.",
+                // Política de Privacidad ES (Suministrada por el usuario)
+                "policy-intro": "Medex, ha desarrollado la aplicación móvil Pausa como una herramienta comercial. Esta página tiene como objetivo informar a los usuarios sobre nuestras políticas relativas a la recopilación, uso y divulgación de Información Personal.",
+                "policy-perm-title": "Recopilación y Uso de la Información",
+                "policy-perm-text-1": "Para que Pausa funcione correctamente y cumpla su objetivo, la aplicación requiere ciertos permisos en su dispositivo (como mostrarse sobre otras aplicaciones, gestionar notificaciones para silenciarlas y leer el estado del teléfono para desactivar el bloqueo ante una llamada entrante).",
+                "policy-perm-highlight": "Queremos ser claros: Pausa no recopila, almacena, ni transmite ninguna información personal identificable de sus usuarios a servidores externos. Todos los permisos solicitados se utilizan de manera local y exclusiva para el funcionamiento técnico de la aplicación en su dispositivo.",
+                "policy-child-title": "Privacidad de los Menores de Edad", "policy-child-text": "Pausa cumple estrictamente con las normativas de protección infantil en línea (como COPPA). No recopilamos datos personales de ningún tipo, incluyendo niños.",
+                "policy-third-title": "Terceros y Análisis", "policy-third-text": "La aplicación no utiliza servicios de terceros que puedan recopilar información utilizada para identificarlo.",
+                "policy-sec-title": "Seguridad", "policy-sec-text": "Dado que no recopilamos datos personales, no existen bases de datos externas vulnerables a filtraciones por nuestra parte.",
+                "policy-change-title": "Cambios en esta Política", "policy-change-text": "Es posible que actualicemos nuestra Política de Privacidad. Le notificaremos publicando la nueva Política en esta página.",
+                "policy-cont-title": "Contacto", "policy-cont-text": "Si tiene preguntas, no dude en contactarnos a: ",
+            },
+            en: {
+                "page-title": "Pausa | Medex - Reclaim your Focus",
+                "nav-objective": "Goal", "nav-installation": "Installation", "nav-privacy": "Privacy",
+                "btn-download": "Download Pausa",
+                "hero-title-1": "Reclaim your Time.", "hero-title-2": "Silence the Noise.",
+                "hero-subtitle": "Pausa is the ultimate tool to block distractions, reduce digital stress, and recover your sustained attention span.",
+                "payment-model": "One-time payment. Forever.", "payment-subtitle": "No monthly subscriptions, no ads, no hidden fees.",
+                "objective-title": "Why use Pausa?",
+                "objective-desc": "Constant eye contact with notifications fragments your attention and raises stress levels. We designed Medex Pausa with a clinical and practical goal: forcing you to disconnect.",
+                "carousel-1-title": "Deep Work", "carousel-1-desc": "Ideal for focusing on complex tasks without social media interruptions.",
+                "carousel-2-title": "Efficient Study", "carousel-2-desc": "Activate the lock for 60 minutes and ensure your reading retention.",
+                "carousel-3-title": "Health & Presence", "carousel-3-desc": "Truly disconnect during family dinners or before sleeping.",
+                "steps-title": "Setting up in 3 Simple Steps",
+                "steps-desc": "For the blocking to be effective, Pausa needs critical system permissions. We guide you to activate them all at once.",
+                "perm-1-title": "Display over other apps", "perm-1-desc": "Allows Pausa's lock screen to overlap your applications when you try to open them.",
+                "perm-2-title": "Manage notifications", "perm-2-desc": "Essential for silencing alerts and preventing incoming notifications from breaking concentration.",
+                "perm-3-title": "Read phone state", "perm-3-desc": "We ensure that if you receive an incoming call (emergencies), the lock is temporarily paused.",
+                "policy-title": "Pausa Privacy Policy", "policy-date": "Last updated: 03/21/2026",
+                "footer-desc": "Developing tools for digital health.", "footer-rights": "&copy; 2026 Medex. All rights reserved.",
+                // Placeholder Policy EN - USER MUST REPLACE with legal translation
+                "policy-intro": "[English placeholder] Medex developed Pausa as a commercial tool. This page informs users about our policies regarding the collection, use, and disclosure of Personal Information.",
+                "policy-perm-title": "[English placeholder] Information Collection and Use",
+                "policy-perm-text-1": "[English placeholder] For Pausa to function correctly, the application requires certain permissions on your device (display over apps, manage notifications, read phone state).",
+                "policy-perm-highlight": "[English placeholder] Clear: Pausa does not collect, store, or transmit any personally identifiable information from its users to external servers. All permissions are used locally.",
+                "policy-child-title": "[English placeholder] Children's Privacy", "policy-child-text": "[English placeholder] Pausa complies with COPPA. We do not collect personal data of any kind, including from children.",
+                "policy-third-title": "[English placeholder] Third-Party & Analytics", "policy-third-text": "[English placeholder] The application does not use third-party services that may collect information.",
+                "policy-sec-title": "[English placeholder] Security", "policy-sec-text": "[English placeholder] Since we do not collect personal data, there are no external databases vulnerable to leaks.",
+                "policy-change-title": "[English placeholder] Policy Changes", "policy-change-text": "[English placeholder] We may update our Privacy Policy. We will notify you by posting the new Policy here.",
+                "policy-cont-title": "[English placeholder] Contact", "policy-cont-text": "[English placeholder] If you have questions, contact us at: ",
+            },
+            pt: {
+                "page-title": "Pausa | Medex - Recupere seu Foco",
+                "nav-objective": "Objetivo", "nav-installation": "Instalação", "nav-privacy": "Privacidade",
+                "btn-download": "Baixar Pausa",
+                "hero-title-1": "Recupere seu Tempo.", "hero-title-2": "Silencie o Ruído.",
+                "hero-subtitle": "Pausa é a ferramenta definitiva para bloquear distrações, reduzir o estresse digital e recuperar sua capacidade de atenção sustentada.",
+                "payment-model": "Pagamento único. Para sempre.", "payment-subtitle": "Sem assinaturas mensais, sem anúncios, sem taxas ocultas.",
+                "objective-title": "Por que usar o Pausa?",
+                "objective-desc": "O contato visual constante com as notificações fragmenta sua atenção e eleva os níveis de estresse. Projetamos o Medex Pausa com um objetivo clínico e prático: forçá-lo a se desconectar.",
+                "carousel-1-title": "Trabalho Profundo", "carousel-1-desc": "Ideal para se concentrar em tarefas complexas sem interrupções de redes sociais.",
+                "carousel-2-title": "Estudo Eficiente", "carousel-2-desc": "Ative o bloqueio por 60 minutos e garanta sua retenção de leitura.",
+                "carousel-3-title": "Saúde e Presença", "carousel-3-desc": "Desconecte-se de verdade durante jantares familiares ou antes de dormir.",
+                "steps-title": "Configuração em 3 Passos Simples",
+                "steps-desc": "Para que o bloqueio seja eficaz, o Pausa precisa de permissões críticas do sistema. Nós o guiamos para ativá-las de uma vez.",
+                "perm-1-title": "Sobrepor a outros apps", "perm-1-desc": "Permite que a tela de bloqueio do Pausa se sobreponha aos seus aplicativos quando você tentar abri-los.",
+                "perm-2-title": "Gerenciar notificações", "perm-2-desc": "Fundamental para silenciar alertas e impedir que notificações rompam sua concentração.",
+                "perm-3-title": "Ler estado do telefone", "perm-3-desc": "Garantimos que se você receber uma chamada (emergências), o bloqueio seja pausado temporariamente.",
+                "policy-title": "Política de Privacidade do Pausa", "policy-date": "Última atualização: 21/03/2026",
+                "footer-desc": "Desenvolvendo ferramentas para saúde digital.", "footer-rights": "&copy; 2026 Medex. Todos os direitos reservados.",
+                // Placeholder Policy PT - USER MUST REPLACE with legal translation
+                "policy-intro": "[Português placeholder] Medex desenvolveu o Pausa como uma ferramenta comercial. Esta página informa sobre nossas políticas de coleta, uso e divulgação de Informações Pessoais.",
+                "policy-perm-title": "[Português placeholder] Coleta e Uso de Informações",
+                "policy-perm-text-1": "[Português placeholder] Para o funcionamento correto, o aplicativo requer permissões (sobreposição, notificações, estado do telefone).",
+                "policy-perm-highlight": "[Português placeholder] Claro: Pausa não coleta, armazena ou transmite informações pessoais identificáveis dos usuários para servidores externos.",
+                "policy-child-title": "[Português placeholder] Privacidade de Menores", "policy-child-text": "[Português placeholder] Pausa cumpre com COPPA. Não coletamos dados pessoais de nenhum tipo, inclusive de crianças.",
+                "policy-third-title": "[Português placeholder] Terceiros e Análises", "policy-third-text": "[Português placeholder] O aplicativo não usa serviços de terceiros que possam coletar informações.",
+                "policy-sec-title": "[Português placeholder] Segurança", "policy-sec-text": "[Português placeholder] Como não coletamos dados pessoais, não há bancos de dados externos vulneráveis.",
+                "policy-change-title": "[Português placeholder] Mudanças na Política", "policy-change-text": "[Português placeholder] Podemos atualizar nossa Política. Notificaremos você postando a nova Política aqui.",
+                "policy-cont-title": "[Português placeholder] Contato", "policy-cont-text": "[Português placeholder] Se tiver dúvidas, entre em contato em: ",
+            },
+            fr: {
+                "page-title": "Pausa | Medex - Récupérez votre Concentration",
+                "nav-objective": "Objectif", "nav-installation": "Installation", "nav-privacy": "Confidentialité",
+                "btn-download": "Télécharger Pausa",
+                "hero-title-1": "Récupérez votre Temps.", "hero-title-2": "Silenciez le Bruit.",
+                "hero-subtitle": "Pausa est l'outil ultime pour bloquer les distractions, réduire le stress numérique et retrouver votre capacité d'attention soutenue.",
+                "payment-model": "Un seul paiement. Pour toujours.", "payment-subtitle": "Pas d'abonnements mensuels, pas de publicités, pas de frais cachés.",
+                "objective-title": "Pourquoi utiliser Pausa ?",
+                "objective-desc": "Le contact visuel constant avec les notifications fragmente votre attention et augmente le niveau de stress. Nous avons conçu Medex Pausa avec un objectif clinique et pratique : vous forcer à vous déconnecter.",
+                "carousel-1-title": "Travail Profond", "carousel-1-desc": "Idéal pour se concentrer sur des tâches complexes sans interruptions des réseaux sociaux.",
+                "carousel-2-title": "Étude Efficace", "carousel-2-desc": "Activez le blocage pendant 60 minutes et assurez votre rétention de lecture.",
+                "carousel-3-title": "Santé et Présence", "carousel-3-desc": "Déconnectez-vous vraiment pendant les dîners en famille ou avant de dormir.",
+                "steps-title": "Configuration en 3 Étapes Simples",
+                "steps-desc": "Pour que le blocage soit efficace, Pausa nécessite des permissions système critiques. Nous vous guidons pour les activer en une seule fois.",
+                "perm-1-title": "Afficher sur d'autres apps", "perm-1-desc": "Permet à l'écran de verrouillage de Pausa de se superposer à vos applications lorsque vous tentez de les ouvrir.",
+                "perm-2-title": "Gérer les notifications", "perm-2-desc": "Essentiel pour masquer les alertes et empêcher les notifications de briser la concentration.",
+                "perm-3-title": "Lire l'état du téléphone", "perm-3-desc": "Nous garantissons que si vous recevez un appel (urgences), le blocage est temporairement suspendu.",
+                "policy-title": "Politique de Confidentialité de Pausa", "policy-date": "Dernière mise à jour: 21/03/2026",
+                "footer-desc": "Développement d'outils pour la santé numérique.", "footer-rights": "&copy; 2026 Medex. Tous droits réservés.",
+                // Placeholder Policy FR - USER MUST REPLACE with legal translation
+                "policy-intro": "[Français placeholder] Medex a développé Pausa en tant qu'outil commercial. Cette page informe sur nos politiques de collecte, d'utilisation et de divulgation des Informations Personnelles.",
+                "policy-perm-title": "[Français placeholder] Collecte et Utilisation",
+                "policy-perm-text-1": "[Français placeholder] Pour le bon fonctionnement, l'application nécessite des permissions (superposition, notifications, état du téléphone).",
+                "policy-perm-highlight": "[Français placeholder] Clair: Pausa ne collecte, ne stocke ni ne transmet d'informations personnelles identifiables des utilisateurs vers des serveurs externes.",
+                "policy-child-title": "[Français placeholder] Vie Privée des Mineurs", "policy-child-text": "[Français placeholder] Pausa respecte la COPPA. Nous ne collectons aucune donnée personnelle, y compris des enfants.",
+                "policy-third-title": "[Français placeholder] Tiers et Analyses", "policy-third-text": "[Français placeholder] L'application n'utilise pas de services tiers susceptibles de collecter des informations.",
+                "policy-sec-title": "[Français placeholder] Sécurité", "policy-sec-text": "[Français placeholder] Comme nous ne collectons pas de données personnelles, il n'y a pas de bases de données externes vulnérables.",
+                "policy-change-title": "[Français placeholder] Modifications", "policy-change-text": "[Français placeholder] Nous pouvons mettre à jour notre Politique. Nous vous informerons en publiant la nouvelle Politique ici.",
+                "policy-cont-title": "[Français placeholder] Contact", "policy-cont-text": "[Français placeholder] Si vous avez des questions, contactez-nous à: ",
+            },
+            zh: {
+                "page-title": "Pausa | Medex - 重获专注",
+                "nav-objective": "目标", "nav-installation": "安装", "nav-privacy": "隐私",
+                "btn-download": "下载 Pausa",
+                "hero-title-1": "重获属于你的时间。", "hero-title-2": "静音噪音。",
+                "hero-subtitle": "Pausa 是阻断分心、减少数字压力并恢复持续注意力的终极工具。",
+                "payment-model": "一次性付款。永久使用。", "payment-subtitle": "无月费订阅、无广告、无隐藏费用。",
+                "objective-title": "为什么使用 Pausa？",
+                "objective-desc": "不断关注通知会分散你的注意力并提高压力水平。我们设计 Medex Pausa 具有临床和实际目标：强制你断开连接。",
+                "carousel-1-title": "深度工作", "carousel-1-desc": "非常适合专注于复杂任务，不受社交媒体干扰。",
+                "carousel-2-title": "高效学习", "carousel-2-desc": "激活锁定 60 分钟，确保你的阅读记忆。",
+                "carousel-3-title": "健康与临在", "carousel-3-desc": "在家庭聚餐或睡觉前真正断开连接。",
+                "steps-title": "3 个简单步骤设置",
+                "steps-desc": "为了使阻断有效，Pausa 需要关键的系统权限。我们引导你一次性激活它们。",
+                "perm-1-title": "在其他应用上显示", "perm-1-desc": "允许 Pausa 的锁定屏幕在你尝试打开其他应用程序时覆盖它们。",
+                "perm-2-title": "管理通知", "perm-2-desc": "对于静音警报和防止来电通知破坏注意力至关重要。",
+                "perm-3-title": "读取手机状态", "perm-3-desc": "我们确保如果你接到紧急来电（紧急情况），锁定会暂时暂停。",
+                "policy-title": "Pausa 隐私政策", "policy-date": "最后更新: 2026年3月21日",
+                "footer-desc": "开发数字健康工具。", "footer-rights": "&copy; 2026 Medex. 版权所有。",
+                // Placeholder Policy ZH - USER MUST REPLACE with legal translation
+                "policy-intro": "[中文 placeholder] Medex 将 Pausa 开发为商业工具。本页告知用户我们关于收集、使用和披露个人信息的政策。",
+                "policy-perm-title": "[中文 placeholder] 信息收集和使用",
+                "policy-perm-text-1": "[中文 placeholder] 为使 Pausa 正常运行，应用需要某些权限（悬浮窗、通知、手机状态）。",
+                "policy-perm-highlight": "[中文 placeholder] 明确：Pausa 不会收集、存储或将用户的任何个人身份信息传输到外部服务器。所有权限均在本地使用。",
+                "policy-child-title": "[中文 placeholder] 儿童隐私", "policy-child-text": "[中文 placeholder] Pausa 符合 COPPA。我们不收集任何类型的个人数据，包括儿童数据。",
+                "policy-third-title": "[中文 placeholder] 第三方和分析", "policy-third-text": "[中文 placeholder] 应用不使用可能收集信息的第三方服务。",
+                "policy-sec-title": "[中文 placeholder] 安全", "policy-sec-text": "[中文 placeholder] 由于我们不收集个人数据，因此不存在易受泄漏影响的外部数据库。",
+                "policy-change-title": "[中文 placeholder] 政策变更", "policy-change-text": "[中文 placeholder] 我们可能会更新隐私政策。我们将在此发布新政策来通知你。",
+                "policy-cont-title": "[中文 placeholder] 联系我们", "policy-cont-text": "[中文 placeholder] 如有疑问，请联系： ",
+            },
+            ru: {
+                "page-title": "Pausa | Medex - Верни Фокус",
+                "nav-objective": "Цель", "nav-installation": "Установка", "nav-privacy": "Конфиденциальность",
+                "btn-download": "Скачать Pausa",
+                "hero-title-1": "Верни своё Время.", "hero-title-2": "Заглуши Шум.",
+                "hero-subtitle": "Pausa — это ультимативный инструмент для блокировки отвлекающих факторов, снижения цифрового стресса и восстановления устойчивого внимания.",
+                "payment-model": "Один платёж. Навсегда.", "payment-subtitle": "Без ежемесячных подписок, без рекламы, без скрытых комиссий.",
+                "objective-title": "Зачем использовать Pausa?",
+                "objective-desc": "Постоянный зрительный контакт с уведомлениями фрагментирует ваше внимание и повышает уровень стресса. Мы разработали Medex Pausa с клинической и практической целью: заставить вас отключиться.",
+                "carousel-1-title": "Глубокая Работа", "carousel-1-desc": "Идеально для фокусировки на сложных задачах без отвлечений на социальные сети.",
+                "carousel-2-title": "Эффективная Учёба", "carousel-2-desc": "Активируйте блокировку на 60 минут и обеспечьте удержание прочитанного.",
+                "carousel-3-title": "Здоровье и Присутствие", "carousel-3-desc": "Действительно отключайтесь во время семейных ужинов или перед сном.",
+                "steps-title": "Настройка в 3 Простых Шага",
+                "steps-desc": "Чтобы блокировка была эффективной, Pausa требуются критические системные разрешения. Мы поможем вам активировать их все сразу.",
+                "perm-1-title": "Показ поверх других окон", "perm-1-desc": "Позволяет экрану блокировки Pausa перекрывать ваши приложения при попытке их открыть.",
+                "perm-2-title": "Управление уведомлениями", "perm-2-desc": "Критично для заглушения алертов и предотвращения входящих уведомлений.",
+                "perm-3-title": "Чтение состояния телефона", "perm-3-desc": "Мы гарантируем, что если вы получите входящий звонок (экстренный), блокировка будет временно приостановлена.",
+                "policy-title": "Политика Конфиденциальности Pausa", "policy-date": "Последнее обновление: 21.03.2026",
+                "footer-desc": "Разработка инструментов для цифрового здоровья.", "footer-rights": "&copy; 2026 Medex. Все права защищены.",
+                // Placeholder Policy RU - USER MUST REPLACE with legal translation
+                "policy-intro": "[Русский placeholder] Medex разработала Pausa как коммерческий инструмент. Эта страница информирует пользователей о политике сбора, использования и раскрытия Личной Информации.",
+                "policy-perm-title": "[Русский placeholder] Сбор и Использование Информации",
+                "policy-perm-text-1": "[Русский placeholder] Для корректной работы приложению требуются разрешения (поверх окон, уведомления, состояние телефона).",
+                "policy-perm-highlight": "[Русский placeholder] Ясно: Pausa не собирает, не хранит и не передаёт никакую личную информацию пользователей на внешние сервера. Все разрешения используются локально.",
+                "policy-child-title": "[Русский placeholder] Конфиденциальность Детей", "policy-child-text": "[Русский placeholder] Pausa соответствует COPPA. Мы не собираем личные данные любого рода, в том числе у детей.",
+                "policy-third-title": "[Русский placeholder] Третьи Лица и Аналитика", "policy-third-text": "[Русский placeholder] Приложение не использует сторонние сервисы, которые могут собирать информацию.",
+                "policy-sec-title": "[Русский placeholder] Безопасность", "policy-sec-text": "[Русский placeholder] Поскольку мы не собираем личные данные, у нас нет внешних баз данных, уязвимых для утечек.",
+                "policy-change-title": "[Русский placeholder] Изменения Политики", "policy-change-text": "[Русский placeholder] Мы можем обновлять Политику. Мы уведомим вас, опубликовав новую Политику здесь.",
+                "policy-cont-title": "[Русский placeholder] Контакт", "policy-cont-text": "[Русский placeholder] Если есть вопросы, обращайтесь: ",
+            },
+        };
+
+        // --- GESTIÓN DEL CARRUSEL ---
+        let currentSlide = 0;
+        const totalSlides = 3;
+        const slidesContainer = document.getElementById('carousel-slides');
+
+        function showSlide(index) {
+            if (index >= totalSlides) currentSlide = 0;
+            else if (index < 0) currentSlide = totalSlides - 1;
+            else currentSlide = index;
+            
+            slidesContainer.style.transform = `translateX(-${currentSlide * 100}%)`;
+            updateDots();
+        }
+
+        function nextSlide() { showSlide(currentSlide + 1); }
+        function prevSlide() { showSlide(currentSlide - 1); }
+
+        function createDots() {
+            const dotsContainer = document.getElementById('carousel-dots');
+            for (let i = 0; i < totalSlides; i++) {
+                const dot = document.createElement('button');
+                dot.className = `w-2.5 h-2.5 rounded-full bg-white/40 hover:bg-white/90 transition ${i === 0 ? 'bg-white' : ''}`;
+                dot.onclick = () => showSlide(i);
+                dotsContainer.appendChild(dot);
+            }
+        }
+
+        function updateDots() {
+            const dots = document.getElementById('carousel-dots').children;
+            for (let i = 0; i < totalSlides; i++) {
+                dots[i].className = `w-2.5 h-2.5 rounded-full bg-white/40 hover:bg-white/90 transition ${i === currentSlide ? 'bg-tech-blue' : ''}`;
+            }
+        }
+
+        // --- LÓGICA DE INICIALIZACIÓN ---
+        function changeLanguage(lang) {
+            const currentLangSpan = document.getElementById('current-lang');
+            const data = translations[lang];
+
+            // Animación de salida (React style fade)
+            document.querySelectorAll('[data-i18n]').forEach(el => el.classList.add('fade-out'));
+
+            setTimeout(() => {
+                currentLangSpan.textContent = lang.toUpperCase();
+                
+                // Actualizar textos simples
+                document.querySelectorAll('[data-i18n]').forEach(el => {
+                    const key = el.getAttribute('data-i18n');
+                    if (data[key]) el.textContent = data[key];
+                });
+
+                // Actualizar contenido de la política (Estructura dinámica)
+                renderPolicyContent(lang);
+
+                // Animación de entrada
+                document.querySelectorAll('[data-i18n]').forEach(el => el.classList.remove('fade-out'));
+            }, 300);
+        }
+
+        function renderPolicyContent(lang) {
+            const container = document.getElementById('policy-content');
+            const d = translations[lang];
+            
+            // Estructura HTML para la política (Soporte multilingüe real)
+            container.innerHTML = `
+                <div><h3 class="font-bold text-slate-950 text-lg mb-2">1. Introducción</h3><p>${d['policy-intro']}</p></div>
+                <div>
+                    <h3 class="font-bold text-slate-950 text-lg mb-2">2. ${d['policy-perm-title']}</h3>
+                    <p>${d['policy-perm-text-1']}</p>
+                    <p class="mt-3 font-semibold text-tech-blue bg-blue-50 p-5 rounded-xl border border-blue-100">${d['policy-perm-highlight']}</p>
+                </div>
+                <div><h3 class="font-bold text-slate-950 text-lg mb-2">3. ${d['policy-child-title']}</h3><p>${d['policy-child-text']}</p></div>
+                <div><h3 class="font-bold text-slate-950 text-lg mb-2">4. ${d['policy-third-title']}</h3><p>${d['policy-third-text']}</p></div>
+                <div><h3 class="font-bold text-slate-950 text-lg mb-2">5. ${d['policy-sec-title']}</h3><p>${d['policy-sec-text']}</p></div>
+                <div><h3 class="font-bold text-slate-950 text-lg mb-2">6. ${d['policy-change-title']}</h3><p>${d['policy-change-text']}</p></div>
+                <div><h3 class="font-bold text-slate-950 text-lg mb-2">7. ${d['policy-cont-title']}</h3><p>${d['policy-cont-text']}<a href="mailto:medexapps@gmail.com" class="text-tech-blue font-semibold hover:underline transition">medexapps@gmail.com</a></p></div>
+            `;
+        }
+
+        // Inicialización al cargar
+        window.onload = () => {
+            createDots();
+            // Iniciar carrusel automático (opcional, cada 5s)
+            // setInterval(nextSlide, 5000); 
+            changeLanguage('es'); // Idioma por defecto
+        };
+    </script>
 
 </body>
 </html>
