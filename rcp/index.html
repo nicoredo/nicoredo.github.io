@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MEDEX.AR - Asistente RCP</title>
+    <style>
+        /* --- ESTILOS VISUALES --- */
+        body { background-color: #0d1117; color: #ffffff; font-family: 'Segoe UI', sans-serif; margin: 0; padding: 20px; display: flex; flex-direction: column; height: 95vh; box-sizing: border-box; }
+        h1, h2, h3 { margin: 0; }
+        button { font-family: inherit; }
+        
+        .header { position: relative; display: flex; justify-content: space-between; align-items: center; border-bottom: 3px solid #30363d; padding-bottom: 15px; margin-bottom: 20px; height: 60px; }
+        .logo-espacio { color: #8b949e; font-size: 1.2rem; font-weight: bold; letter-spacing: 2px; }
+        .global-timer { position: absolute; left: 50%; transform: translateX(-50%); font-size: 4.5rem; color: #ffd700; font-weight: bold; }
+        .header-buttons { display: flex; gap: 15px; }
+        .btn-header { background-color: transparent; padding: 10px 20px; font-size: 1.2rem; border-radius: 8px; cursor: pointer; font-weight: bold; transition: all 0.2s; }
+        .btn-header:hover { filter: brightness(1.3); }
+        .btn-reset { color: #8b949e; border: 2px solid #8b949e; }
+        .btn-end { color: #ff4d4d; border: 2px solid #ff4d4d; }
+        
+        .main-controls { display: flex; justify-content: center; margin-bottom: 20px; }
+        .btn-main-action { width: 80%; padding: 20px; font-size: 2rem; font-weight: bold; border-radius: 12px; cursor: pointer; border: none; color: white; text-transform: uppercase; box-shadow: 0 4px 15px rgba(0,0,0,0.5); transition: transform 0.1s; }
+        .btn-main-action:active { transform: scale(0.98); }
+        .btn-start { background-color: #238636; }
+        .btn-pause { background-color: #d29922; }
+        
+        .main-container { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; flex-grow: 1; margin-bottom: 20px;}
+        .panel { background-color: #161b22; border: 2px solid #30363d; border-radius: 12px; padding: 20px; display: flex; flex-direction: column; align-items: center; }
+        .panel-title { color: #58a6ff; font-size: 1.5rem; margin-bottom: 20px; }
+        .cycle-timer { font-size: 7rem; font-weight: bold; margin: 10px 0; }
+        .metronome-status { color: #3fb950; font-size: 1.5rem; margin-bottom: 10px; }
+        .rhythm-container { display: flex; width: 100%; gap: 15px; margin-top: auto; }
+        .btn-rhythm { flex: 1; padding: 20px 10px; font-size: 1.3rem; font-weight: bold; border: 2px solid transparent; border-radius: 8px; color: white; cursor: pointer; transition: all 0.2s; }
+        .btn-rhythm:hover { filter: brightness(1.2); }
+        .btn-shockable { background-color: #da3633; }
+        .btn-non-shockable { background-color: #1f6feb; }
+        
+        .action-list { width: 100%; display: flex; flex-direction: column; gap: 15px; }
+        .btn-action { background-color: #21262d; color: white; border: 2px solid #8b949e; padding: 15px; font-size: 1.4rem; border-radius: 8px; text-align: left; display: flex; justify-content: space-between; align-items: center; cursor: pointer; transition: all 0.2s; }
+        .btn-action:hover:not(.deshabilitado) { background-color: #30363d; border-color: #c9d1d9; }
+        
+        .resaltar-ritmo { animation: parpadeo-amarillo 1s infinite alternate; }
+        @keyframes parpadeo-amarillo { from { box-shadow: 0 0 5px #ffd700; border-color: #ffd700; } to { box-shadow: 0 0 20px #ffd700, inset 0 0 10px #ffd700; border-color: #ffd700; } }
+        .resaltar-alerta { animation: parpadeo-rojo 1s infinite alternate; }
+        @keyframes parpadeo-rojo { from { box-shadow: 0 0 5px #ff4d4d; border-color: #ff4d4d; } to { box-shadow: 0 0 25px #ff4d4d, inset 0 0 10px #ff4d4d; border-color: #ff4d4d; } }
+        .deshabilitado { background-color: #0d1117; color: #484f58; border-color: #30363d; text-decoration: line-through; }
+        
+        /* --- BLOQUE INFERIOR DIVIDIDO (LOG + CHECKLIST) --- */
+        .bottom-container { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; height: 260px; }
+        
+        .log-container { background-color: #0d1117; border: 2px solid #30363d; border-radius: 12px; padding: 15px; height: 100%; box-sizing: border-box; overflow-y: auto; }
+        .log-title { color: #8b949e; font-size: 1.2rem; border-bottom: 1px solid #30363d; padding-bottom: 10px; margin-bottom: 10px;}
+        .log-entry { font-size: 1.1rem; font-family: monospace; margin-bottom: 5px; color: #c9d1d9;}
+        .log-time { color: #ffd700; margin-right: 10px; }
+
+        .checklist-container { background-color: #0d1117; border: 2px solid #30363d; border-radius: 12px; padding: 15px; display: flex; flex-direction: column; height: 100%; box-sizing: border-box; }
+        .checklist-title { color: #8b949e; font-size: 1.2rem; border-bottom: 1px solid #30363d; padding-bottom: 10px; margin-bottom: 15px;}
+        .checklist-items { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px; }
+        .check-item { font-size: 1.1rem; color: #c9d1d9; cursor: pointer; display: flex; align-items: center; gap: 8px; }
+        .check-item input[type="checkbox"] { width: 18px; height: 18px; cursor: pointer; }
+        .free-text-area { flex-grow: 1; background-color: #161b22; border: 1px solid #30363d; color: white; padding: 10px; border-radius: 8px; font-family: inherit; resize: none; font-size: 1rem; }
+        .free-text-area:focus { outline: none; border-color: #58a6ff; }
+
+        /* --- VENTANA EMERGENTE (MODAL FINALIZAR) --- */
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.85); display: flex; justify-content: center; align-items: center; z-index: 1000; }
+        .modal-content { background-color: #161b22; border: 2px solid #30363d; border-radius: 12px; padding: 40px; text-align: center; max-width: 600px; width: 90%; }
+        .modal-content h2 { color: #ff4d4d; font-size: 2rem; margin-bottom: 10px; }
+        .modal-content p { font-size: 1.2rem; color: #c9d1d9; margin-bottom: 20px; }
+        .modal-text-final { width: 100%; box-sizing: border-box; height: 80px; margin-bottom: 25px; background-color: #0d1117; border: 1px solid #8b949e; color: white; padding: 10px; border-radius: 8px; font-family: inherit; resize: none; font-size: 1rem;}
+        .modal-text-final:focus { outline: none; border-color: #58a6ff; }
+        .modal-options { display: flex; gap: 20px; margin-bottom: 30px; }
+        .btn-modal-option { flex: 1; padding: 20px; font-size: 1.5rem; font-weight: bold; border-radius: 8px; border: none; color: white; cursor: pointer; }
+        .btn-obito { background-color: #484f58; }
+        .btn-rosc { background-color: #238636; }
+        .btn-cancel { background-color: transparent; color: #8b949e; border: 1px solid #8b949e; padding: 10px 20px; font-size: 1.1rem; border-radius: 8px; cursor: pointer; }
+        .oculto { display: none !important; }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <div class="logo-espacio">✚ MEDEX.AR</div>
+        <div class="global-timer" id="display-global">00:00</div>
+        <div class="header-buttons">
+            <button class="btn-header btn-end" id="btn-open-modal">FINALIZAR</button>
+            <button class="btn-header btn-reset" id="btn-reiniciar" onclick="location.reload()">REINICIAR</button>
+        </div>
+    </div>
+
+    <div class="main-controls">
+        <button id="btn-main" class="btn-main-action btn-start">▶ INICIAR CÓDIGO AZUL (Espacio)</button>
+    </div>
+
+    <div class="main-container">
+        <div class="panel">
+            <h2 class="panel-title">⏳ TIEMPO DE CICLO</h2>
+            <div class="cycle-timer" id="display-ciclo">02:00</div>
+            <div class="metronome-status" id="display-metronomo">🎵 Metrónomo Activo (110 lpm)</div>
+            <div style="font-size: 1.2rem; color: #8b949e; margin-bottom: 15px;">[ TECLA 'C' ]: REINICIAR CICLO</div>
+            
+            <div class="rhythm-container">
+                <button id="btn-fv" class="btn-rhythm btn-shockable">[ 1 ] FV / TV</button>
+                <button id="btn-asist" class="btn-rhythm btn-non-shockable">[ 2 ] ASIST / AESP</button>
+            </div>
+        </div>
+
+        <div class="panel">
+            <h2 class="panel-title">⚡ ACCIONES RÁPIDAS</h2>
+            <div class="action-list">
+                <button id="btn-descarga" class="btn-action">
+                    <span>[ D ] DESFIBRILAR (Descarga)</span>
+                </button>
+                <button id="btn-adrenalina" class="btn-action">
+                    <span>[ A ] ADRENALINA 1mg</span>
+                    <span id="display-adrenalina" style="color: #ff4d4d; font-size: 1.3rem; font-weight: bold; display: none;">Siguiente en: 04:00</span>
+                </button>
+                <button id="btn-amiodarona" class="btn-action">
+                    <span>[ M ] AMIODARONA / LIDO</span>
+                </button>
+                <button id="btn-intubacion" class="btn-action">
+                    <span>[ I ] INTUBACIÓN / VÍA AÉREA</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="bottom-container">
+        
+        <div class="log-container" id="log-caja">
+            <div class="log-title">📝 REGISTRO DE EVENTOS (LOG AUTOMÁTICO)</div>
+        </div>
+
+        <div class="checklist-container">
+            <div class="checklist-title">✅ CHECKLIST Y NOTAS MANUALES</div>
+            
+            <div class="checklist-items">
+                <label class="check-item"><input type="checkbox" id="chk-iv"> Acceso IV / IO</label>
+                <label class="check-item"><input type="checkbox" id="chk-lab"> Extracción laboratorio</label>
+                <label class="check-item" title="5H: Hipovolemia, Hipoxia, Hidrogenión (Acidosis), Hipo/Hiperpotasemia, Hipotermia&#10;5T: Neumotórax a Tensión, Taponamiento Cardíaco, Toxinas, Trombosis Pulmonar, Trombosis Coronaria"><input type="checkbox" id="chk-5h5t"> Causas 5H/5T evaluadas ℹ️</label>
+                <label class="check-item"><input type="checkbox" id="chk-familia"> Familia notificada</label>
+            </div>
+
+            <textarea id="notas-libres" class="free-text-area" placeholder="Escriba aquí anotaciones libres (Ej: Ritmo de base del paciente, líder...)"></textarea>
+        </div>
+
+    </div>
+
+    <div id="modal-finalizar" class="modal-overlay oculto">
+        <div class="modal-content">
+            <h2>FINALIZAR CÓDIGO AZUL</h2>
+            <p>Por favor, indique el desenlace de la reanimación.</p>
+            
+            <textarea id="notas-medico-final" class="modal-text-final" placeholder="Anotaciones médicas finales (Ej: Hora de óbito declarada por Dr. Pérez, o signos vitales post-PCR...)"></textarea>
+
+            <div class="modal-options">
+                <button class="btn-modal-option btn-obito" onclick="simularDescarga('ÓBITO')">✝️ ÓBITO</button>
+                <button class="btn-modal-option btn-rosc" onclick="simularDescarga('ROSC - CUIDADOS POST PCR')">❤️ CUIDADOS POST-PCR</button>
+            </div>
+            <button class="btn-cancel" id="btn-close-modal">Cancelar / Volver a la Reanimación</button>
+        </div>
+    </div>
+
+    <script>
+        let rcpActivo = false; let tiempoGlobal = 0; let tiempoCiclo = 120; let relojPrincipal = null;
+        let descargasDadas = 0; let adrenalinaActiva = false; let tiempoAdrenalina = 0; let ritmoActual = null;
+        const uiGlobal = document.getElementById('display-global'); const uiCiclo = document.getElementById('display-ciclo'); const uiAdrenalina = document.getElementById('display-adrenalina');
+        const btnMain = document.getElementById('btn-main'); const cajaLog = document.getElementById('log-caja');
+        const btnFv = document.getElementById('btn-fv'); const btnAsist = document.getElementById('btn-asist'); const btnDescarga = document.getElementById('btn-descarga');
+        const btnAdrenalina = document.getElementById('btn-adrenalina'); const btnAmiodarona = document.getElementById('btn-amiodarona'); const btnIntubacion = document.getElementById('btn-intubacion');
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        
+        function reproducirSonido(tipo) {
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+            const osc = audioCtx.createOscillator(); const gain = audioCtx.createGain();
+            osc.connect(gain); gain.connect(audioCtx.destination);
+            if (tipo === 'metronomo') { osc.type = 'sine'; osc.frequency.setValueAtTime(800, audioCtx.currentTime); gain.gain.setValueAtTime(0.1, audioCtx.currentTime); osc.start(); osc.stop(audioCtx.currentTime + 0.05); } 
+            else if (tipo === 'alarma') { osc.type = 'square'; osc.frequency.setValueAtTime(400, audioCtx.currentTime); gain.gain.setValueAtTime(0.3, audioCtx.currentTime); osc.start(); osc.stop(audioCtx.currentTime + 0.5); }
+        }
+
+        function formatearTiempo(segundosTotal) {
+            const m = Math.floor(segundosTotal / 60).toString().padStart(2, '0');
+            const s = (segundosTotal % 60).toString().padStart(2, '0');
+            return `${m}:${s}`;
+        }
+
+        function agregarLog(mensaje) {
+            const horaActual = formatearTiempo(tiempoGlobal);
+            cajaLog.innerHTML += `<div class="log-entry"><span class="log-time">${horaActual}</span> - ${mensaje}</div>`;
+            cajaLog.scrollTop = cajaLog.scrollHeight;
+        }
+
+        function tickReloj() {
+            tiempoGlobal++; uiGlobal.innerText = formatearTiempo(tiempoGlobal);
+            if (tiempoCiclo > 0) {
+                tiempoCiclo--; uiCiclo.innerText = formatearTiempo(tiempoCiclo);
+                if (tiempoCiclo === 0) { reproducirSonido('alarma'); btnFv.classList.add('resaltar-ritmo'); btnAsist.classList.add('resaltar-ritmo'); agregarLog("⏳ FIN DE CICLO. Chequear ritmo y cambiar reanimador."); }
+            }
+            if (adrenalinaActiva && tiempoAdrenalina > 0) {
+                tiempoAdrenalina--; uiAdrenalina.innerText = "Siguiente en: " + formatearTiempo(tiempoAdrenalina);
+                if (tiempoAdrenalina === 0) { adrenalinaActiva = false; uiAdrenalina.style.display = 'none'; btnAdrenalina.classList.add('resaltar-alerta'); reproducirSonido('alarma'); agregarLog("🚨 ALERTA: Considerar nueva dosis de Adrenalina."); }
+            }
+        }
+
+        let metronomoInterval = null;
+        function alternarRCP() {
+            if (!rcpActivo) {
+                rcpActivo = true; btnMain.classList.remove('btn-start'); btnMain.classList.add('btn-pause'); btnMain.innerText = "⏸ PAUSAR RELOJES";
+                if (tiempoGlobal === 0) agregarLog("🚨 INICIO DE CÓDIGO AZUL / RCP");
+                relojPrincipal = setInterval(tickReloj, 1000); metronomoInterval = setInterval(() => reproducirSonido('metronomo'), 545);
+            } else {
+                rcpActivo = false; btnMain.classList.remove('btn-pause'); btnMain.classList.add('btn-start'); btnMain.innerText = "▶ CONTINUAR RCP";
+                clearInterval(relojPrincipal); clearInterval(metronomoInterval); agregarLog("⏸ RCP Pausada.");
+            }
+        }
+
+        function reiniciarCiclo() { tiempoCiclo = 120; uiCiclo.innerText = formatearTiempo(tiempoCiclo); btnFv.classList.remove('resaltar-ritmo'); btnAsist.classList.remove('resaltar-ritmo'); }
+
+        btnFv.addEventListener('click', () => { ritmoActual = 'FV'; reiniciarCiclo(); btnDescarga.classList.add('resaltar-alerta'); agregarLog("💓 Ritmo: FV / TV sin pulso (Desfibrilable)"); });
+        btnAsist.addEventListener('click', () => { ritmoActual = 'ASIST'; reiniciarCiclo(); btnDescarga.classList.remove('resaltar-alerta'); if (!adrenalinaActiva) btnAdrenalina.classList.add('resaltar-alerta'); agregarLog("💓 Ritmo: Asistolia / AESP (No Desfibrilable)"); });
+        btnDescarga.addEventListener('click', () => { descargasDadas++; btnDescarga.classList.remove('resaltar-alerta'); agregarLog(`⚡ Descarga #${descargasDadas} entregada.`); reiniciarCiclo(); if (descargasDadas >= 2 && !adrenalinaActiva) btnAdrenalina.classList.add('resaltar-alerta'); if (descargasDadas >= 3) btnAmiodarona.classList.add('resaltar-alerta'); });
+        btnAdrenalina.addEventListener('click', () => { btnAdrenalina.classList.remove('resaltar-alerta'); adrenalinaActiva = true; tiempoAdrenalina = 240; uiAdrenalina.style.display = 'inline'; uiAdrenalina.innerText = "Siguiente en: 04:00"; agregarLog("💉 Adrenalina 1mg administrada."); });
+        btnAmiodarona.addEventListener('click', () => { btnAmiodarona.classList.remove('resaltar-alerta'); agregarLog("💉 Amiodarona / Lidocaína administrada."); });
+        btnIntubacion.addEventListener('click', () => { if (!btnIntubacion.classList.contains('deshabilitado')) { btnIntubacion.classList.add('deshabilitado'); agregarLog("🌬️ Vía aérea avanzada asegurada."); }});
+
+        document.addEventListener('keydown', (e) => {
+            if (document.activeElement === document.getElementById('notas-libres') || document.activeElement === document.getElementById('notas-medico-final')) return;
+            const tecla = e.key.toLowerCase();
+            if (tecla === ' ') { e.preventDefault(); alternarRCP(); }
+            if (tecla === 'c' && rcpActivo) reiniciarCiclo();
+            if (tecla === '1' && rcpActivo) btnFv.click();
+            if (tecla === '2' && rcpActivo) btnAsist.click();
+            if (tecla === 'd' && rcpActivo) btnDescarga.click();
+            if (tecla === 'a' && rcpActivo) btnAdrenalina.click();
+            if (tecla === 'm' && rcpActivo) btnAmiodarona.click();
+            if (tecla === 'i' && rcpActivo) btnIntubacion.click();
+        });
+
+        btnMain.addEventListener('click', alternarRCP);
+
+        // --- LÓGICA DE EXPORTACIÓN Y MODAL ---
+        const modalFinalizar = document.getElementById('modal-finalizar');
+        document.getElementById('btn-open-modal').addEventListener('click', () => {
+            if (rcpActivo) alternarRCP(); 
+            modalFinalizar.classList.remove('oculto');
+        });
+        document.getElementById('btn-close-modal').addEventListener('click', () => { modalFinalizar.classList.add('oculto'); });
+
+        function simularDescarga(resultado) {
+            agregarLog(`🛑 FIN DE REANIMACIÓN. Desenlace: ${resultado}`);
+            modalFinalizar.classList.add('oculto');
+
+            let textoReporte = "================================================\n";
+            textoReporte += "   REPORTE DE CÓDIGO AZUL / RCP - MEDEX.AR\n";
+            textoReporte += "================================================\n\n";
+            
+            const fechaHoy = new Date().toLocaleDateString('es-AR');
+            const horaHoy = new Date().toLocaleTimeString('es-AR');
+            textoReporte += `Fecha del evento: ${fechaHoy} - Hora: ${horaHoy}\n`;
+            textoReporte += `Desenlace registrado: ${resultado}\n`;
+            textoReporte += `Tiempo total de reanimación: ${formatearTiempo(tiempoGlobal)}\n\n`;
+            
+            textoReporte += "------------------------------------------------\n";
+            textoReporte += "ESTADO DEL CHECKLIST:\n";
+            textoReporte += "------------------------------------------------\n";
+            textoReporte += document.getElementById('chk-iv').checked ? "[ X ] Acceso IV / IO establecido\n" : "[   ] Acceso IV / IO establecido\n";
+            textoReporte += document.getElementById('chk-lab').checked ? "[ X ] Extracción laboratorio\n" : "[   ] Extracción laboratorio\n";
+            textoReporte += document.getElementById('chk-5h5t').checked ? "[ X ] Causas 5H/5T evaluadas\n" : "[   ] Causas 5H/5T evaluadas\n";
+            textoReporte += document.getElementById('chk-familia').checked ? "[ X ] Familia notificada\n" : "[   ] Familia notificada\n";
+            
+            textoReporte += "\n------------------------------------------------\n";
+            textoReporte += "NOTAS MANUALES DURANTE RCP:\n";
+            textoReporte += "------------------------------------------------\n";
+            const notas = document.getElementById('notas-libres').value;
+            textoReporte += notas ? notas + "\n" : "Sin notas adicionales.\n";
+
+            // NOTAS FINALES DEL MÉDICO
+            const notasFinales = document.getElementById('notas-medico-final').value;
+            if (notasFinales) {
+                textoReporte += "\n------------------------------------------------\n";
+                textoReporte += "ANOTACIONES MÉDICAS FINALES:\n";
+                textoReporte += "------------------------------------------------\n";
+                textoReporte += notasFinales + "\n";
+            }
+
+            textoReporte += "\n------------------------------------------------\n";
+            textoReporte += "REGISTRO DE INTERVENCIONES (LOG):\n";
+            textoReporte += "------------------------------------------------\n";
+            document.querySelectorAll('.log-entry').forEach(entrada => {
+                textoReporte += entrada.innerText + "\n";
+            });
+
+            textoReporte += "\n================================================\n";
+            textoReporte += "Reporte generado automáticamente.\n";
+
+            const blob = new Blob([textoReporte], { type: 'text/plain;charset=utf-8' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `Codigo_Azul_${fechaHoy.replace(/\//g, '-')}_${horaHoy.replace(/:/g, '')}.txt`;
+            document.body.appendChild(link); link.click(); document.body.removeChild(link); URL.revokeObjectURL(url);
+        }
+    </script>
+</body>
+</html>
