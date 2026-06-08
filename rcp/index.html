@@ -75,6 +75,32 @@
         .btn-rosc { background-color: #238636; }
         .btn-cancel { background-color: transparent; color: #8b949e; border: 1px solid #8b949e; padding: 10px 20px; font-size: 1.1rem; border-radius: 8px; cursor: pointer; }
         .oculto { display: none !important; }
+
+        /* ========================================== */
+        /* --- DISEÑO RESPONSIVO (Tablets y Celulares) --- */
+        /* ========================================== */
+        @media (max-width: 950px) {
+            body { height: auto; padding: 10px; }
+            
+            /* Reacomoda la cabecera para que no se superponga */
+            .header { flex-direction: column; height: auto; gap: 10px; padding-bottom: 10px; }
+            .global-timer { position: static; transform: none; font-size: 3.5rem; }
+            .header-buttons { width: 100%; justify-content: center; }
+            
+            /* Apila los contenedores principales (1 sola columna) */
+            .main-container { grid-template-columns: 1fr; gap: 15px; }
+            .bottom-container { grid-template-columns: 1fr; height: auto; gap: 15px; }
+            
+            /* Ajusta los tamaños de texto gigantes */
+            .cycle-timer { font-size: 5rem; }
+            .btn-main-action { width: 100%; font-size: 1.5rem; padding: 15px; }
+            
+            /* Dale un alto fijo al log en celular para que se pueda scrollear */
+            .log-container { height: 250px; }
+            
+            /* Checklist en una sola columna */
+            .checklist-items { grid-template-columns: 1fr; }
+        }
     </style>
 </head>
 <body>
