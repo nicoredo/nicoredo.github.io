@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>MedEx | Evaluación Inteligenteeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee</title>
+  <link rel="stylesheet" href="styles.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;900&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+</head>
+<body>
+  <div class="container-principal">
+    
+    <!-- 🩺 Sección 1: Historia Clínica -->
+    <section class="hc-superior fade-in slide-up" id="seccion-1">
+      <h1> Evaluación de Pacientes</h1>
+      <textarea id="texto-hc" placeholder="Pegue aquí resumen de historia clínica..."></textarea>
+      <div class="opciones-carga">
+  <label for="word-upload" class="btn-principal btn-subir">
+    📄 Subir Word
+    <input type="file" id="word-upload" accept=".docx" style="display: none" />
+  </label>
+  <span id="estado-subida" class="texto-subida"></span>
+
+      <label for="pdf-upload" class="btn-principal btn-subir"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="#c62828" viewBox="0 0 16 16" style="margin-right: 6px;">
+  <path d="M4 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V5.5L10.5 0H4zm4.5 1.5v4a.5.5 0 0 0 .5.5h4v8a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h4.5z"/>
+  <text x="4" y="13" font-size="6" fill="#c62828" font-family="Arial">PDF</text>
+</svg>
+Subir PDF
+  <input type="file" id="pdf-upload" accept=".pdf" style="display: none" />
+</label>
+        </div>
+
+<button id="btn-limpiar-texto" class="btn-secundario btn-mini">🧹 Limpiar Historia</button>
+
+      <button id="evaluar-ia-directa" class="btn-principal anim-pulse">🧠 Evaluar con IA</button>
+    </section>
+
+    <!-- 📊 Sección 2: Resultados IA -->
+    <section class="bloque-col resultados-ia" id="seccion-2">
+      <h2>📊 Resultados IA</h2>
+      <div id="resultado-ia" class="resultado-html">
+        <p><em>Esperando evaluación...</em></p>
+      </div>
+    </section>
+
+    <!-- 📝 Sección 3: Comentarios + Botones -->
+    <section class="bloque-col comentarios-medico" id="seccion-3">
+      <h2>📝 Comentarios del Médico</h2>
+      <textarea id="comentarios-medico" placeholder="Escriba aquí observaciones adicionales..."></textarea>
+      <div class="botonera">
+        <button id="btn-derivar" class="btn-accion">📄 Generar Derivación</button>
+        <button id="btn-limpiar" class="btn-accion btn-secundario">🗑️ Limpiar Todo</button>
+      </div>
+    </section>
+  </div>
+
+  <!-- Modal derivación -->
+  <div id="modal-derivacion" class="modal oculto">
+    <div class="modal-box">
+      <h3>📌 Datos para la Derivación</h3>
+      <input type="text" id="nombre-paciente" placeholder="Apellido y Nombre"/>
+      <input type="text" id="dni-paciente" placeholder="DNI"/>
+      <input type="text" id="contacto-paciente" placeholder="Teléfono o contacto"/>
+      <input type="text" id="medico-derivador" placeholder="Médico derivador"/>
+      <div class="modal-acciones">
+        <button id="confirmar-derivacion" class="btn-pdf">✅ Confirmar PDF</button>
+        <button id="cancelar-derivacion" class="btn-clear">❌ Cancelar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Overlay de carga -->
+  <div id="overlay-cargando" class="overlay oculto">
+    <div class="contenedor-carga">
+      <div class="barra-cargando">
+        <div class="progreso"></div>
+      </div>
+      <p id="frase-carga">Evaluando con IA...</p>
+    </div>
+  </div>
+
+  <script src="./js/app.js"></script>
+</body>
+</html>
