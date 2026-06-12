@@ -1,86 +1,255 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>MedEx | Evaluación Inteligenteeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee</title>
-  <link rel="stylesheet" href="styles.css" />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;900&display=swap" rel="stylesheet">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Medex — Clinical Software Ecosystem</title>
+    <link rel="icon" type="image/png" href="M fondo negro.png">
+    
+    <style>
+        :root {
+            --bg-color: #0b0c10;
+            --card-bg: #1f2833;
+            --text-main: #ffffff;
+            --text-muted: #c5a059; /* Un tono dorado/bronce sutil o podés cambiarlo por gris suave #95a5a6 */
+            --accent-cyan: #45f3ff;
+            --accent-blue: #2f80ed;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            overflow-x: hidden;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        /* Navbar */
+        header {
+            width: 100%;
+            padding: 20px 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            background: rgba(11, 12, 16, 0.8);
+            backdrop-filter: blur(10px);
+            position: fixed;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .brand img {
+            height: 40px; /* Ajustá según proporciones de tu archivo medex fondo negro.png */
+            display: block;
+        }
+
+        .nav-links a {
+            color: var(--text-main);
+            text-decoration: none;
+            font-size: 0.95rem;
+            font-weight: 500;
+            transition: color 0.3s;
+            padding: 8px 16px;
+            border-radius: 4px;
+        }
+
+        .nav-links a:hover {
+            color: var(--accent-cyan);
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        /* Hero Section */
+        .hero {
+            padding: 160px 5% 60px 5%;
+            text-align: center;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .hero h1 {
+            font-size: 3rem;
+            font-weight: 800;
+            line-height: 1.2;
+            margin-bottom: 20px;
+            background: linear-gradient(45deg, #ffffff, #95a5a6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            color: #95a5a6;
+            margin-bottom: 40px;
+            line-height: 1.6;
+        }
+
+        /* Grid del Ecosistema */
+        .ecosystem-grid {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 5% 80px 5%;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 25px;
+        }
+
+        .card {
+            background-color: var(--card-bg);
+            border: 1px solid rgba(255, 255, 255, 0.03);
+            border-radius: 12px;
+            padding: 30px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            transition: transform 0.3s, border-color 0.3s, box-shadow 0.3s;
+            text-decoration: none;
+            color: var(--text-main);
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            border-color: var(--accent-cyan);
+            box-shadow: 0 10px 20px rgba(69, 243, 255, 0.05);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 15px;
+        }
+
+        .card-icon {
+            font-size: 1.8rem;
+        }
+
+        .card h3 {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--text-main);
+        }
+
+        .card p {
+            font-size: 0.95rem;
+            color: #95a5a6;
+            line-height: 1.5;
+            margin-bottom: 25px;
+            flex-grow: 1;
+        }
+
+        .card-action {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--accent-cyan);
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .card-action::after {
+            content: '→';
+            transition: transform 0.2s;
+        }
+
+        .card:hover .card-action::after {
+            transform: translateX(5px);
+        }
+
+        /* Footer */
+        footer {
+            margin-top: auto;
+            padding: 40px 5%;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            text-align: center;
+            color: #555;
+            font-size: 0.85rem;
+        }
+
+        @media (max-width: 768px) {
+            .hero h1 { font-size: 2.2rem; }
+            .hero p { font-size: 1rem; }
+        }
+    </style>
 </head>
 <body>
-  <div class="container-principal">
-    
-    <!-- 🩺 Sección 1: Historia Clínica -->
-    <section class="hc-superior fade-in slide-up" id="seccion-1">
-      <h1> Evaluación de Pacientes</h1>
-      <textarea id="texto-hc" placeholder="Pegue aquí resumen de historia clínica..."></textarea>
-      <div class="opciones-carga">
-  <label for="word-upload" class="btn-principal btn-subir">
-    📄 Subir Word
-    <input type="file" id="word-upload" accept=".docx" style="display: none" />
-  </label>
-  <span id="estado-subida" class="texto-subida"></span>
 
-      <label for="pdf-upload" class="btn-principal btn-subir"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="#c62828" viewBox="0 0 16 16" style="margin-right: 6px;">
-  <path d="M4 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V5.5L10.5 0H4zm4.5 1.5v4a.5.5 0 0 0 .5.5h4v8a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h4.5z"/>
-  <text x="4" y="13" font-size="6" fill="#c62828" font-family="Arial">PDF</text>
-</svg>
-Subir PDF
-  <input type="file" id="pdf-upload" accept=".pdf" style="display: none" />
-</label>
+    <header>
+        <div class="brand">
+            <img src="medex fondo negro.png" alt="Medex Logo">
         </div>
+        <nav class="nav-links">
+            <a href="mailto:tu-correo@medex.ar">Contacto</a>
+        </nav>
+    </header>
 
-<button id="btn-limpiar-texto" class="btn-secundario btn-mini">🧹 Limpiar Historia</button>
+    <main>
+        <section class="hero">
+            <h1>Ecosistema de Software Clínico</h1>
+            <p>Soluciones digitales modulares e inteligentes diseñadas para optimizar la práctica médica, la investigación científica y la gestión de emergencias críticas.</p>
+        </section>
 
-      <button id="evaluar-ia-directa" class="btn-principal anim-pulse">🧠 Evaluar con IA</button>
-    </section>
+        <section class="ecosystem-grid">
+            
+            <a href="/medreg" class="card">
+                <div>
+                    <div class="card-header">
+                        <h3>medreg</h3>
+                        <span class="card-icon">🔌</span>
+                    </div>
+                    <p>Sidebar inteligente con IA para Historias Clínicas Electrónicas. Extracción contextual de datos, dictado por voz y estructuración de informes clínicos.</p>
+                </div>
+                <div class="card-action">Abrir Módulo</div>
+            </a>
 
-    <!-- 📊 Sección 2: Resultados IA -->
-    <section class="bloque-col resultados-ia" id="seccion-2">
-      <h2>📊 Resultados IA</h2>
-      <div id="resultado-ia" class="resultado-html">
-        <p><em>Esperando evaluación...</em></p>
-      </div>
-    </section>
+            <a href="/rcp" class="card">
+                <div>
+                    <div class="card-header">
+                        <h3>asistente rcp</h3>
+                        <span class="card-icon">⚡</span>
+                    </div>
+                    <p>Herramienta interactiva para unidades críticas. Metrónomo dinámico, control de tiempos de ciclos y registro automatizado de eventos para códigos azules.</p>
+                </div>
+                <div class="card-action">Iniciar Asistente</div>
+            </a>
 
-    <!-- 📝 Sección 3: Comentarios + Botones -->
-    <section class="bloque-col comentarios-medico" id="seccion-3">
-      <h2>📝 Comentarios del Médico</h2>
-      <textarea id="comentarios-medico" placeholder="Escriba aquí observaciones adicionales..."></textarea>
-      <div class="botonera">
-        <button id="btn-derivar" class="btn-accion">📄 Generar Derivación</button>
-        <button id="btn-limpiar" class="btn-accion btn-secundario">🗑️ Limpiar Todo</button>
-      </div>
-    </section>
-  </div>
+            <a href="/investigacion" class="card">
+                <div>
+                    <div class="card-header">
+                        <h3>investigación</h3>
+                        <span class="card-icon">📊</span>
+                    </div>
+                    <p>Evaluador masivo de criterios médicos con IA. Automatiza el filtrado de pacientes para protocolos clínicos y exporta bases de datos listas en CSV.</p>
+                </div>
+                <div class="card-action">Acceder al Evaluador</div>
+            </a>
 
-  <!-- Modal derivación -->
-  <div id="modal-derivacion" class="modal oculto">
-    <div class="modal-box">
-      <h3>📌 Datos para la Derivación</h3>
-      <input type="text" id="nombre-paciente" placeholder="Apellido y Nombre"/>
-      <input type="text" id="dni-paciente" placeholder="DNI"/>
-      <input type="text" id="contacto-paciente" placeholder="Teléfono o contacto"/>
-      <input type="text" id="medico-derivador" placeholder="Médico derivador"/>
-      <div class="modal-acciones">
-        <button id="confirmar-derivacion" class="btn-pdf">✅ Confirmar PDF</button>
-        <button id="cancelar-derivacion" class="btn-clear">❌ Cancelar</button>
-      </div>
-    </div>
-  </div>
+            <a href="/pausa" class="card">
+                <div>
+                    <div class="card-header">
+                        <h3>pausa</h3>
+                        <span class="card-icon">📱</span>
+                    </div>
+                    <p>Herramienta de reducción de estrés digital y enfoque para profesionales de la salud. Bloqueo efectivo de distracciones móviles en bloques de trabajo clínico.</p>
+                </div>
+                <div class="card-action">Descargar App</div>
+            </a>
 
-  <!-- Overlay de carga -->
-  <div id="overlay-cargando" class="overlay oculto">
-    <div class="contenedor-carga">
-      <div class="barra-cargando">
-        <div class="progreso"></div>
-      </div>
-      <p id="frase-carga">Evaluando con IA...</p>
-    </div>
-  </div>
+        </section>
+    </main>
 
-  <script src="./js/app.js"></script>
+    <footer>
+        <p>&copy; 2026 Medex. Todos los derechos reservados. Desarrollado con criterio clínico.</p>
+    </footer>
+
 </body>
 </html>
