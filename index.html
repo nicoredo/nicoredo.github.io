@@ -3,24 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Medex — Clinical Software Ecosystem</title>
+    <title>medex — Soluciones Digitales Inteligentes para la Práctica Clínica</title>
     <link rel="icon" type="image/png" href="M fondo negro.png">
     
     <style>
         :root {
             --bg-color: #0b0c10;
-            --card-bg: #1f2833;
+            --card-bg: #141923;
             --text-main: #ffffff;
-            --text-muted: #c5a059; /* Un tono dorado/bronce sutil o podés cambiarlo por gris suave #95a5a6 */
-            --accent-cyan: #45f3ff;
-            --accent-blue: #2f80ed;
+            --text-muted: #8e9aa8;
+            --accent-cyan: #00f0ff;
+            --border-color: rgba(255, 255, 255, 0.07);
         }
 
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
         }
 
         body {
@@ -35,125 +35,150 @@
         /* Navbar */
         header {
             width: 100%;
-            padding: 20px 5%;
+            padding: 20px 8%;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-            background: rgba(11, 12, 16, 0.8);
-            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border-color);
+            background: rgba(11, 12, 16, 0.85);
+            backdrop-filter: blur(12px);
             position: fixed;
             top: 0;
             z-index: 1000;
         }
 
         .brand img {
-            height: 40px; /* Ajustá según proporciones de tu archivo medex fondo negro.png */
+            height: 38px;
             display: block;
         }
 
         .nav-links a {
-            color: var(--text-main);
+            color: var(--text-muted);
             text-decoration: none;
-            font-size: 0.95rem;
+            font-size: 0.9rem;
             font-weight: 500;
             transition: color 0.3s;
-            padding: 8px 16px;
-            border-radius: 4px;
+            padding: 8px 20px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            background: rgba(255, 255, 255, 0.02);
         }
 
         .nav-links a:hover {
             color: var(--accent-cyan);
-            background: rgba(255, 255, 255, 0.02);
+            border-color: var(--accent-cyan);
         }
 
         /* Hero Section */
         .hero {
-            padding: 160px 5% 60px 5%;
+            padding: 180px 8% 80px 8%;
             text-align: center;
-            max-width: 900px;
+            max-width: 1000px;
             margin: 0 auto;
         }
 
-        .hero h1 {
-            font-size: 3rem;
-            font-weight: 800;
-            line-height: 1.2;
+        .hero-tag {
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--accent-cyan);
             margin-bottom: 20px;
-            background: linear-gradient(45deg, #ffffff, #95a5a6);
+            font-weight: 600;
+        }
+
+        .hero h1 {
+            font-size: 3.4rem;
+            font-weight: 700;
+            line-height: 1.15;
+            margin-bottom: 24px;
+            letter-spacing: -0.5px;
+            background: linear-gradient(180deg, #ffffff 0%, #a2b4c7 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
 
         .hero p {
-            font-size: 1.2rem;
-            color: #95a5a6;
+            font-size: 1.25rem;
+            color: var(--text-muted);
             margin-bottom: 40px;
             line-height: 1.6;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
         }
 
-        /* Grid del Ecosistema */
-        .ecosystem-grid {
+        /* Grid de Productos */
+        .products-section {
             width: 100%;
             max-width: 1200px;
             margin: 0 auto;
-            padding: 0 5% 80px 5%;
+            padding: 0 8% 100px 8%;
+        }
+
+        .section-title {
+            font-size: 1.1rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-muted);
+            margin-bottom: 30px;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 12px;
+        }
+
+        .products-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-            gap: 25px;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
         }
 
         .card {
             background-color: var(--card-bg);
-            border: 1px solid rgba(255, 255, 255, 0.03);
-            border-radius: 12px;
-            padding: 30px;
+            border: 1px solid var(--border-color);
+            border-radius: 14px;
+            padding: 35px;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
-            transition: transform 0.3s, border-color 0.3s, box-shadow 0.3s;
+            transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.3s, box-shadow 0.3s;
             text-decoration: none;
             color: var(--text-main);
         }
 
         .card:hover {
-            transform: translateY(-5px);
-            border-color: var(--accent-cyan);
-            box-shadow: 0 10px 20px rgba(69, 243, 255, 0.05);
+            transform: translateY(-4px);
+            border-color: rgba(0, 240, 255, 0.4);
+            box-shadow: 0 20px 40px rgba(0, 240, 255, 0.03);
         }
 
         .card-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 15px;
-        }
-
-        .card-icon {
-            font-size: 1.8rem;
+            margin-bottom: 20px;
         }
 
         .card h3 {
-            font-size: 1.4rem;
-            font-weight: 700;
+            font-size: 1.6rem;
+            font-weight: 600;
+            letter-spacing: -0.3px;
             color: var(--text-main);
+            margin-bottom: 12px;
         }
 
         .card p {
             font-size: 0.95rem;
-            color: #95a5a6;
-            line-height: 1.5;
-            margin-bottom: 25px;
+            color: var(--text-muted);
+            line-height: 1.6;
+            margin-bottom: 30px;
             flex-grow: 1;
         }
 
         .card-action {
             font-size: 0.9rem;
-            font-weight: 600;
+            font-weight: 500;
             color: var(--accent-cyan);
             display: flex;
             align-items: center;
-            gap: 5px;
+            gap: 6px;
+            border-top: 1px solid rgba(255, 255, 255, 0.04);
+            padding-top: 20px;
         }
 
         .card-action::after {
@@ -162,22 +187,27 @@
         }
 
         .card:hover .card-action::after {
-            transform: translateX(5px);
+            transform: translateX(4px);
         }
 
         /* Footer */
         footer {
             margin-top: auto;
-            padding: 40px 5%;
-            border-top: 1px solid rgba(255, 255, 255, 0.05);
-            text-align: center;
-            color: #555;
+            padding: 40px 8%;
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: var(--text-muted);
             font-size: 0.85rem;
         }
 
         @media (max-width: 768px) {
-            .hero h1 { font-size: 2.2rem; }
-            .hero p { font-size: 1rem; }
+            header { padding: 20px 5%; }
+            .hero { padding-top: 140px; }
+            .hero h1 { font-size: 2.3rem; }
+            .hero p { font-size: 1.1rem; }
+            footer { flex-direction: column; gap: 15px; text-align: center; }
         }
     </style>
 </head>
@@ -185,70 +215,71 @@
 
     <header>
         <div class="brand">
-            <img src="medex fondo negro.png" alt="Medex Logo">
+            <img src="medex fondo negro.png" alt="medex">
         </div>
         <nav class="nav-links">
-            <a href="mailto:tu-correo@medex.ar">Contacto</a>
+            <a href="mailto:contacto@medex.ar">Soporte Institucional</a>
         </nav>
     </header>
 
     <main>
         <section class="hero">
-            <h1>Ecosistema de Software Clínico</h1>
-            <p>Soluciones digitales modulares e inteligentes diseñadas para optimizar la práctica médica, la investigación científica y la gestión de emergencias críticas.</p>
+            <div class="hero-tag">Tecnología Médica Avanzada</div>
+            <h1>Conectamos la precisión clínica con la eficiencia digital</h1>
+            <p>Desarrollamos soluciones de software de alto rendimiento diseñadas para reducir la carga operativa, optimizar protocolos críticos y potenciar la investigación científica.</p>
         </section>
 
-        <section class="ecosystem-grid">
-            
-            <a href="/medreg" class="card">
-                <div>
-                    <div class="card-header">
-                        <h3>medreg</h3>
-                        <span class="card-icon">🔌</span>
+        <section class="products-section">
+            <h2 class="section-title">Soluciones Disponibles</h2>
+            <div class="products-grid">
+                
+                <a href="/medreg" class="card">
+                    <div>
+                        <div class="card-header">
+                            <h3>medreg</h3>
+                        </div>
+                        <p>Optimización inteligente para Historias Clínicas Electrónicas. Extracción local de datos estructurados, dictado por voz y automatización de informes mediante IA asistencial.</p>
                     </div>
-                    <p>Sidebar inteligente con IA para Historias Clínicas Electrónicas. Extracción contextual de datos, dictado por voz y estructuración de informes clínicos.</p>
-                </div>
-                <div class="card-action">Abrir Módulo</div>
-            </a>
+                    <div class="card-action">Acceder a MedReg</div>
+                </a>
 
-            <a href="/rcp" class="card">
-                <div>
-                    <div class="card-header">
-                        <h3>asistente rcp</h3>
-                        <span class="card-icon">⚡</span>
+                <a href="/rcp" class="card">
+                    <div>
+                        <div class="card-header">
+                            <h3>asistente rcp</h3>
+                        </div>
+                        <p>Soporte digital interactivo para la gestión del Código Azul. Metrónomo integrado, temporizador exacto de ciclos clínicos y generación automática de reportes de eventos en tiempo real.</p>
                     </div>
-                    <p>Herramienta interactiva para unidades críticas. Metrónomo dinámico, control de tiempos de ciclos y registro automatizado de eventos para códigos azules.</p>
-                </div>
-                <div class="card-action">Iniciar Asistente</div>
-            </a>
+                    <div class="card-action">Iniciar Asistente</div>
+                </a>
 
-            <a href="/investigacion" class="card">
-                <div>
-                    <div class="card-header">
-                        <h3>investigación</h3>
-                        <span class="card-icon">📊</span>
+                <a href="/investigacion" class="card">
+                    <div>
+                        <div class="card-header">
+                            <h3>investigación</h3>
+                        </div>
+                        <p>Análisis masivo de bases de datos para protocolos científicos. Automatiza la validación de criterios médicos con IA y genera listados estructurados listos para exportar a CSV.</p>
                     </div>
-                    <p>Evaluador masivo de criterios médicos con IA. Automatiza el filtrado de pacientes para protocolos clínicos y exporta bases de datos listas en CSV.</p>
-                </div>
-                <div class="card-action">Acceder al Evaluador</div>
-            </a>
+                    <div class="card-action">Abrir Evaluador</div>
+                </a>
 
-            <a href="/pausa" class="card">
-                <div>
-                    <div class="card-header">
-                        <h3>pausa</h3>
-                        <span class="card-icon">📱</span>
+                <a href="/pausa" class="card">
+                    <div>
+                        <div class="card-header">
+                            <h3>pausa</h3>
+                        </div>
+                        <p>Herramienta diseñada para mitigar la fatiga digital en entornos de salud. Bloqueo controlado de distracciones móviles para asegurar bloques de trabajo clínico profundo.</p>
                     </div>
-                    <p>Herramienta de reducción de estrés digital y enfoque para profesionales de la salud. Bloqueo efectivo de distracciones móviles en bloques de trabajo clínico.</p>
-                </div>
-                <div class="card-action">Descargar App</div>
-            </a>
+                    <div class="card-action">Descargar Aplicación</div>
+                </a>
 
+            </div>
         </section>
     </main>
 
     <footer>
-        <p>&copy; 2026 Medex. Todos los derechos reservados. Desarrollado con criterio clínico.</p>
+        <p>&copy; 2026 medex. Soluciones globales de software médico.</p>
+        <p style="font-size: 0.8rem; opacity: 0.7;">Diseñado por profesionales de la salud.</p>
     </footer>
 
 </body>
