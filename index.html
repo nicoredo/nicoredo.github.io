@@ -8,12 +8,14 @@
     
     <style>
         :root {
-            --bg-color: #0b0c10;
-            --card-bg: #141923;
+            --bg-color: #0b0f19; /* Un azul/gris espacial muy profundo, no negro puro */
+            --bg-glow: radial-gradient(circle at 50% -20%, rgba(0, 240, 255, 0.15) 0%, rgba(11, 15, 25, 0) 60%);
+            --card-bg: rgba(20, 28, 45, 0.4); /* Fondo de tarjeta semi-transparente */
             --text-main: #ffffff;
-            --text-muted: #8e9aa8;
+            --text-muted: #8fa0b5;
             --accent-cyan: #00f0ff;
-            --border-color: rgba(255, 255, 255, 0.07);
+            --border-color: rgba(255, 255, 255, 0.06);
+            --border-hover: rgba(0, 240, 255, 0.3);
         }
 
         * {
@@ -25,6 +27,8 @@
 
         body {
             background-color: var(--bg-color);
+            background-image: var(--bg-glow); /* Luz ambiental en el fondo */
+            background-attachment: fixed;
             color: var(--text-main);
             overflow-x: hidden;
             display: flex;
@@ -35,184 +39,250 @@
         /* Navbar */
         header {
             width: 100%;
-            padding: 20px 8%;
+            padding: 24px 8%;
             display: flex;
             justify-content: space-between;
             align-items: center;
             border-bottom: 1px solid var(--border-color);
-            background: rgba(11, 12, 16, 0.85);
-            backdrop-filter: blur(12px);
+            background: rgba(11, 15, 25, 0.75);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
             position: fixed;
             top: 0;
             z-index: 1000;
         }
 
+        /* Integración y protagonismo del Logo */
+        .brand {
+            display: flex;
+            align-items: center;
+            position: relative;
+        }
+
         .brand img {
-            height: 38px;
+            height: 42px;
             display: block;
+            filter: drop-shadow(0 0 15px rgba(0, 240, 255, 0.2)); /* El logo ahora emite un leve brillo */
         }
 
         .nav-links a {
-            color: var(--text-muted);
+            color: var(--text-main);
             text-decoration: none;
-            font-size: 0.9rem;
-            font-weight: 500;
-            transition: color 0.3s;
-            padding: 8px 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
+            padding: 10px 22px;
             border: 1px solid var(--border-color);
-            border-radius: 6px;
+            border-radius: 8px;
             background: rgba(255, 255, 255, 0.02);
         }
 
         .nav-links a:hover {
             color: var(--accent-cyan);
             border-color: var(--accent-cyan);
+            box-shadow: 0 0 15px rgba(0, 240, 255, 0.15);
+            background: rgba(0, 240, 255, 0.02);
         }
 
         /* Hero Section */
         .hero {
-            padding: 180px 8% 80px 8%;
+            padding: 200px 8% 100px 8%;
             text-align: center;
             max-width: 1000px;
             margin: 0 auto;
+            position: relative;
+        }
+
+        /* Círculo sutil difuminado detrás del texto del hero */
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 40%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 400px;
+            height: 200px;
+            background: rgba(0, 210, 255, 0.08);
+            filter: blur(80px);
+            border-radius: 50%;
+            z-index: -1;
         }
 
         .hero-tag {
-            font-size: 0.85rem;
+            font-size: 0.8rem;
             text-transform: uppercase;
-            letter-spacing: 2px;
+            letter-spacing: 3px;
             color: var(--accent-cyan);
-            margin-bottom: 20px;
-            font-weight: 600;
+            margin-bottom: 24px;
+            font-weight: 700;
         }
 
         .hero h1 {
-            font-size: 3.4rem;
+            font-size: 3.8rem;
             font-weight: 700;
             line-height: 1.15;
             margin-bottom: 24px;
-            letter-spacing: -0.5px;
-            background: linear-gradient(180deg, #ffffff 0%, #a2b4c7 100%);
+            letter-spacing: -1px;
+            background: linear-gradient(180deg, #ffffff 0%, #b0c4de 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
 
         .hero p {
-            font-size: 1.25rem;
+            font-size: 1.3rem;
             color: var(--text-muted);
             margin-bottom: 40px;
             line-height: 1.6;
-            max-width: 800px;
+            max-width: 760px;
             margin-left: auto;
             margin-right: auto;
         }
 
-        /* Grid de Productos */
+        /* Sección de Soluciones */
         .products-section {
             width: 100%;
             max-width: 1200px;
             margin: 0 auto;
-            padding: 0 8% 100px 8%;
+            padding: 0 8% 120px 8%;
         }
 
         .section-title {
-            font-size: 1.1rem;
+            font-size: 1rem;
             text-transform: uppercase;
-            letter-spacing: 1px;
+            letter-spacing: 2px;
             color: var(--text-muted);
-            margin-bottom: 30px;
+            margin-bottom: 40px;
             border-bottom: 1px solid var(--border-color);
-            padding-bottom: 12px;
+            padding-bottom: 16px;
+            font-weight: 600;
         }
 
         .products-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
             gap: 30px;
         }
 
+        /* Tarjetas Estilo Glassmorphism */
         .card {
-            background-color: var(--card-bg);
+            background: var(--card-bg);
             border: 1px solid var(--border-color);
-            border-radius: 14px;
-            padding: 35px;
+            border-radius: 16px;
+            padding: 40px;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
-            transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.3s, box-shadow 0.3s;
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
             text-decoration: none;
             color: var(--text-main);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
         }
 
         .card:hover {
-            transform: translateY(-4px);
-            border-color: rgba(0, 240, 255, 0.4);
-            box-shadow: 0 20px 40px rgba(0, 240, 255, 0.03);
+            transform: translateY(-6px);
+            border-color: var(--border-hover);
+            background: rgba(255, 255, 255, 0.03);
+            box-shadow: 0 30px 60px rgba(0, 240, 255, 0.04), inset 0 0 20px rgba(255, 255, 255, 0.02);
         }
 
-        .card-header {
-            margin-bottom: 20px;
+        /* Contenedor del Logo de cada App */
+        .app-logo-container {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 24px;
         }
+
+        /* Estilo base para los sub-logos de las Apps */
+        .app-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 1.2rem;
+            letter-spacing: -0.5px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        /* Variantes de logos según la app */
+        .icon-medreg { background: linear-gradient(135deg, #0072ff 0%, #00d2ff 100%); color: #fff; }
+        .icon-rcp { background: linear-gradient(135deg, #ff416c 0%, #ff4b2b 100%); color: #fff; }
+        .icon-investigacion { background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%); color: #fff; }
+        .icon-pausa { background: linear-gradient(135deg, #8a2387 0%, #e94057 100%); color: #fff; }
 
         .card h3 {
-            font-size: 1.6rem;
+            font-size: 1.7rem;
             font-weight: 600;
-            letter-spacing: -0.3px;
+            letter-spacing: -0.5px;
             color: var(--text-main);
-            margin-bottom: 12px;
         }
 
         .card p {
-            font-size: 0.95rem;
+            font-size: 0.98rem;
             color: var(--text-muted);
             line-height: 1.6;
-            margin-bottom: 30px;
+            margin-bottom: 35px;
             flex-grow: 1;
         }
 
         .card-action {
             font-size: 0.9rem;
-            font-weight: 500;
+            font-weight: 600;
             color: var(--accent-cyan);
             display: flex;
             align-items: center;
-            gap: 6px;
-            border-top: 1px solid rgba(255, 255, 255, 0.04);
-            padding-top: 20px;
+            gap: 8px;
+            border-top: 1px solid var(--border-color);
+            padding-top: 24px;
+            transition: color 0.3s;
         }
 
         .card-action::after {
             content: '→';
-            transition: transform 0.2s;
+            transition: transform 0.2s ease;
+        }
+
+        .card:hover .card-action {
+            color: #ffffff;
         }
 
         .card:hover .card-action::after {
-            transform: translateX(4px);
+            transform: translateX(6px);
         }
 
         /* Footer */
         footer {
             margin-top: auto;
-            padding: 40px 8%;
+            padding: 48px 8%;
             border-top: 1px solid var(--border-color);
             display: flex;
             justify-content: space-between;
             align-items: center;
             color: var(--text-muted);
             font-size: 0.85rem;
+            background: rgba(11, 15, 25, 0.5);
         }
 
         @media (max-width: 768px) {
             header { padding: 20px 5%; }
-            .hero { padding-top: 140px; }
-            .hero h1 { font-size: 2.3rem; }
+            .hero { padding-top: 160px; }
+            .hero h1 { font-size: 2.5rem; }
             .hero p { font-size: 1.1rem; }
-            footer { flex-direction: column; gap: 15px; text-align: center; }
+            .products-section { padding: 0 5% 80px 5%; }
+            footer { flex-direction: column; gap: 20px; text-align: center; }
         }
     </style>
 </head>
 <body>
 
+    <!-- Header / Navbar -->
     <header>
         <div class="brand">
             <img src="medex fondo negro.png" alt="medex">
@@ -222,53 +292,64 @@
         </nav>
     </header>
 
+    <!-- Main Content -->
     <main>
+        <!-- Hero Section -->
         <section class="hero">
-            <div class="hero-tag">Tecnología Médica Avanzada</div>
-            <h1>Conectamos la precisión clínica con la eficiencia digital</h1>
-            <p>Desarrollamos soluciones de software de alto rendimiento diseñadas para reducir la carga operativa, optimizar protocolos críticos y potenciar la investigación científica.</p>
+            <div class="hero-tag">Tecnología Médica de Precisión</div>
+            <h1>Conectamos la práctica clínica con la eficiencia digital</h1>
+            <p>Desarrollamos soluciones de software avanzadas y específicas diseñadas para mitigar la carga operativa, guiar protocolos críticos y potenciar la investigación científica.</p>
         </section>
 
+        <!-- Sección de Soluciones -->
         <section class="products-section">
-            <h2 class="section-title">Soluciones Disponibles</h2>
+            <h2 class="section-title">Plataformas Disponibles</h2>
             <div class="products-grid">
                 
+                <!-- Tarjeta: MedReg -->
                 <a href="/medreg" class="card">
                     <div>
-                        <div class="card-header">
+                        <div class="app-logo-container">
+                            <div class="app-icon icon-medreg">mr</div>
                             <h3>medreg</h3>
                         </div>
-                        <p>Optimización inteligente para Historias Clínicas Electrónicas. Extracción local de datos estructurados, dictado por voz y automatización de informes mediante IA asistencial.</p>
+                        <p>Optimización inteligente para Historias Clínicas Electrónicas. Extracción local de datos estructurados, transcripción avanzada por voz y automatización de informes mediante IA asistencial.</p>
                     </div>
                     <div class="card-action">Acceder a MedReg</div>
                 </a>
 
+                <!-- Tarjeta: Asistente RCP -->
                 <a href="/rcp" class="card">
                     <div>
-                        <div class="card-header">
+                        <div class="app-logo-container">
+                            <div class="app-icon icon-rcp">rcp</div>
                             <h3>asistente rcp</h3>
                         </div>
-                        <p>Soporte digital interactivo para la gestión del Código Azul. Metrónomo integrado, temporizador exacto de ciclos clínicos y generación automática de reportes de eventos en tiempo real.</p>
+                        <p>Soporte digital interactivo para la gestión de eventos de Código Azul. Metrónomo integrado, temporizador de precisión para ciclos críticos y generación inmediata de reportes de reanimación.</p>
                     </div>
                     <div class="card-action">Iniciar Asistente</div>
                 </a>
 
+                <!-- Tarjeta: Evaluador de Investigación -->
                 <a href="/investigacion" class="card">
                     <div>
-                        <div class="card-header">
+                        <div class="app-logo-container">
+                            <div class="app-icon icon-investigacion">in</div>
                             <h3>investigación</h3>
                         </div>
-                        <p>Análisis masivo de bases de datos para protocolos científicos. Automatiza la validación de criterios médicos con IA y genera listados estructurados listos para exportar a CSV.</p>
+                        <p>Análisis automatizado de grandes volúmenes de datos para protocolos científicos. Valida criterios de inclusión/exclusión médicos con IA y exporta datasets estructurados listos en CSV.</p>
                     </div>
                     <div class="card-action">Abrir Evaluador</div>
                 </a>
 
+                <!-- Tarjeta: Pausa -->
                 <a href="/pausa" class="card">
                     <div>
-                        <div class="card-header">
+                        <div class="app-logo-container">
+                            <div class="app-icon icon-pausa">p‖</div>
                             <h3>pausa</h3>
                         </div>
-                        <p>Herramienta diseñada para mitigar la fatiga digital en entornos de salud. Bloqueo controlado de distracciones móviles para asegurar bloques de trabajo clínico profundo.</p>
+                        <p>Módulo de gestión del enfoque diseñado para mitigar la fatiga digital en el entorno de salud. Bloqueo temporizado de distracciones móviles para asegurar bloques eficaces de trabajo clínico profundo.</p>
                     </div>
                     <div class="card-action">Descargar Aplicación</div>
                 </a>
@@ -277,9 +358,10 @@
         </section>
     </main>
 
+    <!-- Footer -->
     <footer>
         <p>&copy; 2026 medex. Soluciones globales de software médico.</p>
-        <p style="font-size: 0.8rem; opacity: 0.7;">Diseñado por profesionales de la salud.</p>
+        <p style="font-size: 0.8rem; opacity: 0.6; letter-spacing: 0.5px;">Desarrollado con estricto criterio clínico.</p>
     </footer>
 
 </body>
