@@ -3,12 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Medex</title>
-    <link rel="icon" type="image/png" href="M fondo negro.png">
+    <title>Medex — Soluciones Digitales Inteligentes para la Práctica Médica</title>
+    <!-- Favicon corregido a la variante M fondo blanco -->
+    <link rel="icon" type="image/png" href="M fondo blanco.png">
     
     <style>
         :root {
-            --bg-color: #0b0f19; /* Un azul/gris espacial muy profundo, no negro puro */
+            --bg-color: #0b0f19; /* Un azul/gris espacial muy profundo */
             --bg-glow: radial-gradient(circle at 50% -20%, rgba(0, 240, 255, 0.15) 0%, rgba(11, 15, 25, 0) 60%);
             --card-bg: rgba(20, 28, 45, 0.4); /* Fondo de tarjeta semi-transparente */
             --text-main: #ffffff;
@@ -39,12 +40,12 @@
         /* Navbar */
         header {
             width: 100%;
-            padding: 24px 8%;
+            padding: 20px 8%;
             display: flex;
             justify-content: space-between;
             align-items: center;
             border-bottom: 1px solid var(--border-color);
-            background: rgba(11, 15, 25, 0.75);
+            background: rgba(11, 15, 25, 0.8);
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
             position: fixed;
@@ -52,17 +53,21 @@
             z-index: 1000;
         }
 
-        /* Integración y protagonismo del Logo */
+        /* Mayor presencia del logo principal eliminando filtros conflictivos */
         .brand {
             display: flex;
             align-items: center;
-            position: relative;
         }
 
         .brand img {
-            height: 42px;
+            height: 52px; /* Aumentado de 42px a 52px para dar más presencia */
+            width: auto;
             display: block;
-            filter: drop-shadow(0 0 15px rgba(0, 240, 255, 0.2)); /* El logo ahora emite un leve brillo */
+            transition: opacity 0.3s ease;
+        }
+
+        .brand img:hover {
+            opacity: 0.9;
         }
 
         .nav-links a {
@@ -88,24 +93,23 @@
 
         /* Hero Section */
         .hero {
-            padding: 200px 8% 100px 8%;
+            padding: 220px 8% 100px 8%;
             text-align: center;
             max-width: 1000px;
             margin: 0 auto;
             position: relative;
         }
 
-        /* Círculo sutil difuminado detrás del texto del hero */
         .hero::before {
             content: '';
             position: absolute;
             top: 40%;
             left: 50%;
             transform: translate(-50%, -50%);
-            width: 400px;
-            height: 200px;
-            background: rgba(0, 210, 255, 0.08);
-            filter: blur(80px);
+            width: 500px;
+            height: 250px;
+            background: rgba(0, 210, 255, 0.07);
+            filter: blur(100px);
             border-radius: 50%;
             z-index: -1;
         }
@@ -185,7 +189,7 @@
             transform: translateY(-6px);
             border-color: var(--border-hover);
             background: rgba(255, 255, 255, 0.03);
-            box-shadow: 0 30px 60px rgba(0, 240, 255, 0.04), inset 0 0 20px rgba(255, 255, 255, 0.02);
+            box-shadow: 0 30px 60px rgba(0, 240, 255, 0.04);
         }
 
         /* Contenedor del Logo de cada App */
@@ -196,29 +200,34 @@
             margin-bottom: 24px;
         }
 
-        /* Estilo base para los sub-logos de las Apps */
-        .app-icon {
+        /* Contenedor adaptado para las imágenes PNG reales de las apps */
+        .app-icon-img {
             width: 48px;
             height: 48px;
-            border-radius: 12px;
+            object-fit: contain;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            padding: 4px;
+        }
+
+        /* Estilo temporal para las apps que aún no tienen PNG listo */
+        .app-icon-placeholder {
+            width: 48px;
+            height: 48px;
+            border-radius: 10px;
             display: flex;
             align-items: center;
             justify-content: center;
             font-weight: 700;
-            font-size: 1.2rem;
-            letter-spacing: -0.5px;
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+            font-size: 1.1rem;
             border: 1px solid rgba(255, 255, 255, 0.1);
         }
-
-        /* Variantes de logos según la app */
-        .icon-medreg { background: linear-gradient(135deg, #0072ff 0%, #00d2ff 100%); color: #fff; }
         .icon-rcp { background: linear-gradient(135deg, #ff416c 0%, #ff4b2b 100%); color: #fff; }
         .icon-investigacion { background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%); color: #fff; }
-        .icon-pausa { background: linear-gradient(135deg, #8a2387 0%, #e94057 100%); color: #fff; }
 
         .card h3 {
-            font-size: 1.7rem;
+            font-size: 1.6rem;
             font-weight: 600;
             letter-spacing: -0.5px;
             color: var(--text-main);
@@ -272,7 +281,8 @@
 
         @media (max-width: 768px) {
             header { padding: 20px 5%; }
-            .hero { padding-top: 160px; }
+            .brand img { height: 44px; }
+            .hero { padding-top: 180px; }
             .hero h1 { font-size: 2.5rem; }
             .hero p { font-size: 1.1rem; }
             .products-section { padding: 0 5% 80px 5%; }
@@ -310,7 +320,8 @@
                 <a href="/medreg" class="card">
                     <div>
                         <div class="app-logo-container">
-                            <div class="app-icon icon-medreg">mr</div>
+                            <!-- Integrado icon16.png para Medreg -->
+                            <img src="icon16.png" alt="MedReg" class="app-icon-img">
                             <h3>medreg</h3>
                         </div>
                         <p>Optimización inteligente para Historias Clínicas Electrónicas. Extracción local de datos estructurados, transcripción avanzada por voz y automatización de informes mediante IA asistencial.</p>
@@ -322,7 +333,8 @@
                 <a href="/rcp" class="card">
                     <div>
                         <div class="app-logo-container">
-                            <div class="app-icon icon-rcp">rcp</div>
+                            <!-- Placeholder temporal hasta generar su PNG definitivo -->
+                            <div class="app-icon-placeholder icon-rcp">rcp</div>
                             <h3>asistente rcp</h3>
                         </div>
                         <p>Soporte digital interactivo para la gestión de eventos de Código Azul. Metrónomo integrado, temporizador de precisión para ciclos críticos y generación inmediata de reportes de reanimación.</p>
@@ -334,7 +346,8 @@
                 <a href="/investigacion" class="card">
                     <div>
                         <div class="app-logo-container">
-                            <div class="app-icon icon-investigacion">in</div>
+                            <!-- Placeholder temporal hasta generar su PNG definitivo -->
+                            <div class="app-icon-placeholder icon-investigacion">in</div>
                             <h3>investigación</h3>
                         </div>
                         <p>Análisis automatizado de grandes volúmenes de datos para protocolos científicos. Valida criterios de inclusión/exclusión médicos con IA y exporta datasets estructurados listos en CSV.</p>
@@ -346,7 +359,8 @@
                 <a href="/pausa" class="card">
                     <div>
                         <div class="app-logo-container">
-                            <div class="app-icon icon-pausa">p‖</div>
+                            <!-- Integrado icono.png (Símbolo puro) para Pausa -->
+                            <img src="icono.png" alt="Pausa" class="app-icon-img">
                             <h3>pausa</h3>
                         </div>
                         <p>Módulo de gestión del enfoque diseñado para mitigar la fatiga digital en el entorno de salud. Bloqueo temporizado de distracciones móviles para asegurar bloques eficaces de trabajo clínico profundo.</p>
