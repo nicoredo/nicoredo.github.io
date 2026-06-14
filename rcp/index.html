@@ -13,7 +13,20 @@
         button { font-family: inherit; }
         
         .header { position: relative; display: flex; justify-content: space-between; align-items: center; border-bottom: 3px solid #30363d; padding-bottom: 15px; margin-bottom: 20px; height: 60px; }
-        .logo-espacio { color: #8b949e; font-size: 1.2rem; font-weight: bold; letter-spacing: 2px; }
+        .logo-espacio {
+    display: flex;
+    align-items: center;
+    gap: 12px; /* Espaciado limpio entre el isotipo y el texto */
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+        .header-logo {
+    height: 38px; /* Ajustá este valor para que coincida con la altura de tus botones/timer */
+    width: auto;
+    object-fit: contain;
+    display: block;
+}
         .global-timer { position: absolute; left: 50%; transform: translateX(-50%); font-size: 4.5rem; color: #ffd700; font-weight: bold; }
         .header-buttons { display: flex; gap: 15px; }
         .btn-header { background-color: transparent; padding: 10px 20px; font-size: 1.2rem; border-radius: 8px; cursor: pointer; font-weight: bold; transition: all 0.2s; }
