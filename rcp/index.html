@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Asistente RCP</title>
-    <link rel="icon" type="image/svg+xml" href="icono.svg">
-    <link rel="apple-touch-icon" href="icono.svg">
+    <link rel="icon" type="image/svg+xml" href="icono rcp.png">
+    <link rel="apple-touch-icon" href="icono rcp.png">
     <style>
         /* --- ESTILOS VISUALES --- */
         body { background-color: #0d1117; color: #ffffff; font-family: 'Segoe UI', sans-serif; margin: 0; padding: 20px; display: flex; flex-direction: column; height: 95vh; box-sizing: border-box; }
@@ -107,17 +107,20 @@
 </head>
 <body>
 
-    <div class="header">
-        <div class="logo-espacio">✚ MEDEX.AR</div>
-        <div class="global-timer" id="display-global">00:00</div>
-        <div class="header-buttons">
-            <button class="btn-header btn-end" id="btn-open-modal">FINALIZAR</button>
-            <button class="btn-header btn-reset" id="btn-reiniciar" onclick="location.reload()">REINICIAR</button>
-        </div>
+<div class="header">
+    <div class="logo-espacio">
+        <img src="icono rcp.png" alt="medex rcp" class="header-logo">
+        <span>medex.ar</span>
     </div>
+    <div class="global-timer" id="display-global">00:00</div>
+    <div class="header-buttons">
+        <button class="btn-header btn-end" id="btn-open-modal">FINALIZAR</button>
+        <button class="btn-header btn-reset" id="btn-reiniciar" onclick="location.reload()">REINICIAR</button>
+    </div>
+</div>
 
     <div class="main-controls">
-        <button id="btn-main" class="btn-main-action btn-start">▶ INICIAR CÓDIGO AZUL (Espacio)</button>
+        <button id="btn-main" class="btn-main-action btn-start">▶ INICIAR PROTOCOLO RCP (Espacio)</button>
     </div>
 
     <div class="main-container">
