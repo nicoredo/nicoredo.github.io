@@ -20,6 +20,13 @@
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 1px;
+            /* Nuevos ajustes para el link */
+    text-decoration: none; /* Quita el subrayado clásico de los enlaces */
+    color: #ffffff;        /* Fuerza a que el texto siga siendo blanco puro */
+}
+        .logo-espacio:hover {
+    opacity: 0.85;
+    transition: opacity 0.2s ease;
 }
         .header-logo {
     height: 48px; /* Ajustá este valor para que coincida con la altura de tus botones/timer */
@@ -121,9 +128,10 @@
 <body>
 
 <div class="header">
-    <div class="logo-espacio">
+    <a href="https://medex.ar/" class="logo-espacio">
         <img src="icono rcp.png" alt="medex rcp" class="header-logo">
         <span>medex.ar</span>
+    </a>
     </div>
     <div class="global-timer" id="display-global">00:00</div>
     <div class="header-buttons">
