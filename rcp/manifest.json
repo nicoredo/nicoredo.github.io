@@ -1,9 +1,9 @@
 {
   "name": "Asistente RCP — Medex",
   "short_name": "Asistente RCP",
-  "description": "Soporte digital interactivo para la asistencia de RCP.",
-  "start_url": "/rcp/index.html",
-  "scope": "/rcp/",
+  "description": "Soporte digital interactivo para la gestión de eventos de Código Azul.",
+  "start_url": "index.html",
+  "scope": "./",
   "display": "standalone",
   "background_color": "#0d1117",
   "theme_color": "#0d1117",
