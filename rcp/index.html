@@ -3,9 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Asistente RCP</title>
+    <title>Asistente RCP | Medex.ar</title>
     <link rel="icon" type="image/svg+xml" href="icono rcp.png">
     <link rel="apple-touch-icon" href="icono rcp.png">
+
+    <link rel="manifest" href="manifest.json">
+    
     <style>
         /* --- ESTILOS VISUALES --- */
         body { background-color: #0d1117; color: #ffffff; font-family: 'Segoe UI', sans-serif; margin: 0; padding: 20px; display: flex; flex-direction: column; height: 95vh; box-sizing: border-box; }
@@ -364,6 +367,16 @@
             link.download = `Codigo_Azul_${fechaHoy.replace(/\//g, '-')}_${horaHoy.replace(/:/g, '')}.txt`;
             document.body.appendChild(link); link.click(); document.body.removeChild(link); URL.revokeObjectURL(url);
         }
+
+        // --- REGISTRO DEL SERVICE WORKER PARA MODO PWA OFFLINE ---
+if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+        navigator.serviceWorker.register('sw.js')
+            .then(reg => console.log('Service Worker de RCP registrado con éxito.', reg.scope))
+            .catch(err => console.warn('Error al registrar el Service Worker de RCP.', err));
+    });
+}
+        
     </script>
     <div class="app-footer-copyright">
         © 2026 medex.ar — Todos los derechos reservados. No constituye una guía mandatoria de conducta clínica.
