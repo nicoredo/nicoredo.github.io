@@ -34,6 +34,19 @@
     object-fit: contain;
     display: block;
 }
+
+        .app-footer-copyright {
+    text-align: right;
+    font-size: 0.75rem;
+    color: #8b949e;
+    opacity: 0.4; /* Súper discreto, no distrae al médico */
+    margin-top: 15px;
+    letter-spacing: 0.5px;
+}
+.app-footer-copyright a {
+    color: inherit;
+    text-decoration: none;
+}
         .global-timer { position: absolute; left: 50%; transform: translateX(-50%); font-size: 4.5rem; color: #ffd700; font-weight: bold; }
         .header-buttons { display: flex; gap: 15px; }
         .btn-header { background-color: transparent; padding: 10px 20px; font-size: 1.2rem; border-radius: 8px; cursor: pointer; font-weight: bold; transition: all 0.2s; }
@@ -352,5 +365,9 @@
             document.body.appendChild(link); link.click(); document.body.removeChild(link); URL.revokeObjectURL(url);
         }
     </script>
+    <div class="app-footer-copyright">
+        © 2026 medex.ar — Todos los derechos reservados. No constituye una guía mandatoria de conducta clínica.
+    </div>
+</body>
 </body>
 </html>
