@@ -2,7 +2,7 @@ const CACHE_NAME = 'medex-rcp-cache-v1';
 const ASSETS_TO_CACHE = [
   '/rcp/',
   '/rcp/index.html',
-  '/rcp/icono rcp.png'
+  '/rcp/icono-rcp.png'
 ];
 
 // Instala el Service Worker y guarda los archivos en la memoria caché
