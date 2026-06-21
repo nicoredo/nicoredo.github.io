@@ -229,6 +229,38 @@
     </div>
 
     <script>
+
+        // ==========================================
+    // --- CAPA 1: BLOQUEO DE DOMINIO ---
+    // ==========================================
+    (function() {
+        const allowedDomains = ['medex.ar', 'www.medex.ar', 'nicoredo.github.io', 'localhost', '127.0.0.1'];
+        const currentHost = window.location.hostname;
+        
+        // Bloquea si se abre como archivo local (file://) o si no está en la lista permitida
+        if (window.location.protocol === 'file:' || (currentHost !== '' && !allowedDomains.includes(currentHost))) {
+            document.body.innerHTML = `<div style="text-align:center; margin-top:20%; font-family:sans-serif;">
+                <h2 style="color:#ff4d4d; font-size: 2rem;">⚠️ Acceso Denegado</h2>
+                <p style="font-size: 1.2rem; color: #c9d1d9;">El Asistente RCP es propiedad de <b>medex.ar</b> y solo puede ejecutarse desde su plataforma oficial.</p>
+            </div>`;
+            throw new Error("Ejecución no autorizada bloqueada.");
+        }
+    })();
+
+    // ==========================================
+    // --- CAPA 2: ANTI-CURIOSOS ---
+    // ==========================================
+    document.addEventListener('contextmenu', e => e.preventDefault()); // Bloquea clic derecho
+    document.addEventListener('keydown', e => {
+        // Bloquea F12, Ctrl+Shift+I, Ctrl+U
+        if (e.key === 'F12' || 
+           (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'C' || e.key === 'J')) ||
+           (e.ctrlKey && e.key === 'U')) {
+            e.preventDefault();
+        }
+    });
+
+        
         let rcpActivo = false; let tiempoGlobal = 0; let tiempoCiclo = 120; let relojPrincipal = null;
         let descargasDadas = 0; let adrenalinaActiva = false; let tiempoAdrenalina = 0; let ritmoActual = null;
         const uiGlobal = document.getElementById('display-global'); const uiCiclo = document.getElementById('display-ciclo'); const uiAdrenalina = document.getElementById('display-adrenalina');
