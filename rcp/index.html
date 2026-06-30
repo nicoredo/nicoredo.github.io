@@ -263,6 +263,7 @@
         
         let rcpActivo = false; let tiempoGlobal = 0; let tiempoCiclo = 120; let relojPrincipal = null;
         let descargasDadas = 0; let adrenalinaActiva = false; let tiempoAdrenalina = 0; let ritmoActual = null;
+let adrenalinasDadas = 0; let amiodaronasDadas = 0;
         const uiGlobal = document.getElementById('display-global'); const uiCiclo = document.getElementById('display-ciclo'); const uiAdrenalina = document.getElementById('display-adrenalina');
         const btnMain = document.getElementById('btn-main'); const cajaLog = document.getElementById('log-caja');
         const btnFv = document.getElementById('btn-fv'); const btnAsist = document.getElementById('btn-asist'); const btnDescarga = document.getElementById('btn-descarga');
@@ -316,7 +317,22 @@
         function reiniciarCiclo() { tiempoCiclo = 120; uiCiclo.innerText = formatearTiempo(tiempoCiclo); btnFv.classList.remove('resaltar-ritmo'); btnAsist.classList.remove('resaltar-ritmo'); }
 
         btnFv.addEventListener('click', () => { ritmoActual = 'FV'; reiniciarCiclo(); btnDescarga.classList.add('resaltar-alerta'); agregarLog("💓 Ritmo: FV / TV sin pulso (Desfibrilable)"); });
-        btnAsist.addEventListener('click', () => { ritmoActual = 'ASIST'; reiniciarCiclo(); btnDescarga.classList.remove('resaltar-alerta'); if (!adrenalinaActiva) btnAdrenalina.classList.add('resaltar-alerta'); agregarLog("💓 Ritmo: Asistolia / AESP (No Desfibrilable)"); });
+       btnAsist.addEventListener('click', () => { 
+    ritmoActual = 'ASIST'; 
+    reiniciarCiclo(); 
+    
+    // 1. Apagamos TODAS las alertas de la vía desfibrilable
+    btnDescarga.classList.remove('resaltar-alerta'); 
+    btnAmiodarona.classList.remove('resaltar-alerta'); // <- ¡Este es el agregado clave!
+    
+    // 2. Evaluamos la Adrenalina (Pilar de la Asistolia)
+    if (!adrenalinaActiva) {
+        btnAdrenalina.classList.add('resaltar-alerta'); 
+    }
+    
+    agregarLog("💓 Ritmo: Asistolia / AESP (No Desfibrilable)"); 
+});
+        
         btnDescarga.addEventListener('click', () => { 
     descargasDadas++; 
     btnDescarga.classList.remove('resaltar-alerta'); 
@@ -329,8 +345,34 @@
     if (descargasDadas === 3 || descargasDadas === 5) btnAmiodarona.classList.add('resaltar-alerta'); 
 });
         
-        btnAdrenalina.addEventListener('click', () => { btnAdrenalina.classList.remove('resaltar-alerta'); adrenalinaActiva = true; tiempoAdrenalina = 240; uiAdrenalina.style.display = 'inline'; uiAdrenalina.innerText = "Siguiente en: 04:00"; agregarLog("💉 Adrenalina 1mg administrada."); });
-        btnAmiodarona.addEventListener('click', () => { btnAmiodarona.classList.remove('resaltar-alerta'); agregarLog("💉 Amiodarona / Lidocaína administrada."); });
+        btnAdrenalina.addEventListener('click', () => { 
+    btnAdrenalina.classList.remove('resaltar-alerta'); 
+    adrenalinaActiva = true; 
+    tiempoAdrenalina = 240; 
+    uiAdrenalina.style.display = 'inline'; 
+    uiAdrenalina.innerText = "Siguiente en: 04:00"; 
+    
+    // Sumamos 1 al contador y lo mostramos en el log
+    adrenalinasDadas++;
+    agregarLog(`💉 Adrenalina #${adrenalinasDadas} (1mg) administrada.`); 
+});
+
+btnAmiodarona.addEventListener('click', () => { 
+    if (btnAmiodarona.classList.contains('deshabilitado')) return; // Evita clicks si ya se dieron 2 dosis
+
+    btnAmiodarona.classList.remove('resaltar-alerta'); 
+    amiodaronasDadas++;
+    
+    // Determinamos el texto según si es la 1ra o 2da dosis
+    let textoDosis = amiodaronasDadas === 1 ? "1.ª dosis: 300mg" : "2.ª dosis: 150mg";
+    
+    agregarLog(`💉 Amiodarona #${amiodaronasDadas} administrada (${textoDosis}).`); 
+    
+    // Bloqueo de seguridad: La AHA estipula máximo 2 dosis de Amiodarona.
+    if (amiodaronasDadas >= 2) {
+        btnAmiodarona.classList.add('deshabilitado');
+    }
+});
         btnIntubacion.addEventListener('click', () => { if (!btnIntubacion.classList.contains('deshabilitado')) { btnIntubacion.classList.add('deshabilitado'); agregarLog("🌬️ Vía aérea avanzada asegurada."); }});
 
         document.addEventListener('keydown', (e) => {
