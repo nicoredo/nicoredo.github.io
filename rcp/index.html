@@ -317,7 +317,18 @@
 
         btnFv.addEventListener('click', () => { ritmoActual = 'FV'; reiniciarCiclo(); btnDescarga.classList.add('resaltar-alerta'); agregarLog("💓 Ritmo: FV / TV sin pulso (Desfibrilable)"); });
         btnAsist.addEventListener('click', () => { ritmoActual = 'ASIST'; reiniciarCiclo(); btnDescarga.classList.remove('resaltar-alerta'); if (!adrenalinaActiva) btnAdrenalina.classList.add('resaltar-alerta'); agregarLog("💓 Ritmo: Asistolia / AESP (No Desfibrilable)"); });
-        btnDescarga.addEventListener('click', () => { descargasDadas++; btnDescarga.classList.remove('resaltar-alerta'); agregarLog(`⚡ Descarga #${descargasDadas} entregada.`); reiniciarCiclo(); if (descargasDadas >= 2 && !adrenalinaActiva) btnAdrenalina.classList.add('resaltar-alerta'); if (descargasDadas >= 3) btnAmiodarona.classList.add('resaltar-alerta'); });
+        btnDescarga.addEventListener('click', () => { 
+    descargasDadas++; 
+    btnDescarga.classList.remove('resaltar-alerta'); 
+    agregarLog(`⚡ Descarga #${descargasDadas} entregada.`); 
+    reiniciarCiclo(); 
+    
+    if (descargasDadas >= 2 && !adrenalinaActiva) btnAdrenalina.classList.add('resaltar-alerta'); 
+    
+    // Solo resalta Amiodarona tras la 3.ª y 5.ª descarga, respetando la dosis inicial y de mantenimiento
+    if (descargasDadas === 3 || descargasDadas === 5) btnAmiodarona.classList.add('resaltar-alerta'); 
+});
+        
         btnAdrenalina.addEventListener('click', () => { btnAdrenalina.classList.remove('resaltar-alerta'); adrenalinaActiva = true; tiempoAdrenalina = 240; uiAdrenalina.style.display = 'inline'; uiAdrenalina.innerText = "Siguiente en: 04:00"; agregarLog("💉 Adrenalina 1mg administrada."); });
         btnAmiodarona.addEventListener('click', () => { btnAmiodarona.classList.remove('resaltar-alerta'); agregarLog("💉 Amiodarona / Lidocaína administrada."); });
         btnIntubacion.addEventListener('click', () => { if (!btnIntubacion.classList.contains('deshabilitado')) { btnIntubacion.classList.add('deshabilitado'); agregarLog("🌬️ Vía aérea avanzada asegurada."); }});
