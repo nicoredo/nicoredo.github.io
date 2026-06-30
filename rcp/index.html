@@ -215,7 +215,7 @@
 
     <div id="modal-finalizar" class="modal-overlay oculto">
         <div class="modal-content">
-            <h2>FINALIZAR CÓDIGO AZUL</h2>
+            <h2>FINALIZAR RCP</h2>
             <p>Por favor, indique el desenlace de la reanimación.</p>
             
             <textarea id="notas-medico-final" class="modal-text-final" placeholder="Anotaciones médicas finales (Ej: Hora de óbito declarada por Dr. X, o signos vitales post-PCR...)"></textarea>
@@ -306,7 +306,7 @@ let adrenalinasDadas = 0; let amiodaronasDadas = 0;
         function alternarRCP() {
             if (!rcpActivo) {
                 rcpActivo = true; btnMain.classList.remove('btn-start'); btnMain.classList.add('btn-pause'); btnMain.innerText = "⏸ PAUSAR RELOJES";
-                if (tiempoGlobal === 0) agregarLog("🚨 INICIO DE CÓDIGO AZUL / RCP");
+                if (tiempoGlobal === 0) agregarLog("🚨 INICIO DE RCP - CHEQUEAR RITMO");
                 relojPrincipal = setInterval(tickReloj, 1000); metronomoInterval = setInterval(() => reproducirSonido('metronomo'), 545);
             } else {
                 rcpActivo = false; btnMain.classList.remove('btn-pause'); btnMain.classList.add('btn-start'); btnMain.innerText = "▶ CONTINUAR RCP";
